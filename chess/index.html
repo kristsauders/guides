@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thinking in Chess: strategy and tactics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#EDF1F5;--surface:#FFFFFF;--ink:#17212C;--muted:#56626F;--line:#D3DAE2;--accent:#1D6B73;--accent-ink:#FFFFFF;
+--sq-l:#E4E9EF;--sq-d:#8598AC;--lm:rgba(236,196,64,.5);--coord-l:#8598AC;--coord-d:#E4E9EF;
+--c-g:#2E8B57;--c-r:#C0392B;--c-b:#2F6DB5;--c-y:#D39B1E;--note:#E3ECEF;--code:#E6EAEF;
+--serif:"Newsreader","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;--sans:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10151B;--surface:#18202A;--ink:#E3E8EE;--muted:#9AA6B3;--line:#2B3542;--accent:#63B6BC;--accent-ink:#0E1A1C;--sq-l:#AEBBC8;--sq-d:#5B6E82;--coord-l:#5B6E82;--coord-d:#D6DEE6;--note:#1C2A30;--code:#1F2833}}
+:root[data-theme="dark"]{--bg:#10151B;--surface:#18202A;--ink:#E3E8EE;--muted:#9AA6B3;--line:#2B3542;--accent:#63B6BC;--accent-ink:#0E1A1C;--sq-l:#AEBBC8;--sq-d:#5B6E82;--coord-l:#5B6E82;--coord-d:#D6DEE6;--note:#1C2A30;--code:#1F2833}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--serif);font-size:1.12rem;line-height:1.62;font-optical-sizing:auto}
+a{color:var(--accent)}
+button{font-family:var(--sans);cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 95%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:.5rem;padding:.5rem 1rem}
+.bar-t{font-family:var(--sans);font-weight:600;font-size:.9rem;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-t span{color:var(--muted);font-weight:400}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:.45rem .75rem;font-size:.85rem;min-height:38px}
+.btn:hover{border-color:var(--accent)}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.prog{height:3px;background:var(--accent);width:0;transition:width .1s linear}
+main{max-width:760px;margin:0 auto;padding:0 1.1rem 4rem}
+.prose>p,.prose>ul,.prose>ol,.prose>h4,.prose>table,.prose>.note,.prose>pre{max-width:680px}
+header.hero{padding:2.2rem 0 1rem}
+.hero h1{font-size:clamp(2.3rem,8vw,3.6rem);line-height:1.02;letter-spacing:-.02em;margin:.2rem 0 .8rem;font-weight:600}
+.hero .dek{font-size:1.25rem;color:var(--muted);max-width:600px;margin:0 0 1.5rem;line-height:1.45}
+.part{margin:4rem 0 1rem;padding-top:1.4rem;border-top:3px solid var(--ink)}
+.part .pl{font-family:var(--sans);font-size:.85rem;color:var(--muted);margin:0}
+.part h2{font-size:clamp(1.9rem,6vw,2.5rem);line-height:1.1;margin:.2rem 0 .4rem;letter-spacing:-.01em}
+.part p.pd{color:var(--muted);margin:0;max-width:620px}
+.ch{margin-top:2.6rem}
+.ch h3{font-size:1.55rem;line-height:1.2;margin:0 0 .7rem;display:flex;gap:.6rem;align-items:baseline}
+.ch h3 .n{font-family:var(--sans);font-size:.95rem;color:var(--accent);font-weight:600;min-width:1.6em}
+h4{font-size:1.18rem;margin:1.6rem 0 .3rem}
+.term{font-weight:600}
+.note{background:var(--note);border-left:4px solid var(--accent);padding:.8rem 1rem;margin:1.3rem 0;border-radius:0 8px 8px 0}
+.note .nl{font-family:var(--sans);font-size:.8rem;font-weight:600;color:var(--accent);margin:0 0 .2rem}
+.note p{margin:.3rem 0}
+.note.warn{border-left-color:var(--c-r)} .note.warn .nl{color:var(--c-r)}
+table{border-collapse:collapse;width:100%;font-size:.98rem;margin:1rem 0}
+.tw{overflow-x:auto;max-width:680px}
+th,td{text-align:left;padding:.45rem .55rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--sans);font-size:.8rem;color:var(--muted);font-weight:600}
+code,pre{font-family:var(--mono);font-size:.82rem}
+pre{background:var(--code);padding:.9rem;border-radius:8px;overflow-x:auto;line-height:1.45}
+.k{font-family:var(--sans);font-weight:600;font-size:.9em}.k.g{color:var(--c-g)}.k.r{color:var(--c-r)}.k.b{color:var(--c-b)}
+/* board */
+.bd,.pz{margin:1.6rem 0;max-width:460px}
+.bd.wide{max-width:520px}
+.tabs{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.5rem}
+.tab{font-size:.8rem;border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:.35rem .75rem;min-height:34px}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.bwrap{position:relative;border-radius:6px;overflow:hidden;box-shadow:0 0 0 1px var(--line)}
+.bwrap svg{display:block;width:100%;height:auto;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.pc{font-family:"Segoe UI Symbol","Apple Symbols","Noto Sans Symbols 2","Noto Sans Symbols","DejaVu Sans",FreeSerif,sans-serif;font-size:82px;text-anchor:middle;dominant-baseline:central;paint-order:stroke}
+.pc.w{fill:#FBFCFD;stroke:#18202A;stroke-width:3.6px}
+.pc.b{fill:#161C23;stroke:rgba(255,255,255,.55);stroke-width:1.6px}
+.coord{font-family:var(--sans);font-size:17px;font-weight:600}
+.ctl{display:flex;align-items:center;gap:.4rem;margin-top:.5rem;font-family:var(--sans)}
+.ctl .btn{padding:.4rem .7rem}
+.ctl .ct{font-size:.8rem;color:var(--muted);margin-left:auto}
+.cap{font-size:1rem;line-height:1.5;margin-top:.55rem}
+.bd .ctl[style*='flex']+.cap{min-height:4.5em}
+.cap .mv{font-family:var(--sans);font-weight:600;margin-right:.35rem;white-space:nowrap}
+/* puzzles */
+.pz{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:.9rem;max-width:480px}
+.pz-h{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--sans);font-size:.8rem;color:var(--muted);margin-bottom:.3rem}
+.pz-h b{color:var(--ink);font-size:.95rem}
+.pz-p{margin:.1rem 0 .6rem;font-size:1.02rem}
+.pz-msg{font-size:.98rem;margin-top:.6rem;min-height:1.5em}
+.pz-msg.ok{color:var(--c-g)} .pz-msg.no{color:var(--c-r)}
+.pz-mv{font-family:var(--sans);font-size:.85rem;color:var(--muted);margin-top:.3rem;min-height:1.2em}
+.pz.done{border-color:var(--c-g)}
+.score{font-family:var(--sans);font-size:.95rem;margin:.5rem 0}
+/* checklist */
+.cl{list-style:none;padding:0;max-width:680px}
+.cl li{display:flex;gap:.7rem;padding:.55rem 0;border-bottom:1px solid var(--line)}
+.cl input{width:22px;height:22px;flex:none;margin-top:.2rem;accent-color:var(--accent)}
+.cl label{cursor:pointer}
+.cl .q{font-weight:600}
+/* toc */
+.drawer{position:fixed;inset:0;z-index:40;display:none}
+.drawer.open{display:block}
+.drawer .scrim{position:absolute;inset:0;background:rgba(0,0,0,.4)}
+.drawer nav{position:absolute;top:0;right:0;bottom:0;width:min(88vw,360px);background:var(--surface);overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 1rem) 1rem calc(env(safe-area-inset-bottom,0px) + 1rem);font-family:var(--sans)}
+.drawer nav a{display:block;text-decoration:none;color:var(--ink);padding:.4rem .3rem;font-size:.92rem;border-radius:6px}
+.drawer nav a.p{font-weight:600;margin-top:.8rem;color:var(--muted);font-size:.8rem}
+.drawer nav a.cur{background:var(--note);color:var(--accent)}
+.drawer nav a .n{display:inline-block;width:1.8em;color:var(--muted)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 1rem);background:var(--ink);color:var(--bg);font-family:var(--sans);font-size:.88rem;padding:.6rem .6rem .6rem 1rem;border-radius:10px;display:flex;gap:.6rem;align-items:center;z-index:30;max-width:92vw;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.toast button{background:transparent;color:inherit;border:1px solid currentColor;border-radius:7px;padding:.35rem .6rem}
+.gl input{width:100%;max-width:680px;font:inherit;font-family:var(--sans);font-size:1rem;padding:.6rem .8rem;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.gl dl{max-width:680px}
+.gl dt{font-weight:600;margin-top:.9rem}
+.gl dd{margin:0;color:var(--ink)}
+.sheet{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));max-width:680px}
+.sheet div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.8rem 1rem}
+.sheet h4{margin:0 0 .3rem;font-size:1.05rem}
+.sheet ol,.sheet ul{margin:0;padding-left:1.1rem;font-size:.98rem}
+.src li{margin-bottom:.4rem;font-size:1rem}
+footer{color:var(--muted);font-size:.9rem;margin-top:3rem}
+@media (max-width:480px){body{font-size:1.06rem}.ch h3{font-size:1.35rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style></head>
+<body>
+<div class="bar"><div class="bar-in"><div class="bar-t">Thinking in chess <span id="curch"></span></div>
+<button class="btn" id="tocBtn">Contents</button><button class="btn" id="themeBtn" aria-label="Toggle light or dark theme">◐</button></div><div class="prog" id="prog"></div></div>
+<div class="drawer" id="drawer"><div class="scrim"></div><nav id="tocnav" aria-label="Contents"></nav></div>
+<main><header class="hero">
+  <h1>Thinking in chess</h1>
+  <p class="dek">Strategy and tactics from beginner to club player: how to find good moves, avoid bad ones, and build an advantage one step at a time.</p>
+  <div class="bd wide" data-b="hero"></div>
+</header>
+
+<section class="prose">
+  <p>You know how the pieces move. You've probably fallen for a trap or two and set a few of your own. What's missing is the part nobody explains well: <em>how do strong players decide what to do?</em> Why castle? What does "control the center" actually buy you? When is a trade good? How do you find a plan when nothing is happening?</p>
+  <p>This guide answers those questions in the order that matters for improving. That order surprises people. At the beginner and early intermediate level, games are decided overwhelmingly by tactics: a piece left hanging, a fork not seen, a mate in two missed. The old line attributed to Richard Teichmann, that chess is 99 percent tactics, overstates it, but not by as much as you'd hope. So Part I is about a thinking routine that stops you from losing material, Part II is about the tactical patterns that win it, and only then do we get to openings, plans, pawn structure and endgames.</p>
+  <p>Every diagram is live. Tap <b>Next</b> to step through the moves, and tap the tabs above a board to switch between related positions. Part VI ends with ten puzzles you solve by moving the pieces yourself. Read in order the first time; after that, the Contents button jumps anywhere. Your place is saved.</p>
+</section>
+
+<!-- PART I -->
+<section class="part" id="p1"><p class="pl">Part I</p><h2>Seeing the board</h2><p class="pd">A routine for every move, what the pieces are worth, and how to count before you capture.</p></section>
+
+<section class="ch prose" id="c1">
+  <h3><span class="n">1</span>Reading the diagrams</h3>
+  <p>The diagrams use <span class="term">algebraic notation</span>. Each square is named by its file (the column, a to h, left to right from White's side) and its rank (the row, 1 to 8, from White's side). Pieces are abbreviated K, Q, R, B and N (knight, since K is taken). Pawns get no letter: "e4" means a pawn moved to e4. An "x" means a capture, "+" means check, "#" means checkmate, and O-O and O-O-O are kingside and queenside castling.</p>
+  <div class="bd" data-b="intro"></div>
+  <p>Moves are numbered in pairs: "1.e4 e5" is White's first move and Black's reply. When a line starts with Black's move, it's written with an ellipsis, like "6… Ke7". You'll also see the standard annotation marks: ! for a strong move, !! for a brilliant one, ? for a mistake and ?? for a blunder.</p>
+  <div class="bd" data-b="legend"></div>
+  <p>Throughout, the board is shown from White's side. When a position is about Black's play, the caption says so.</p>
+</section>
+
+<section class="ch prose" id="c2">
+  <h3><span class="n">2</span>The move-by-move routine</h3>
+  <p>The single biggest jump from beginner to intermediate isn't knowledge. It's process. Chess coach Dan Heisman gave the most common beginner habit a name: <span class="term">hope chess</span>. You make a move without checking whether your opponent has a reply you can't meet, and hope they don't find it. Its opposite, which he calls <span class="term">real chess</span>, is simply doing that check every single move. It sounds obvious. Almost nobody does it consistently until they train themselves to.</p>
+  <p>Here's a real trap that punishes hope chess. Black wins White's queen on move 5 and is checkmated two moves later.</p>
+  <div class="bd" data-b="legal"></div>
+  <p>Black saw "I can take a queen" and stopped thinking. The fix is a fixed sequence of questions, asked in the same order every move until it becomes automatic.</p>
+  <h4>Step 1: What did that move do?</h4>
+  <p>When your opponent moves, before you think about your own plans, ask what their move changed. What does the moved piece attack now? What did it stop defending? What line did it open behind it? Most blunders happen because a player keeps thinking about their own idea and treats the opponent's move as noise.</p>
+  <h4>Step 2: Checks, captures, threats</h4>
+  <p>Look at every check, every capture and every threat available, <em>for both sides</em>. These are called <span class="term">forcing moves</span>, because they limit the opponent's replies. Forcing moves are where tactics live. Check them in that order, and don't skip the silly-looking ones: the queen sacrifice that "obviously" doesn't work is exactly the one you need to rule out properly.</p>
+  <h4>Step 3: Candidate moves</h4>
+  <p>List two or three reasonable moves. If there's nothing forcing, candidates come from the position's needs: develop a piece, improve your worst piece, attack a weakness, prevent the opponent's idea (Part IV covers how to find these).</p>
+  <h4>Step 4: Blunder check</h4>
+  <p>Before you touch the piece, imagine the board after your move and ask one question: <em>what checks, captures and threats does my opponent have now?</em> This is the step that stops hope chess. It takes a few seconds and prevents most lost games at club level.</p>
+  <ul class="cl">
+    <li><input type="checkbox" id="r1"><label for="r1"><span class="q">What did their move change?</span> New attacks, dropped defenses, opened lines.</label></li>
+    <li><input type="checkbox" id="r2"><label for="r2"><span class="q">Checks, captures, threats.</span> Mine and theirs.</label></li>
+    <li><input type="checkbox" id="r3"><label for="r3"><span class="q">Two or three candidates.</span> Forcing moves first, then the position's needs.</label></li>
+    <li><input type="checkbox" id="r4"><label for="r4"><span class="q">Blunder check.</span> After my move, what are their checks, captures and threats?</label></li>
+  </ul>
+  <div class="note"><p class="nl">Why this beats studying openings</p><p>A player who never hangs pieces and always notices a two-move threat will beat a player who knows twenty moves of theory but plays hope chess. You'll see this routine behind every puzzle in this guide. If you take one thing from it, take this.</p></div>
+  <p>A caution from the other direction: Dutch International Master Willy Hendriks has argued that beginner thinking systems can become rituals. Strong players mostly recognize patterns rather than working through checklists. Both things are true. The checklist is how you learn to see patterns until you no longer need it, the way you once sounded out words before you could read.</p>
+</section>
+
+<section class="ch prose" id="c3">
+  <h3><span class="n">3</span>What pieces are worth</h3>
+  <p>You need a common currency to judge trades. The traditional scale is measured in pawns:</p>
+  <div class="tw"><table>
+    <tr><th>Piece</th><th>Classic value</th><th>Refinement</th></tr>
+    <tr><td>Pawn</td><td>1</td><td>Central pawns are worth a bit more than edge pawns; a pawn close to promotion can be worth far more.</td></tr>
+    <tr><td>Knight</td><td>3</td><td>Better in closed positions with many pawns.</td></tr>
+    <tr><td>Bishop</td><td>3</td><td>Better in open positions. Two bishops together are worth about half a pawn extra.</td></tr>
+    <tr><td>Rook</td><td>5</td><td>Weak in the opening, dominant in the endgame.</td></tr>
+    <tr><td>Queen</td><td>9</td><td>Roughly two rooks, or three minor pieces, depending on the position.</td></tr>
+    <tr><td>King</td><td>—</td><td>Priceless, but in the endgame fights like a piece worth about 3–4.</td></tr>
+  </table></div>
+  <p>Those refinements come mostly from IM (now GM) Larry Kaufman's study of hundreds of thousands of master games. His key findings: a single bishop and a single knight are worth the same on average, so which is better depends on the position; the <span class="term">bishop pair</span> is worth about half a pawn, enough to matter; and a rook's pawn (a- or h-file) is worth a bit less than other pawns, since it can only capture in one direction.</p>
+  <p>The numbers are averages. A piece's real value is what it can do right now, and that depends on where it stands.</p>
+  <div class="bd" data-b="mobility"></div>
+  <p>This is the seed of all positional chess. If two armies are equal in material, the one whose pieces control more squares, and more important squares, is better. Every later idea (development, outposts, open files, good and bad bishops) is a way of making your pieces worth more than their sticker price and your opponent's worth less.</p>
+  <h4>Common trades</h4>
+  <p>Some exchanges come up constantly. Two minor pieces for a rook and pawn is usually good for the side with the two pieces in the middlegame, since pieces coordinate and rooks need open files. Giving a rook for a minor piece is called losing "the exchange"; it's a two-point loss on paper and a real one most of the time. Three minor pieces for a queen is usually fine for the pieces. A queen for two rooks is about equal.</p>
+</section>
+
+<section class="ch prose" id="c4">
+  <h3><span class="n">4</span>Counting and trading</h3>
+  <p>When pieces pile up on a square, you can work out what happens without calculating every move. Count <span class="term">attackers</span> and <span class="term">defenders</span> of the target. If you have more attackers, you can usually win it. Then check the order: capture with your least valuable pieces first, because the side that captures last on the square is the one that keeps material.</p>
+  <div class="bd" data-b="count"></div>
+  <p>Two refinements make counting accurate. First, values matter, not just numbers: if your only attacker is a queen and their defender is a pawn, "one against one" still means you lose the queen. Second, either side can stop an exchange sequence whenever continuing would lose material, so compare where the sequence ends at each point, not only at the end.</p>
+  <h4>When to trade</h4>
+  <p>Beginners either trade everything to simplify or avoid all trades out of fear. Both are ways of not thinking. Trades are tools with predictable effects:</p>
+  <div class="tw"><table>
+    <tr><th>Situation</th><th>Guideline</th><th>Why</th></tr>
+    <tr><td>You're ahead in material</td><td>Trade pieces, not pawns</td><td>An extra piece matters more as the board empties; keep pawns so you have something to promote.</td></tr>
+    <tr><td>You're behind</td><td>Avoid piece trades, trade pawns</td><td>Complications are your friend; fewer pawns means more drawing chances.</td></tr>
+    <tr><td>You're under attack</td><td>Trade the attacking pieces</td><td>Each trade removes an attacker; attacks die when the attackers are gone.</td></tr>
+    <tr><td>You're attacking</td><td>Avoid trades, especially of your best attacker</td><td>Keep the pressure; the defender wants trades.</td></tr>
+    <tr><td>You have a bad piece</td><td>Trade it for their good piece</td><td>A bishop blocked by its own pawns for their active knight is a bargain.</td></tr>
+    <tr><td>Space advantage</td><td>Avoid trades</td><td>The cramped side wants trades to breathe.</td></tr>
+    <tr><td>Cramped</td><td>Seek trades</td><td>Fewer pieces need less room.</td></tr>
+  </table></div>
+  <p>Before any trade, ask: after this trade, which remaining pieces are better, mine or theirs? And whose pawn structure improves? A trade that looks equal on the value scale can be a clear gain or loss once you ask that.</p>
+</section>
+<!-- PART II -->
+<section class="part" id="p2"><p class="pl">Part II</p><h2>Tactics</h2><p class="pd">Short, forcing sequences that win material or mate. Recognizing these patterns is the fastest way to raise your rating.</p></section>
+
+<section class="ch prose" id="c5">
+  <h3><span class="n">5</span>Loose pieces and forcing moves</h3>
+  <p>Grandmaster John Nunn coined a four-letter warning: <span class="term">LPDO</span>, loose pieces drop off. A loose piece is one that isn't defended. Most tactics are aimed at loose pieces or at the king, because those are the targets that can't be protected by a simple recapture. So before you look for fancy combinations, just scan the board: which pieces are undefended, mine and theirs? Which pieces are defended only once while being attacked?</p>
+  <p>Tactics work because of <span class="term">forcing moves</span>. A check has to be answered. A capture usually has to be recaptured. A threat to a queen or to mate has to be met. When your opponent has only one or two legal or sensible replies, you can calculate much further ahead, because the tree of possibilities barely branches. That's why good players calculate forcing lines first and quiet moves last.</p>
+  <p>Almost every tactic is a <span class="term">double attack</span> at heart: one move creates two threats, and the opponent can only answer one. The next chapters are different ways to create that.</p>
+  <div class="note"><p class="nl">The in-between move</p><p>In an exchange sequence, the "obvious" recapture isn't forced if you have something stronger first, like a check or a bigger threat. This is called a <span class="term">zwischenzug</span> (German for in-between move). Always ask, before recapturing, whether there's a forcing move to play first.</p></div>
+</section>
+
+<section class="ch prose" id="c6">
+  <h3><span class="n">6</span>Forks</h3>
+  <p>A <span class="term">fork</span> is one piece attacking two or more targets at once. Any piece can fork, but the knight is the specialist: its jump can't be blocked, and beginners find its geometry hardest to see. Train yourself to notice when the enemy king and queen, or king and rook, are a knight's jump apart from the same square.</p>
+  <div class="bd" data-b="forks"></div>
+  <p>The best forks include a check, because the opponent must spend their move on the king. When you see two enemy pieces that are both loose, ask which of your pieces could hit both, and whether a square exists where it can.</p>
+</section>
+
+<section class="ch prose" id="c7">
+  <h3><span class="n">7</span>Pins and skewers</h3>
+  <p>A <span class="term">pin</span> attacks a piece that can't move (or shouldn't) because a more valuable piece stands behind it on the same line. Only long-range pieces pin: bishops, rooks and queens. When the piece behind is the king, the pin is <span class="term">absolute</span> and moving the pinned piece is illegal. Otherwise it's <span class="term">relative</span>: legal, but costly.</p>
+  <div class="bd" data-b="pins"></div>
+  <p>Pinned pieces are half-dead. They can't defend what they appear to defend, which is behind many "impossible" captures. The standard ways to exploit a pin: attack the pinned piece again (especially with a pawn), or pile more attackers on it than can defend it. The standard ways to escape one: put a piece between (unpinning, like ...Be7 in the Queen's Gambit), move the piece behind it, or challenge the pinning piece with ...h6 or ...a6.</p>
+  <p>A <span class="term">skewer</span> reverses the pin: the valuable piece is in front. It has to move, and it exposes what's behind.</p>
+  <div class="bd" data-b="skewer"></div>
+</section>
+
+<section class="ch prose" id="c8">
+  <h3><span class="n">8</span>Discovered attacks and double check</h3>
+  <p>A <span class="term">discovered attack</span> happens when one piece moves out of the way of another, unveiling an attack from the piece behind. The moving piece gets a free move to make its own threat. Two threats from one move: a double attack again. When the unveiled attack is a check, it's a <span class="term">discovered check</span>, and it's among the most powerful weapons in chess.</p>
+  <div class="bd" data-b="disc"></div>
+  <p>If the moving piece <em>also</em> gives check, it's <span class="term">double check</span>. The only defense to double check is moving the king. You can't block two lines at once, and you can't capture two checking pieces with one move. Puzzle 4 in Part VI shows why that matters.</p>
+  <p>To spot these, look for your pieces lined up behind your own pieces, aimed at something valuable. That setup is a loaded weapon, and it's also something to watch for when your opponent builds it.</p>
+</section>
+
+<section class="ch prose" id="c9">
+  <h3><span class="n">9</span>Removing the defender, overloading and deflection</h3>
+  <p>If a target is defended, attack the defense. There are three closely related versions:</p>
+  <ul>
+    <li><span class="term">Removing the defender</span>: capture or drive away the piece that guards something important.</li>
+    <li><span class="term">Overloading</span>: one piece is defending two things; make it choose.</li>
+    <li><span class="term">Deflection</span>: force a defender to move away from its post, usually with a sacrifice it has to take.</li>
+  </ul>
+  <div class="bd" data-b="removedef"></div>
+  <p>The opposite trick is the <span class="term">decoy</span>: lure an enemy piece (often the king) onto a square where a tactic works, like the queen sacrifice in the smothered mate below. When you see a near-miss tactic ("if only that knight weren't there"), ask how to remove, overload, deflect or decoy the obstacle.</p>
+</section>
+
+<section class="ch prose" id="c10">
+  <h3><span class="n">10</span>Mating patterns</h3>
+  <p>Checkmates aren't calculated from scratch; they're recognized. Strong players know dozens of patterns, and spotting the first move of one is usually the hard part. Start with these.</p>
+  <div class="bd" data-b="mates"></div>
+  <p>The back-rank mate teaches a defensive habit as much as an attacking one. Once the middlegame starts and your back rank has few defenders, find a quiet moment to make <span class="term">luft</span> with h3 or g3 (…h6 or …g6 as Black). Don't do it while pieces are still undeveloped, and don't do it when it weakens squares near your king that the opponent can use right away.</p>
+  <p>Other patterns worth learning next, all easily found in puzzle trainers by name: Anastasia's mate, the Arabian mate, Boden's mate, the Greek gift sacrifice (Bxh7+ followed by Ng5+ and Qh5), and the two-bishops mate on a castled king.</p>
+</section>
+<!-- PART III -->
+<section class="part" id="p3"><p class="pl">Part III</p><h2>The opening</h2><p class="pd">Principles over memorization: what the first ten moves are for, and a small, sound repertoire.</p></section>
+
+<section class="ch prose" id="c11">
+  <h3><span class="n">11</span>Three jobs: center, development, king safety</h3>
+  <p>The opening has three jobs, and nearly every rule you've heard is a consequence of them.</p>
+  <p><b>Control the center.</b> The four center squares (d4, e4, d5, e5) and the ring around them are where pieces have the most reach, as the knight diagram in Chapter 3 showed. Pieces in the center can switch to either wing quickly; pieces on the edge can't. Controlling the center doesn't necessarily mean occupying it with pawns. It means your pawns and pieces attack those squares, so your pieces can use them and your opponent's can't.</p>
+  <div class="bd" data-b="center"></div>
+  <p><b>Develop your pieces.</b> A piece on its starting square does nothing. Development means bringing knights and bishops out to active squares where they influence the center, then connecting your rooks. Each opening move is a unit of time, called a <span class="term">tempo</span>. Spending tempi on moves that don't develop (moving a piece twice, early pawn moves on the edge, early queen trips) hands the opponent a <span class="term">lead in development</span>. And a lead in development is a temporary advantage: it only pays off if you open the position and use it before the opponent catches up.</p>
+  <p><b>Keep your king safe.</b> The center is where the fighting happens, which makes it a bad place for the king. Castling moves it to the side behind a wall of pawns and brings a rook toward the middle. More in the next chapter.</p>
+  <div class="note"><p class="nl">A good opening move does more than one thing</p><p>1.e4 claims the center <em>and</em> opens lines for the queen and bishop. Nf3 develops <em>and</em> attacks e5 <em>and</em> prepares castling. When choosing between moves in the opening, favor the one that serves more of the three jobs.</p></div>
+</section>
+
+<section class="ch prose" id="c12">
+  <h3><span class="n">12</span>Castling</h3>
+  <p>Castling is the only move that develops a rook and secures the king at once. Usually you should castle within the first ten moves or so, and kingside castling (O-O) is the default because it takes fewer preparatory moves.</p>
+  <p>The danger of skipping it is concrete. The f7 square (f2 for White) is the weak point at the start: only the king defends it. And the center files open quickly once pawns are exchanged, putting an uncastled king directly on the line of fire.</p>
+  <div class="bd" data-b="fried"></div>
+  <p>A few practical rules about castling:</p>
+  <ul>
+    <li><b>Don't move the pawns in front of your castled king without a reason.</b> Each pawn move there creates squares the enemy can use and lines they can open. The three pawns f2, g2, h2 (f7, g7, h7) are the king's shelter.</li>
+    <li><b>Castle long (O-O-O) with a purpose.</b> It's a bit less safe (the a-pawn is unguarded and the king takes an extra move to get to b1), but it puts the rook on the d-file immediately and often signals an attack: see Chapter 18.</li>
+    <li><b>Sometimes delaying is right.</b> If the center is locked by pawns, the king can wait. If the opponent is planning a pawn storm on one side, it can pay to see which side before committing. In the endgame, don't castle at all; the king should come to the center.</li>
+    <li><b>The rules.</b> You can't castle out of check, through a square attacked by the enemy, or into check, and not if the king or that rook has moved. You <em>can</em> castle if the rook is attacked or if it passes over an attacked square (relevant for O-O-O and the b-file).</li>
+  </ul>
+</section>
+
+<section class="ch prose" id="c13">
+  <h3><span class="n">13</span>Opening rules, their exceptions, and traps</h3>
+  <p>The classic opening rules are shortcuts for the three jobs:</p>
+  <ul>
+    <li>Start with a center pawn (e4 or d4; …e5 or …d5).</li>
+    <li>Develop knights before bishops, since you usually know where knights belong (f3 and c3) before you know which diagonal the bishops want.</li>
+    <li>Don't move the same piece twice in the opening without a reason.</li>
+    <li>Don't bring the queen out early; she gets chased, and every chase gains the opponent a free developing move.</li>
+    <li>Castle early.</li>
+    <li>Connect your rooks (clear the back rank between them), then put them on open or central files.</li>
+    <li>Don't grab pawns if it costs a lot of development, especially with the queen.</li>
+  </ul>
+  <p>Every one of these has exceptions, and the exceptions have the same shape: a concrete tactical reason beats a general rule. In the Fried Liver line above, White moves the knight twice because Ng5 attacks f7 right now. In the Légal trap in Chapter 2, White "loses" the queen because it leads to mate. General principles tell you what to play when nothing concrete is happening. When something is, calculate.</p>
+  <p>Here's the flip side: meeting an early queen attack. You'll see this a lot online.</p>
+  <div class="bd" data-b="scholar"></div>
+  <p>The defense works because every Black move both answers the threat and develops or gains time. That's the model for handling any premature attack: defend with developing moves, then punish.</p>
+</section>
+
+<section class="ch prose" id="c14">
+  <h3><span class="n">14</span>A starter repertoire</h3>
+  <p>You don't need much opening theory below intermediate level. You need openings that lead to positions where the principles work and that you understand. Pick one plan with White and one reply as Black to each of 1.e4 and 1.d4, and learn the ideas, not long move lists. Here's a sound, principled set.</p>
+  <h4>With White: 1.e4 and the Italian Game</h4>
+  <div class="bd" data-b="italian"></div>
+  <p>The ideas: pieces to natural squares, castle, then decide between d3–d4 when well prepared, or maneuvering the b1 knight via d2 and f1 to g3 for a kingside push. If Black plays 2…Nf6 or 2…d6 instead, just keep developing: Bc4, Nc3 or c3, d3 or d4, castle.</p>
+  <h4>With Black against 1.e4: 1…e5</h4>
+  <p>Mirror the same principles. Against the Italian, 3…Bc5 or 3…Nf6 both lead to healthy positions. Against the Ruy Lopez (3.Bb5), 3…a6 and …Nf6 with ...Be7 and ...O-O is time-tested. Know the Fried Liver trap from Chapter 12: after 3…Nf6 4.Ng5 d5 5.exd5, avoid 5…Nxd5 at your level and play 5…Na5 instead.</p>
+  <h4>With Black against 1.d4: the Queen's Gambit Declined</h4>
+  <div class="bd" data-b="qgd"></div>
+  <p>Solid, logical, and it teaches you pawn structure (Chapter 17 and the Carlsbad plan in Chapter 21). If White plays the London System (Bf4, e3, c3, often without c4), the same …d5, …Nf6, …e6, …c5 setup works fine.</p>
+  <h4>Everything else</h4>
+  <p>Against unusual first moves, take the center with a pawn, develop, castle. You'll be fine. Once you're comfortable, look up the first few moves of what opponents actually play against you. Your own game history is the best opening book you'll ever have.</p>
+  <div class="note"><p class="nl">How much theory?</p><p>A reasonable rule until you're a solid intermediate player: know the first five to eight moves of your main lines and, more important, <em>why</em> each move is played. If you find yourself out of your preparation on move 6, you're doing it right. Time spent memorizing move 15 is time not spent on tactics and endgames.</p></div>
+</section>
+<!-- PART IV -->
+<section class="part" id="p4"><p class="pl">Part IV</p><h2>The middlegame</h2><p class="pd">Evaluating positions, improving pieces, reading pawn structure, applying pressure and making plans.</p></section>
+
+<section class="ch prose" id="c15">
+  <h3><span class="n">15</span>Evaluating a position</h3>
+  <p>When the opening is over and there's no tactic, what do you do? You look for <em>differences</em> between the two sides and play to make the ones in your favor matter. International Master Jeremy Silman made this idea popular under the name <span class="term">imbalances</span>. His list, lightly paraphrased:</p>
+  <div class="tw"><table>
+    <tr><th>Imbalance</th><th>Question to ask</th></tr>
+    <tr><td>Material</td><td>Who's ahead, and does the extra material matter here?</td></tr>
+    <tr><td>Minor pieces</td><td>Bishop vs knight: open or closed position? Good or bad bishop? Does anyone have the bishop pair?</td></tr>
+    <tr><td>Pawn structure</td><td>Isolated, doubled, backward, passed pawns? Where are the pawn breaks?</td></tr>
+    <tr><td>Space</td><td>Whose pawns are further advanced, giving their pieces more room?</td></tr>
+    <tr><td>Files</td><td>Is there an open file, and who controls it?</td></tr>
+    <tr><td>Weak squares</td><td>Are there holes (squares no pawn can guard) that a piece could occupy?</td></tr>
+    <tr><td>Development</td><td>Who has more pieces in play?</td></tr>
+    <tr><td>Initiative</td><td>Who's making threats and who's reacting?</td></tr>
+    <tr><td>King safety</td><td>Whose king is more exposed?</td></tr>
+    <tr><td>Statics vs dynamics</td><td>Are the advantages long-term (structure, bishop pair) or short-term (development, initiative)?</td></tr>
+  </table></div>
+  <p>That last row is the most important strategic idea in chess. <span class="term">Static</span> advantages are permanent-ish: a better pawn structure, an extra pawn, a knight on an outpost. They favor slow play, trades and endgames. <span class="term">Dynamic</span> advantages are temporary: a lead in development, an initiative, active pieces. They must be used now, usually by opening the position and attacking, or they evaporate. A huge amount of good chess is simply knowing which kind you have and acting accordingly. The Opera Game in Part VI is dynamics in their purest form.</p>
+  <div class="note warn"><p class="nl">Tactics first, always</p><p>Imbalances tell you what to aim for. They don't excuse skipping Chapter 2. Players who start thinking strategically often begin hanging pieces, because they're thinking about outposts instead of checks. Run the checks-captures-threats scan first, every move, and only then ask what the position wants.</p></div>
+</section>
+
+<section class="ch prose" id="c16">
+  <h3><span class="n">16</span>Piece activity</h3>
+  <p>If you remember one middlegame rule, make it this one: <b>find your worst piece and improve it</b>. When there's no tactic and no obvious plan, the piece doing the least is where the next move should come from. This works absurdly well, because a position is only as strong as its weakest link.</p>
+  <div class="bd" data-b="activity"></div>
+  <h4>Knights</h4>
+  <p>Knights are short-range, so they need forward posts. An <span class="term">outpost</span> is a square in the opponent's half that your pawn protects and no enemy pawn can attack. A knight on an outpost can often be worth more than a rook. When you see a hole in the enemy's pawn structure, ask how to get a knight there.</p>
+  <h4>Bishops</h4>
+  <p>A bishop is <span class="term">good</span> when its own pawns are on the opposite color, leaving its diagonals clear, and <span class="term">bad</span> when its own pawns block it. The fix: put your pawns on the color your remaining bishop <em>doesn't</em> use, or trade the bad bishop. Bishops love open positions and long diagonals, and the bishop pair becomes powerful when the position opens.</p>
+  <h4>Rooks</h4>
+  <p>Rooks need open files (no pawns) or half-open files (only enemy pawns). Put them there, double them (two rooks on one file), then aim for the 7th rank. A rook on the 7th attacks pawns from the side where they can't defend each other and traps the enemy king on the back rank.</p>
+  <h4>The queen</h4>
+  <p>The queen is strong but vulnerable: any lesser piece can chase her with gain of tempo. In the middlegame, she's often best a step behind the action, supporting other pieces, rather than leading it.</p>
+</section>
+
+<section class="ch prose" id="c17">
+  <h3><span class="n">17</span>Pawn structure</h3>
+  <p>Pawns are the skeleton of the position. They can't move backward, so every pawn move permanently changes which squares can be guarded. Pieces come and go, but the pawn structure tells you where the pieces belong and what the long-term plans are.</p>
+  <div class="bd" data-b="pawns"></div>
+  <p>A few principles fall out of these pictures:</p>
+  <ul>
+    <li><b>Every pawn move creates a weakness</b> (the squares it can no longer guard). That's not a reason never to move pawns. It's a reason to move them with purpose.</li>
+    <li><b>Weaknesses are targets only if you can attack them.</b> A backward pawn on a half-open file, attacked by rooks, is a real problem; one that no piece can reach is cosmetic.</li>
+    <li><b>Pawn breaks are how plans happen.</b> A <span class="term">pawn break</span> is a pawn move that challenges the enemy pawns to open lines: …c5 and …f6 in the French, d4 in the Italian, b4–b5 in the Carlsbad. When you're unsure what to do, ask which pawn breaks are available to each side, and whether you can prepare yours or prevent theirs.</li>
+    <li><b>Capture toward the center.</b> When recapturing with a pawn, taking toward the middle usually improves your structure.</li>
+    <li><b>Passed pawns must be pushed</b>, and they're best blockaded by a knight, which isn't blinded by the pawn in front of it.</li>
+  </ul>
+</section>
+
+<section class="ch prose" id="c18">
+  <h3><span class="n">18</span>Space, the center and where to attack</h3>
+  <p><span class="term">Space</span> is the territory behind your pawn chain. More space means more room for your pieces to maneuver and less for theirs. The side with less space should look for trades (fewer pieces need less room) and pawn breaks to free themselves. The side with more space should avoid trades and keep the bind.</p>
+  <p>Where to act depends on the center:</p>
+  <ul>
+    <li><b>Open center</b> (few central pawns): pieces rule, the uncastled king is in danger, and wing attacks are risky because the opponent can counter through the middle.</li>
+    <li><b>Closed center</b> (locked pawn chains): play slows down and moves to the wings. Attack on the side where your pawn chain points, since that's where you have more space.</li>
+    <li><b>Fluid center</b>: whoever controls the central pawn breaks controls the game.</li>
+  </ul>
+  <p>The classic principle: a wing attack is best answered by a counterattack in the center. If your opponent throws pawns at your king while the center can still open, open it.</p>
+  <div class="bd wide" data-b="storm"></div>
+  <p>With kings on opposite sides, pawn storms become the main weapon, because advancing pawns toward the enemy king doesn't expose your own. These positions are races. Count tempi: how many moves until your attack breaks through, and how many for theirs? Defensive moves that don't slow the opponent by more than they cost you usually lose the race.</p>
+</section>
+
+<section class="ch prose" id="c19">
+  <h3><span class="n">19</span>Initiative and pressure</h3>
+  <p>In chess, pressure means creating threats that force your opponent to spend moves reacting. The side making threats has the <span class="term">initiative</span>, and holding it is often worth more than a pawn, because a defender who is always responding never gets to execute their own plan, and eventually runs out of good defenses.</p>
+  <h4>How to build pressure</h4>
+  <ul>
+    <li><b>Fix a target, then pile up.</b> Find a weakness that can't move (a backward pawn, a pinned piece, a weak square). Aim more pieces at it than can defend it. Doubled rooks and a queen on a half-open file against a backward pawn is the textbook picture.</li>
+    <li><b>Make threats that improve your position.</b> A developing move with a threat gains a tempo; a threat that forces a piece to a worse square gains even more.</li>
+    <li><b>Tie pieces down.</b> Every enemy piece stuck defending is a piece not attacking you. The rook on the 7th in Chapter 16 tied Black's rook to b7.</li>
+    <li><b>Use the principle of two weaknesses.</b> One weakness can usually be defended. So create a second one on the other side of the board and switch between them. Defenders can't be in two places; the position cracks where they aren't.</li>
+  </ul>
+  <h4>Prophylaxis</h4>
+  <p>The other half of pressure is stopping theirs. <span class="term">Prophylaxis</span> means asking "what does my opponent want to do?" and preventing it before it happens. If your opponent's best piece wants a certain square, take the square away. If their pawn break is their only counterplay, stop the break. Strong players spend a large fraction of their moves this way. It looks passive and is anything but: a player with no active plan tends to make weakening moves.</p>
+</section>
+
+<section class="ch prose" id="c20">
+  <h3><span class="n">20</span>Attacking and defending the king</h3>
+  <p>Attacks on the king succeed for measurable reasons. Before you launch one, check the conditions:</p>
+  <ul>
+    <li><b>More attackers than defenders</b> near the king. Count pieces within reach of the king's area, not just on the board.</li>
+    <li><b>Open lines</b> toward the king, or pawns you can use to open them (a pawn storm, a sacrifice on h7 or g6, a pawn break).</li>
+    <li><b>A stable or closed center</b>, so the opponent can't counterattack in the middle.</li>
+    <li><b>Weaknesses in the pawn shelter</b>: pawns already moved to h6, g6 or f6 give hooks to attack and holes to use.</li>
+  </ul>
+  <p>If most of those are present, attack and look for sacrifices; the defender's pieces won't arrive in time. If they aren't, the attack is probably premature, and you should improve pieces first.</p>
+  <h4>Defending</h4>
+  <p>Defense is a skill. The principles: trade the attacking pieces (especially the enemy queen), bring defenders toward the king, don't create new pawn weaknesses in the shelter unless forced, counterattack in the center, and when you're in real trouble, give material back to break the attack. A pawn or even the exchange returned at the right moment often ends an attack for good.</p>
+</section>
+
+<section class="ch prose" id="c21">
+  <h3><span class="n">21</span>Making a plan</h3>
+  <p>A plan is just an answer to "what should my pieces and pawns be doing over the next several moves?" You don't need to be deep. You need to be consistent. Here's a process that works:</p>
+  <ol>
+    <li><b>Safety scan.</b> Checks, captures, threats (Chapter 2). If something's hanging or there's a tactic, deal with it.</li>
+    <li><b>Imbalances.</b> What are the differences between the sides? Which are static, which dynamic?</li>
+    <li><b>Targets.</b> What weakness in their camp could I attack? What's the weakest point in mine?</li>
+    <li><b>The ideal setup.</b> Where would each of my pieces stand in a perfect world to use my advantages or hit their weaknesses? Which pawn break supports that?</li>
+    <li><b>The worst piece.</b> Which of my pieces is furthest from its ideal square? Move it.</li>
+    <li><b>Their plan.</b> What do they want? Can I stop it cheaply?</li>
+  </ol>
+  <p>Here's the process on a classic structure that arises from the Queen's Gambit Declined when White exchanges on d5.</p>
+  <div class="bd wide" data-b="carlsbad"></div>
+  <p>Walking through the process: no tactics. The imbalance is structure: Black has three queenside pawns to White's two, and a half-open e-file; White has a half-open c-file. White's target is the c6/d5 pawn pair. White's ideal setup: rooks on b1 and c1, pawns on b4–b5 to exchange on c6. That leaves Black with either an isolated d5 pawn or a backward c6 pawn: a static weakness White can pile up on (Chapter 19). Black's plan is the opposite wing: pieces toward White's king, perhaps a knight to e4. Both sides now know what to do for the next fifteen moves. That's a plan.</p>
+</section>
+<!-- PART V -->
+<section class="part" id="p5"><p class="pl">Part V</p><h2>The endgame</h2><p class="pd">Fewer pieces, different rules. A little endgame knowledge wins a surprising number of games.</p></section>
+
+<section class="ch prose" id="c22">
+  <h3><span class="n">22</span>The endgame mindset</h3>
+  <p>When the queens come off and a handful of pieces remain, several middlegame rules flip:</p>
+  <ul>
+    <li><b>The king becomes a fighting piece.</b> With little danger of mate, bring it toward the center and toward the pawns. A centralized king is often worth a whole piece in a pawn ending.</li>
+    <li><b>Passed pawns become the main currency.</b> Creating one, pushing it, and stopping theirs is what most endgames are about.</li>
+    <li><b>Rooks belong behind passed pawns</b>, yours or theirs (Tarrasch's rule). Behind your own, the rook gains power as the pawn advances; behind theirs, it stays useful as the pawn advances.</li>
+    <li><b>Don't rush.</b> In a winning endgame, there's usually no hurry. Improve everything first (king, rook, pawn structure), then break through. Hurried pushes let the defender set up a fortress.</li>
+    <li><b>Trade pieces when ahead</b> (Chapter 4), and remember that the defender's best hope is often trading all the pawns.</li>
+  </ul>
+  <p>Endgame study also improves your middlegame: once you know which endings are won, you know which trades to go for.</p>
+</section>
+
+<section class="ch prose" id="c23">
+  <h3><span class="n">23</span>King and pawn endings</h3>
+  <p>King and pawn endings are pure calculation, and they turn on two ideas. The first is <span class="term">opposition</span>: kings standing on the same file (or rank) with one square between them. The side <em>not</em> to move holds the opposition, because the other king has to give way. The second is <span class="term">key squares</span>: squares that guarantee promotion if the attacking king reaches them. For a pawn that hasn't crossed the middle of the board, they're the three squares two ranks in front of it.</p>
+  <div class="bd" data-b="kp"></div>
+  <p>The takeaways: with king and pawn against king, the attacking king should lead the pawn, not follow it. The defender should stay in front of the pawn and take the opposition whenever possible. And the whole outcome can hinge on whose turn it is, which is why endgame players count moves so carefully.</p>
+  <p>When the defending king is far away, a simpler tool applies: the <span class="term">rule of the square</span>.</p>
+  <div class="bd" data-b="square"></div>
+</section>
+
+<section class="ch prose" id="c24">
+  <h3><span class="n">24</span>Basic checkmates</h3>
+  <p>You must be able to mate with king and queen, and with king and rook, quickly and without stalemate. Both follow the same method: use the queen or rook to cut the enemy king off into a shrinking box, bring your own king up to support, and push the enemy king to the edge. With a rook, the final picture is kings facing each other with the rook checking along the edge.</p>
+  <div class="bd" data-b="rookmate"></div>
+  <p>With a queen, the danger is stalemate (see the Stalemate tab in Chapter 10). A safe method: put the queen a knight's move away from the enemy king and shadow it as it moves, which pushes it to the edge; then stop and bring your own king over before delivering mate. Practice both against a computer until you can do them in under a minute. It's also worth knowing that king and two knights can't force mate, and that king and bishop and knight can, though that one is rare enough to learn later.</p>
+</section>
+
+<section class="ch prose" id="c25">
+  <h3><span class="n">25</span>Rook endings</h3>
+  <p>Rook endings are the most common endings in practice, so two positions are worth knowing by name. The <span class="term">Lucena position</span> is the standard win: the attacking king is on the promotion square with its pawn on the 7th, and it needs shelter from checks.</p>
+  <div class="bd" data-b="lucena"></div>
+  <p>The <span class="term">Philidor position</span> is the standard draw: the defending king stands in front of the pawn and the rook guards the 6th rank until the pawn advances; then the rook drops back and checks from behind.</p>
+  <div class="bd" data-b="philidor"></div>
+  <p>Beyond those two, remember: active rooks beat passive ones, even at the cost of a pawn. A rook cutting off the enemy king is worth a lot. And the old saying that all rook endings are drawn exaggerates, but the defending side really does hold more often than beginners expect, so don't give up in them.</p>
+</section>
+<!-- PART VI -->
+<section class="part" id="p6"><p class="pl">Part VI</p><h2>Putting it together</h2><p class="pd">A famous game, practical habits, a training plan, and puzzles to test yourself.</p></section>
+
+<section class="ch prose" id="c26">
+  <h3><span class="n">26</span>The Opera Game</h3>
+  <p>In 1858, the American Paul Morphy played this game during a performance at the Paris opera against two strong amateurs consulting together. It's the most-taught game in chess because it shows, in 17 moves, what a lead in development does against a king left in the center. Step through it and watch for the ideas from earlier chapters: pins, the weak f7 square, development over pawn-grabbing, sacrifices to open lines, removing the defender, and the back-rank mate.</p>
+  <div class="bd wide" data-b="opera"></div>
+  <p>Notice what Morphy <em>didn't</em> do. He never grabbed material when development was available (7.Qb3 attacks b7, but after 7…Qe7 he played 8.Nc3 rather than take). He sacrificed a knight, a rook and his queen, all to keep lines open while Black's kingside pieces sat at home. That's the principle from Chapter 15: a dynamic advantage must be used before it disappears.</p>
+</section>
+
+<section class="ch prose" id="c27">
+  <h3><span class="n">27</span>Practical play</h3>
+  <h4>The clock</h4>
+  <p>Use your time where it matters. Spend it on critical moments: when the position changes character, when captures start, when a plan must be chosen. Move faster on obvious recaptures and developing moves. And never, ever skip the blunder check to save time. A bad move played fast is still a bad move.</p>
+  <h4>When you're winning</h4>
+  <p>Most won positions are lost through relaxation. Keep running the routine. Trade pieces, stop counterplay, take no unnecessary risks, and ask each move: what is my opponent's only hope? Take that hope away.</p>
+  <h4>When you're losing</h4>
+  <p>Don't resign early at the club level; opponents miss things constantly. Make the position complicated: keep pieces on, create threats, look for stalemate tricks and perpetual check, set problems that require precise calculation. Games are decided by the last mistake, not the first.</p>
+  <h4>After the game</h4>
+  <p>This is where improvement actually happens. Before you turn on an engine, go through the game yourself and note where you felt unsure, where the evaluation swung, and what you were thinking. Then check with the engine. The goal isn't to learn the engine's best move; it's to find <em>why</em> you missed it. "I didn't see his bishop's diagonal" is fixable. "The engine says +0.3" is not a lesson.</p>
+</section>
+
+<section class="ch prose" id="c28">
+  <h3><span class="n">28</span>A training plan</h3>
+  <p>Improvement comes from a balance of playing, solving and reviewing. Rating numbers vary a lot between sites and federations, so these stages are described by skills rather than ratings.</p>
+  <h4>Stage 1: stop losing material</h4>
+  <p><b>You're here if</b> most of your losses involve a piece left hanging or a tactic you didn't see coming. <b>Work on:</b> the Chapter 2 routine every single move; daily tactics puzzles focused on basic patterns (forks, pins, skewers, back rank, mate in 1 and 2); K+Q and K+R mates; the opening principles. <b>Play</b> games of 15 minutes plus 10 seconds per move or slower, so you have time to actually run the routine.</p>
+  <h4>Stage 2: win material, then win the game</h4>
+  <p><b>You're here if</b> you rarely hang pieces outright, but lose to combinations two or three moves deep, or win material and then fail to convert. <b>Work on:</b> tactics at greater volume and depth (combinations of three to five moves); King and pawn endings and the Lucena and Philidor; a small repertoire you understand (Chapter 14); the "worst piece" rule and simple plans; reviewing every loss.</p>
+  <h4>Stage 3: play positions, not just moves</h4>
+  <p><b>You're here if</b> tactics decide fewer of your games and you're outplayed slowly instead. <b>Work on:</b> pawn structures and their standard plans (Chapter 17); annotated master games, where a strong player explains every move; calculation practice (set up a position, calculate without moving pieces, then check); deeper rook endgames; building your openings from your own games.</p>
+  <h4>A weekly shape</h4>
+  <p>A reasonable week for someone with an hour a day: most days, 20–30 minutes of puzzles plus one longer game with a short review. Once or twice a week, swap puzzles for endgame study or one annotated master game. Playing lots of blitz feels like practice but trains habits of moving without checking. Treat it as recreation.</p>
+  <div class="note"><p class="nl">For the tinkerer</p><p>If you like building your own tools, the python-chess library plus a local Stockfish can scan your games for the moments that mattered. Export your games from Lichess (its API serves a user's games as PGN at <code>lichess.org/api/games/user/USERNAME</code>) and flag every move where the evaluation swung by two pawns or more. Filter to your own color and you have a personal list of missed tactics to review.</p>
+<pre>import chess.pgn, chess.engine
+
+eng = chess.engine.SimpleEngine.popen_uci("stockfish")
+with open("games.pgn") as f:
+    while (game := chess.pgn.read_game(f)):
+        board, prev = game.board(), None
+        for node in game.mainline():
+            board.push(node.move)
+            info = eng.analyse(board, chess.engine.Limit(depth=14))
+            s = info["score"].white().score(mate_score=10000)
+            if prev is not None and abs(s - prev) >= 200:
+                print(game.headers["Site"], node.san(), prev, "->", s)
+            prev = s
+eng.quit()</pre></div>
+</section>
+
+<section class="ch prose" id="c29">
+  <h3><span class="n">29</span>Puzzle gym</h3>
+  <p>Ten positions covering the patterns in this guide, roughly from easiest to hardest. Run the routine: checks, captures, threats. Tap a piece and then its destination. Every one of these was checked with Stockfish.</p>
+  <p class="score" id="pzscore"></p>
+  <div id="puzzles"></div>
+</section>
+
+<section class="ch prose" id="c30">
+  <h3><span class="n">30</span>Pocket checklist</h3>
+  <p>Everything above, compressed to fit a single screen.</p>
+  <div class="sheet">
+    <div><h4>Every move</h4><ol><li>What did their move change?</li><li>Checks, captures, threats (both sides)</li><li>Two or three candidates</li><li>Blunder check: their replies after my move</li></ol></div>
+    <div><h4>Opening</h4><ul><li>Center pawn first</li><li>Knights, then bishops</li><li>Castle early</li><li>Don't move pieces twice or chase with the queen</li><li>Connect rooks</li></ul></div>
+    <div><h4>Middlegame</h4><ul><li>Improve the worst piece</li><li>Find targets; pile up</li><li>Knights to outposts, rooks to open files</li><li>Static edge: slow down. Dynamic edge: open up</li><li>What does my opponent want?</li></ul></div>
+    <div><h4>Trades</h4><ul><li>Ahead: trade pieces, keep pawns</li><li>Behind: keep pieces, trade pawns</li><li>Defending: trade attackers</li><li>Trade your bad piece for their good one</li></ul></div>
+    <div><h4>Endgame</h4><ul><li>King to the center</li><li>Push passed pawns</li><li>Rooks behind passed pawns</li><li>Opposition; rule of the square</li><li>Check for stalemate</li></ul></div>
+  </div>
+</section>
+
+<section class="ch prose gl" id="c31">
+  <h3><span class="n">31</span>Glossary</h3>
+  <input id="glq" type="search" placeholder="Search terms" aria-label="Search glossary">
+  <dl id="gl">
+    <dt>Absolute pin</dt><dd>A pin against the king; the pinned piece cannot legally move off the line.</dd>
+    <dt>Back-rank mate</dt><dd>Checkmate by a rook or queen on the first or eighth rank against a king trapped by its own pawns.</dd>
+    <dt>Backward pawn</dt><dd>A pawn whose neighbors have advanced past it and that can't safely advance itself.</dd>
+    <dt>Bad bishop</dt><dd>A bishop hemmed in by its own pawns on its color.</dd>
+    <dt>Bishop pair</dt><dd>Having both bishops when the opponent doesn't; worth about half a pawn on average.</dd>
+    <dt>Blockade</dt><dd>Placing a piece directly in front of an enemy passed pawn to stop it. Knights are ideal blockaders.</dd>
+    <dt>Blunder check</dt><dd>Imagining the position after your intended move and looking for the opponent's checks, captures and threats.</dd>
+    <dt>Candidate moves</dt><dd>The short list of reasonable moves you actually consider.</dd>
+    <dt>Castling</dt><dd>Moving king two squares toward a rook and the rook to the king's other side, in one move.</dd>
+    <dt>Center</dt><dd>The squares d4, e4, d5 and e5, plus the ring of squares around them.</dd>
+    <dt>Connected rooks</dt><dd>Rooks on the same rank with nothing between them, so they defend each other.</dd>
+    <dt>Counterplay</dt><dd>Active threats by the side that's worse or under attack.</dd>
+    <dt>Decoy</dt><dd>Luring an enemy piece to a square where a tactic works.</dd>
+    <dt>Deflection</dt><dd>Forcing a defender away from what it protects.</dd>
+    <dt>Development</dt><dd>Bringing pieces off their starting squares to useful posts.</dd>
+    <dt>Discovered attack</dt><dd>Moving a piece to unveil an attack by another piece behind it.</dd>
+    <dt>Double check</dt><dd>Check from two pieces at once; only a king move answers it.</dd>
+    <dt>Doubled pawns</dt><dd>Two pawns of one color on the same file.</dd>
+    <dt>Dynamic advantage</dt><dd>A temporary edge, like development or initiative, that must be used quickly.</dd>
+    <dt>Exchange, the</dt><dd>Rook for a minor piece. "Winning the exchange" means getting the rook.</dd>
+    <dt>Fianchetto</dt><dd>Developing a bishop to b2, g2, b7 or g7 after moving the knight's pawn one square.</dd>
+    <dt>File</dt><dd>A column of squares, a through h. Open: no pawns. Half-open: only enemy pawns.</dd>
+    <dt>Fork</dt><dd>One piece attacking two or more targets at once.</dd>
+    <dt>Fortress</dt><dd>A defensive setup the stronger side can't break through, despite extra material.</dd>
+    <dt>Hanging</dt><dd>A piece that can be captured for free.</dd>
+    <dt>Hole</dt><dd>A square that can no longer be guarded by a pawn, useful for enemy pieces.</dd>
+    <dt>Hope chess</dt><dd>Moving without checking whether the opponent has a reply you can't meet (Dan Heisman's term).</dd>
+    <dt>Initiative</dt><dd>The ability to make threats that force the opponent to react.</dd>
+    <dt>Isolated pawn</dt><dd>A pawn with no friendly pawns on adjacent files.</dd>
+    <dt>Key squares</dt><dd>Squares that guarantee promotion if the attacking king reaches them.</dd>
+    <dt>LPDO</dt><dd>"Loose pieces drop off" (John Nunn): undefended pieces are the usual targets of tactics.</dd>
+    <dt>Lucena position</dt><dd>The standard winning rook-and-pawn versus rook position; won by "building a bridge."</dd>
+    <dt>Luft</dt><dd>An escape square made for the king by moving a pawn in its shelter.</dd>
+    <dt>Minority attack</dt><dd>Advancing fewer pawns against more on one wing to create weaknesses there.</dd>
+    <dt>Opposition</dt><dd>Kings facing each other with one square between; the side not to move holds it.</dd>
+    <dt>Outpost</dt><dd>A square in enemy territory, protected by your pawn, that no enemy pawn can attack.</dd>
+    <dt>Overloading</dt><dd>Exploiting a piece that has too many defensive jobs.</dd>
+    <dt>Passed pawn</dt><dd>A pawn with no enemy pawns in front of it on its file or adjacent files.</dd>
+    <dt>Pawn break</dt><dd>A pawn advance that challenges enemy pawns to open lines.</dd>
+    <dt>Pawn chain</dt><dd>A diagonal line of pawns protecting each other. Attack its base.</dd>
+    <dt>Perpetual check</dt><dd>An endless series of checks that forces a draw.</dd>
+    <dt>Philidor position</dt><dd>The standard drawing method in rook-and-pawn versus rook.</dd>
+    <dt>Pin</dt><dd>An attack on a piece that can't move without exposing a more valuable piece behind it.</dd>
+    <dt>Prophylaxis</dt><dd>Preventing the opponent's plan before it happens.</dd>
+    <dt>Rank</dt><dd>A row of squares, 1 through 8.</dd>
+    <dt>Relative pin</dt><dd>A pin against a piece other than the king; moving is legal but costly.</dd>
+    <dt>Rule of the square</dt><dd>A quick test of whether a king can catch a passed pawn.</dd>
+    <dt>Skewer</dt><dd>An attack on a valuable piece that, when it moves, exposes a piece behind it.</dd>
+    <dt>Smothered mate</dt><dd>Knight checkmate against a king surrounded by its own pieces.</dd>
+    <dt>Space</dt><dd>Territory controlled behind your pawns.</dd>
+    <dt>Stalemate</dt><dd>The side to move has no legal move and isn't in check: a draw.</dd>
+    <dt>Static advantage</dt><dd>A lasting edge, like better structure or an outpost.</dd>
+    <dt>Tempo</dt><dd>A unit of time: one move. Gaining a tempo means making progress while forcing the opponent to respond.</dd>
+    <dt>Zugzwang</dt><dd>A position where any move worsens your position; you'd rather pass.</dd>
+    <dt>Zwischenzug</dt><dd>An in-between move, usually a check or threat, inserted before an expected recapture.</dd>
+  </dl>
+</section>
+
+<section class="ch prose" id="c32">
+  <h3><span class="n">32</span>Sources and further reading</h3>
+  <ul class="src">
+    <li>Jeremy Silman, <i>How to Reassess Your Chess</i>, 4th ed. (Siles Press, 2010): the imbalances framework in Chapter 15. His <i>Complete Endgame Course</i> is organized by rating level and is the best next step for Part V.</li>
+    <li>Dan Heisman, <i>The Improving Chess Thinker</i> (Mongoose Press) and his articles on thought process: hope chess versus real chess in Chapter 2.</li>
+    <li>Larry Kaufman, "The Evaluation of Material Imbalances," <i>Chess Life</i>, March 1999: the piece-value refinements in Chapter 3.</li>
+    <li>Willy Hendriks, <i>Move First, Think Later</i> (New in Chess): the counterpoint on thinking systems and pattern recognition.</li>
+    <li>John Nunn: the LPDO principle, from his writing on tactics.</li>
+    <li>Irving Chernev, <i>Logical Chess: Move by Move</i>: 33 master games with every move explained; ideal for Stage 2 and 3.</li>
+    <li>Artur Yusupov's nine-volume training course (Quality Chess): the most structured book path from beginner to strong club player.</li>
+    <li>Lichess Puzzles and Practice sections, and Chess.com Puzzles: free, rated, pattern-tagged tactics training.</li>
+  </ul>
+  <p>All positions and move sequences in this guide were checked for legality with python-chess, and the endgame lines and puzzles with Stockfish.</p>
+</section>
+
+</main>
+<script>window.__DATA__={"B": {"hero": [{"label": "", "frames": [{"fen": "1n1Rkb1r/p4ppp/4q3/4p1B1/4P3/8/PPP2PPP/2K5", "a": "", "h": "d8 g,e8 r", "d": "", "t": "Paris, 1858. Paul Morphy has just mated with the only two pieces he had left. By the end of this guide you'll be able to explain every move that led here.", "s": "", "lm": ["d1", "d8"]}], "stm": "w"}], "intro": [{"label": "", "frames": [{"fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", "a": "e2e4 g", "h": "d4 y,e4 y,d5 y,e5 y", "d": "", "t": "Files are the columns a–h, ranks are the rows 1–8, so every square has a name. The four shaded squares are <b>the center<\/b>. The green arrow is the move 1.e4: the pawn on e2 moves to e4.", "s": "", "lm": null}], "stm": "w"}], "legend": [{"label": "", "frames": [{"fen": "4k3/8/8/3q4/8/2N5/8/4K3", "a": "c3d5 g,d5e1 r,d5a2 b", "h": "d5 y", "d": "", "t": "The legend. <span class='k g'>Green<\/span> arrows are ideas and good moves. <span class='k r'>Red<\/span> arrows are threats. <span class='k b'>Blue<\/span> arrows show lines of force. Amber squares are targets or key squares. The pale yellow squares mark the last move played.", "s": "", "lm": null}], "stm": "w"}], "legal": [{"label": "", "frames": [{"fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", "a": "", "h": "", "d": "", "t": "A real opening trap called Légal's Mate. Step through it — the lesson is about the move Black makes on move 5.", "s": "", "lm": null}, {"fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR", "a": "", "h": "", "d": "", "t": "", "s": "1. e4", "lm": ["e2", "e4"]}, {"fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR", "a": "", "h": "", "d": "", "t": "", "s": "1… e5", "lm": ["e7", "e5"]}, {"fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R", "a": "", "h": "", "d": "", "t": "", "s": "2. Nf3", "lm": ["g1", "f3"]}, {"fen": "rnbqkbnr/ppp2ppp/3p4/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R", "a": "", "h": "", "d": "", "t": "Philidor's Defence. Solid, a bit passive.", "s": "2… d6", "lm": ["d7", "d6"]}, {"fen": "rnbqkbnr/ppp2ppp/3p4/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R", "a": "c4f7 b", "h": "f7 y", "d": "", "t": "The bishop aims at f7, the weakest square in Black's camp: only the king defends it.", "s": "3. Bc4", "lm": ["f1", "c4"]}, {"fen": "rn1qkbnr/ppp2ppp/3p4/4p3/2B1P1b1/5N2/PPPP1PPP/RNBQK2R", "a": "g4d1 b", "h": "", "d": "", "t": "Black pins the knight to the queen. If the knight moves, the queen hangs.", "s": "3… Bg4", "lm": ["c8", "g4"]}, {"fen": "rn1qkbnr/ppp2ppp/3p4/4p3/2B1P1b1/2N2N2/PPPP1PPP/R1BQK2R", "a": "", "h": "", "d": "", "t": "", "s": "4. Nc3", "lm": ["b1", "c3"]}, {"fen": "rn1qkbnr/ppp2p1p/3p2p1/4p3/2B1P1b1/2N2N2/PPPP1PPP/R1BQK2R", "a": "", "h": "", "d": "", "t": "A slow move. Black plans ...Bg7 and ignores what White might do.", "s": "4… g6", "lm": ["g7", "g6"]}, {"fen": "rn1qkbnr/ppp2p1p/3p2p1/4N3/2B1P1b1/2N5/PPPP1PPP/R1BQK2R", "a": "g4d1 r,e5f7 g,c4f7 g", "h": "d1 y,f7 y", "d": "", "t": "White breaks the pin! The knight takes a pawn and offers the queen.", "s": "5. Nxe5", "lm": ["f3", "e5"]}, {"fen": "rn1qkbnr/ppp2p1p/3p2p1/4N3/2B1P3/2N5/PPPP1PPP/R1BbK2R", "a": "", "h": "d1 r", "d": "", "t": "Black takes the queen. This is the hope-chess moment: Black counted material instead of asking <i>what checks does White have?<\/i>", "s": "5… Bxd1", "lm": ["g4", "d1"]}, {"fen": "rn1qkbnr/ppp2B1p/3p2p1/4N3/4P3/2N5/PPPP1PPP/R1BbK2R", "a": "c4f7 r", "h": "e8 r", "d": "", "t": "Check. The king has one square: e7.", "s": "6. Bxf7+", "lm": ["c4", "f7"]}, {"fen": "rn1q1bnr/ppp1kB1p/3p2p1/4N3/4P3/2N5/PPPP1PPP/R1BbK2R", "a": "", "h": "", "d": "", "t": "", "s": "6… Ke7", "lm": ["e8", "e7"]}, {"fen": "rn1q1bnr/ppp1kB1p/3p2p1/3NN3/4P3/8/PPPP1PPP/R1BbK2R", "a": "d5e7 r", "h": "e7 r", "d": "", "t": "Checkmate. Two minor pieces and a bishop beat a queen because every one of them was active and aimed at the king.", "s": "7. Nd5#", "lm": ["c3", "d5"]}], "stm": "w"}], "count": [{"label": "", "frames": [{"fen": "r4rk1/pp3ppp/5n2/3p4/8/2N2B2/PP3PPP/R4RK1", "a": "c3d5 g,f3d5 g,f6d5 r", "h": "d5 y", "d": "", "t": "Count the d5 pawn. Attackers: knight and bishop (2). Defenders: the f6 knight (1). More attackers than defenders means the target can be won.", "s": "", "lm": null}, {"fen": "r4rk1/pp3ppp/5n2/3N4/8/5B2/PP3PPP/R4RK1", "a": "", "h": "d5 y", "d": "", "t": "Capture with a piece, knowing the next piece will cover the recapture.", "s": "1. Nxd5", "lm": ["c3", "d5"]}, {"fen": "r4rk1/pp3ppp/8/3n4/8/5B2/PP3PPP/R4RK1", "a": "", "h": "", "d": "", "t": "Black recaptures…", "s": "1… Nxd5", "lm": ["f6", "d5"]}, {"fen": "r4rk1/pp3ppp/8/3B4/8/8/PP3PPP/R4RK1", "a": "", "h": "d5 g", "d": "", "t": "…and White recaptures last. The exchange ends with White a clean pawn up. Attackers 2, defenders 1: the math was right before anything moved.", "s": "2. Bxd5", "lm": ["f3", "d5"]}], "stm": "w"}], "mobility": [{"label": "", "frames": [{"fen": "k7/8/8/8/4N3/8/8/N6K", "a": "", "h": "", "d": "d2 f2 c3 g3 c5 g5 d6 f6 c2 b3", "t": "Same piece, different worth. The knight in the center attacks 8 squares; the one in the corner attacks 2. \"A knight on the rim is dim\" is just this picture in rhyme.", "s": "", "lm": null}], "stm": "w"}], "forks": [{"label": "Knight", "frames": [{"fen": "r3k3/pp3ppp/8/1N6/8/8/PPP2PPP/4K3", "a": "b5c7 g", "h": "c7 y", "d": "", "t": "The knight's jump can't be blocked, and it attacks in eight directions at once — the natural forking piece.", "s": "", "lm": null}, {"fen": "r3k3/ppN2ppp/8/8/8/8/PPP2PPP/4K3", "a": "c7e8 r,c7a8 r", "h": "", "d": "", "t": "Check, and the rook on a8 is attacked too. Black has to answer the check first.", "s": "1. Nc7+", "lm": ["b5", "c7"]}, {"fen": "r7/ppNk1ppp/8/8/8/8/PPP2PPP/4K3", "a": "", "h": "", "d": "", "t": "", "s": "1… Kd7", "lm": ["e8", "d7"]}, {"fen": "N7/pp1k1ppp/8/8/8/8/PPP2PPP/4K3", "a": "", "h": "a8 g", "d": "", "t": "The rook falls. A fork works whenever the opponent can only fix one problem per move.", "s": "2. Nxa8", "lm": ["c7", "a8"]}], "stm": "w"}, {"label": "Pawn", "frames": [{"fen": "4k3/8/3n1n2/8/4P3/8/8/4K3", "a": "", "h": "", "d": "", "t": "Pawns fork too, and a pawn forking two pieces wins material no matter which piece moves.", "s": "", "lm": null}, {"fen": "4k3/8/3n1n2/4P3/8/8/8/4K3", "a": "e5d6 r,e5f6 r", "h": "", "d": "", "t": "Both knights are attacked by the least valuable unit on the board.", "s": "1. e5", "lm": ["e4", "e5"]}, {"fen": "4k3/8/5n2/4Pn2/8/8/8/4K3", "a": "", "h": "", "d": "", "t": "One knight escapes…", "s": "1… Nf5", "lm": ["d6", "f5"]}, {"fen": "4k3/8/5P2/5n2/8/8/8/4K3", "a": "", "h": "f6 g", "d": "", "t": "…the other is lost.", "s": "2. exf6", "lm": ["e5", "f6"]}], "stm": "w"}, {"label": "Queen", "frames": [{"fen": "r3k3/ppp2ppp/8/8/7b/8/PP3PPP/3QK3", "a": "", "h": "h4 y", "d": "", "t": "The queen forks along lines. Look for a loose (undefended) piece and a king on the same queen's move.", "s": "", "lm": null}, {"fen": "r3k3/ppp2ppp/8/8/Q6b/8/PP3PPP/4K3", "a": "a4e8 r,a4h4 r", "h": "", "d": "", "t": "Check along the diagonal and an attack along the rank.", "s": "1. Qa4+", "lm": ["d1", "a4"]}, {"fen": "r3k3/pp3ppp/2p5/8/Q6b/8/PP3PPP/4K3", "a": "", "h": "", "d": "", "t": "Black blocks the check.", "s": "1… c6", "lm": ["c7", "c6"]}, {"fen": "r3k3/pp3ppp/2p5/8/7Q/8/PP3PPP/4K3", "a": "", "h": "h4 g", "d": "", "t": "And the loose bishop drops.", "s": "2. Qxh4", "lm": ["a4", "h4"]}], "stm": "w"}], "pins": [{"label": "Absolute pin", "frames": [{"fen": "r1bqkbnr/ppp2ppp/2np4/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R", "a": "b5e8 r", "h": "c6 y", "d": "", "t": "With d7 empty, the c6 knight is pinned to the king. It is <i>illegal<\/i> to move it. A pinned piece still attacks squares, but it can't leave its post.", "s": "", "lm": ["d7", "d6"]}], "stm": "w"}, {"label": "Relative pin", "frames": [{"fen": "rnbqkb1r/ppp2ppp/4pn2/3p2B1/2PP4/2N5/PP2PPPP/R2QKBNR", "a": "g5d8 r", "h": "f6 y", "d": "", "t": "Here the f6 knight is pinned to the queen. It <i>can<\/i> move, but then Bxd8 wins the queen. Relative pins restrict; they don't prohibit.", "s": "", "lm": ["c1", "g5"]}], "stm": "w"}, {"label": "Exploit it", "frames": [{"fen": "4k3/ppp2ppp/2np4/1B6/3P4/8/PPP2PPP/4K3", "a": "b5e8 r", "h": "c6 y", "d": "", "t": "The classic way to punish a pinned piece: attack it again, preferably with a pawn.", "s": "", "lm": null}, {"fen": "4k3/ppp2ppp/2np4/1B1P4/8/8/PPP2PPP/4K3", "a": "d5c6 r", "h": "", "d": "", "t": "The knight can't move out of the way. Black can only watch.", "s": "1. d5", "lm": ["d4", "d5"]}, {"fen": "8/ppp1kppp/2np4/1B1P4/8/8/PPP2PPP/4K3", "a": "", "h": "", "d": "", "t": "Unpinning, but one move too late.", "s": "1… Ke7", "lm": ["e8", "e7"]}, {"fen": "8/ppp1kppp/2Pp4/1B6/8/8/PPP2PPP/4K3", "a": "", "h": "c6 g", "d": "", "t": "White wins a piece.", "s": "2. dxc6", "lm": ["d5", "c6"]}], "stm": "w"}], "skewer": [{"label": "", "frames": [{"fen": "8/8/q2k4/8/8/7R/5PPP/6K1", "a": "", "h": "", "d": "", "t": "A skewer is a pin in reverse: the more valuable piece stands in front, so when it moves, the piece behind is exposed.", "s": "", "lm": null}, {"fen": "8/8/q2k3R/8/8/8/5PPP/6K1", "a": "h6d6 r,d6a6 b", "h": "a6 y", "d": "", "t": "Check through the king to the queen behind it.", "s": "1. Rh6+", "lm": ["h3", "h6"]}, {"fen": "8/8/q6R/4k3/8/8/5PPP/6K1", "a": "", "h": "", "d": "", "t": "The king has to step off the line.", "s": "1… Ke5", "lm": ["d6", "e5"]}, {"fen": "8/8/R7/4k3/8/8/5PPP/6K1", "a": "", "h": "a6 g", "d": "", "t": "The rook collects the queen.", "s": "2. Rxa6", "lm": ["h6", "a6"]}], "stm": "w"}], "disc": [{"label": "", "frames": [{"fen": "3qk3/ppp2ppp/8/4N3/8/8/PPP2PPP/4R1K1", "a": "e1e5 b", "h": "e5 y", "d": "", "t": "The rook on e1 is aimed at the king, but its own knight is in the way. That knight is a loaded gun: wherever it goes, check is revealed.", "s": "", "lm": null}, {"fen": "3qk3/ppp2ppp/2N5/8/8/8/PPP2PPP/4R1K1", "a": "e1e8 r,c6d8 r", "h": "d8 y", "d": "", "t": "Discovered check, and the knight attacks the queen. Black must deal with check, so the queen can't be saved.", "s": "1. Nc6+", "lm": ["e5", "c6"]}, {"fen": "3q4/pppk1ppp/2N5/8/8/8/PPP2PPP/4R1K1", "a": "", "h": "", "d": "", "t": "", "s": "1… Kd7", "lm": ["e8", "d7"]}, {"fen": "3N4/pppk1ppp/8/8/8/8/PPP2PPP/4R1K1", "a": "", "h": "", "d": "", "t": "The queen falls.", "s": "2. Nxd8", "lm": ["c6", "d8"]}, {"fen": "3k4/ppp2ppp/8/8/8/8/PPP2PPP/4R1K1", "a": "", "h": "", "d": "", "t": "Black gets a knight back, but White is a full rook ahead.", "s": "2… Kxd8", "lm": ["d7", "d8"]}], "stm": "w"}], "removedef": [{"label": "", "frames": [{"fen": "r2q1rk1/pbp2ppp/1p3n2/8/8/3B3Q/PBP2PPP/R4RK1", "a": "h3h7 r,d3h7 b,f6h7 g", "h": "h7 y,f6 y", "d": "", "t": "White threatens Qxh7# (queen supported by the d3 bishop). Only the f6 knight stops it. So remove it.", "s": "", "lm": null}, {"fen": "r2q1rk1/pbp2ppp/1p3B2/8/8/3B3Q/P1P2PPP/R4RK1", "a": "h3h7 r,f6d8 r", "h": "", "d": "", "t": "Now if ...gxf6 or ...Qxf6, then Qxh7 is mate. And the bishop on f6 also attacks the queen on d8.", "s": "1. Bxf6", "lm": ["b2", "f6"]}, {"fen": "r4rk1/pbp2ppp/1p3B2/8/8/3q3Q/P1P2PPP/R4RK1", "a": "", "h": "", "d": "", "t": "Black's best is to give the queen back for a bishop.", "s": "1… Qxd3", "lm": ["d8", "d3"]}, {"fen": "r4rk1/pbp2ppp/1p3B2/8/8/3P3Q/P4PPP/R4RK1", "a": "", "h": "", "d": "", "t": "", "s": "2. cxd3", "lm": ["c2", "d3"]}, {"fen": "r4rk1/pbp2p1p/1p3p2/8/8/3P3Q/P4PPP/R4RK1", "a": "", "h": "", "d": "", "t": "The dust settles with White up a queen for a bishop. Removing one defender collapsed the whole position.", "s": "2… gxf6", "lm": ["g7", "f6"]}], "stm": "w"}], "mates": [{"label": "Back rank", "frames": [{"fen": "6k1/5ppp/8/8/8/8/5PPP/3R2K1", "a": "", "h": "f7 y,g7 y,h7 y", "d": "", "t": "The king's own pawns are the bars of its cell.", "s": "", "lm": null}, {"fen": "3R2k1/5ppp/8/8/8/8/5PPP/6K1", "a": "d8g8 r", "h": "g8 r", "d": "", "t": "Checkmate on the back rank. This pattern decides more amateur games than any other mating pattern.", "s": "1. Rd8#", "lm": ["d1", "d8"]}], "stm": "w"}, {"label": "Luft", "frames": [{"fen": "6k1/5pp1/7p/8/8/8/5PPP/3R2K1", "a": "", "h": "h7 g", "d": "", "t": "Same position after ...h6 at some earlier quiet moment. That little pawn move (\"luft,\" German for air) gives the king an exit.", "s": "", "lm": null}, {"fen": "3R2k1/5pp1/7p/8/8/8/5PPP/6K1", "a": "", "h": "", "d": "", "t": "Check…", "s": "1. Rd8+", "lm": ["d1", "d8"]}, {"fen": "3R4/5ppk/7p/8/8/8/5PPP/6K1", "a": "", "h": "h7 g", "d": "", "t": "…and the king simply steps out.", "s": "1… Kh7", "lm": ["g8", "h7"]}], "stm": "w"}, {"label": "Smothered", "frames": [{"fen": "5r1k/6pp/4Q2N/8/8/8/6PP/6K1", "a": "", "h": "", "d": "", "t": "The king is boxed in by its own pieces. A queen sacrifice finishes the box.", "s": "", "lm": null}, {"fen": "5rQk/6pp/7N/8/8/8/6PP/6K1", "a": "h6g8 b", "h": "", "d": "", "t": "Check. The king can't take (the knight guards g8), so the rook must.", "s": "1. Qg8+", "lm": ["e6", "g8"]}, {"fen": "6rk/6pp/7N/8/8/8/6PP/6K1", "a": "", "h": "", "d": "", "t": "Now g8 is sealed by Black's own rook.", "s": "1… Rxg8", "lm": ["f8", "g8"]}, {"fen": "6rk/5Npp/8/8/8/8/6PP/6K1", "a": "f7h8 r", "h": "h8 r", "d": "", "t": "Smothered mate: nothing can capture or block a knight check.", "s": "2. Nf7#", "lm": ["h6", "f7"]}], "stm": "w"}, {"label": "Queen + king", "frames": [{"fen": "k7/8/2K5/8/8/8/8/1Q6", "a": "", "h": "", "d": "", "t": "The most basic mate, and the easiest one to spoil.", "s": "", "lm": null}, {"fen": "k7/1Q6/2K5/8/8/8/8/8", "a": "", "h": "a8 r", "d": "", "t": "Mate: the king guards the queen. Compare the next tab.", "s": "1. Qb7#", "lm": ["b1", "b7"]}], "stm": "w"}, {"label": "Stalemate", "frames": [{"fen": "k7/8/2K5/8/8/8/8/1Q6", "a": "", "h": "", "d": "", "t": "Same position, careless move.", "s": "", "lm": null}, {"fen": "k7/8/1QK5/8/8/8/8/8", "a": "", "h": "a8 y", "d": "", "t": "Black is not in check and has no legal move. That's stalemate: a draw, from a completely won position. Before every move in a winning endgame, check that the opponent has a move.", "s": "1. Qb6", "lm": ["b1", "b6"]}], "stm": "w"}], "center": [{"label": "", "frames": [{"fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R", "a": "f3e5 r,c6d4 b,c6e5 b", "h": "d4 y,e4 y,d5 y,e5 y", "d": "", "t": "Both sides are already fighting over the center. White's knight attacks e5; Black's knight defends it and eyes d4. Every developing move in a good opening does something like this.", "s": "", "lm": ["b8", "c6"]}], "stm": "w"}], "scholar": [{"label": "", "frames": [{"fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", "a": "", "h": "", "d": "", "t": "The early queen attack every beginner meets. Step through how Black defends <i>and develops<\/i> at the same time.", "s": "", "lm": null}, {"fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR", "a": "", "h": "", "d": "", "t": "", "s": "1. e4", "lm": ["e2", "e4"]}, {"fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR", "a": "", "h": "", "d": "", "t": "", "s": "1… e5", "lm": ["e7", "e5"]}, {"fen": "rnbqkbnr/pppp1ppp/8/4p2Q/4P3/8/PPPP1PPP/RNB1KBNR", "a": "h5f7 r,h5e5 r", "h": "f7 y", "d": "", "t": "The queen comes out early, attacking e5 and eyeing f7.", "s": "2. Qh5", "lm": ["d1", "h5"]}, {"fen": "r1bqkbnr/pppp1ppp/2n5/4p2Q/4P3/8/PPPP1PPP/RNB1KBNR", "a": "", "h": "", "d": "", "t": "Defends e5 while developing.", "s": "2… Nc6", "lm": ["b8", "c6"]}, {"fen": "r1bqkbnr/pppp1ppp/2n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR", "a": "c4f7 r,h5f7 r", "h": "f7 r", "d": "", "t": "Now Qxf7 is mate-in-one. It's a threat you must see.", "s": "3. Bc4", "lm": ["f1", "c4"]}, {"fen": "r1bqkbnr/pppp1p1p/2n3p1/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR", "a": "g6h5 g", "h": "", "d": "", "t": "Blocks the queen and gains time by attacking it.", "s": "3… g6", "lm": ["g7", "g6"]}, {"fen": "r1bqkbnr/pppp1p1p/2n3p1/4p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR", "a": "f3f7 r,c4f7 r", "h": "", "d": "", "t": "Renewing the threat on f7.", "s": "4. Qf3", "lm": ["h5", "f3"]}, {"fen": "r1bqkb1r/pppp1p1p/2n2np1/4p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR", "a": "", "h": "f6 g", "d": "", "t": "Blocks again with a developing move. Black has two pieces out and White's queen will be kicked again. The early queen raid has cost White time.", "s": "4… Nf6", "lm": ["g8", "f6"]}], "stm": "w"}], "fried": [{"label": "", "frames": [{"fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", "a": "", "h": "", "d": "", "t": "Why castle? This line (the Fried Liver attack) shows what happens to a king that stays in the middle.", "s": "", "lm": null}, {"fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR", "a": "", "h": "", "d": "", "t": "", "s": "1. e4", "lm": ["e2", "e4"]}, {"fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR", "a": "", "h": "", "d": "", "t": "", "s": "1… e5", "lm": ["e7", "e5"]}, {"fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R", "a": "", "h": "", "d": "", "t": "", "s": "2. Nf3", "lm": ["g1", "f3"]}, {"fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R", "a": "", "h": "", "d": "", "t": "", "s": "2… Nc6", "lm": ["b8", "c6"]}, {"fen": "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R", "a": "", "h": "", "d": "", "t": "", "s": "3. Bc4", "lm": ["f1", "c4"]}, {"fen": "r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R", "a": "", "h": "", "d": "", "t": "", "s": "3… Nf6", "lm": ["g8", "f6"]}, {"fen": "r1bqkb1r/pppp1ppp/2n2n2/4p1N1/2B1P3/8/PPPP1PPP/RNBQK2R", "a": "g5f7 r,c4f7 r", "h": "f7 y", "d": "", "t": "White breaks an opening rule (moving a piece twice) for a concrete reason: f7.", "s": "4. Ng5", "lm": ["f3", "g5"]}, {"fen": "r1bqkb1r/ppp2ppp/2n2n2/3pp1N1/2B1P3/8/PPPP1PPP/RNBQK2R", "a": "", "h": "", "d": "", "t": "", "s": "4… d5", "lm": ["d7", "d5"]}, {"fen": "r1bqkb1r/ppp2ppp/2n2n2/3Pp1N1/2B5/8/PPPP1PPP/RNBQK2R", "a": "", "h": "", "d": "", "t": "", "s": "5. exd5", "lm": ["e4", "d5"]}, {"fen": "r1bqkb1r/ppp2ppp/2n5/3np1N1/2B5/8/PPPP1PPP/RNBQK2R", "a": "", "h": "", "d": "", "t": "Natural but risky. The knight on d5 is pinned-ish and f7 is still weak.", "s": "5… Nxd5", "lm": ["f6", "d5"]}, {"fen": "r1bqkb1r/ppp2Npp/2n5/3np3/2B5/8/PPPP1PPP/RNBQK2R", "a": "f7d8 r,f7h8 r", "h": "", "d": "", "t": "The knight sacrifices itself on f7.", "s": "6. Nxf7", "lm": ["g5", "f7"]}, {"fen": "r1bq1b1r/ppp2kpp/2n5/3np3/2B5/8/PPPP1PPP/RNBQK2R", "a": "", "h": "", "d": "", "t": "", "s": "6… Kxf7", "lm": ["e8", "f7"]}, {"fen": "r1bq1b1r/ppp2kpp/2n5/3np3/2B5/5Q2/PPPP1PPP/RNB1K2R", "a": "f3f7 r,f3d5 r,c4d5 r", "h": "", "d": "", "t": "Check, and the d5 knight is attacked twice.", "s": "7. Qf3+", "lm": ["d1", "f3"]}, {"fen": "r1bq1b1r/ppp3pp/2n1k3/3np3/2B5/5Q2/PPPP1PPP/RNB1K2R", "a": "", "h": "", "d": "", "t": "The king has to walk forward to defend its knight.", "s": "7… Ke6", "lm": ["f7", "e6"]}, {"fen": "r1bq1b1r/ppp3pp/2n1k3/3np3/2B5/2N2Q2/PPPP1PPP/R1B1K2R", "a": "c3d5 r", "h": "e6 r", "d": "", "t": "Now White piles up on the pinned knight. Black's king is in the middle of the board with White's pieces arriving. White doesn't need to calculate a mate to know this is excellent.", "s": "8. Nc3", "lm": ["b1", "c3"]}], "stm": "w"}], "italian": [{"label": "", "frames": [{"fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", "a": "", "h": "", "d": "", "t": "The Italian Game: a sound, principled opening to build your White play around.", "s": "", "lm": null}, {"fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR", "a": "", "h": "e4 g", "d": "", "t": "Claims the center and opens lines for the queen and bishop.", "s": "1. e4", "lm": ["e2", "e4"]}, {"fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR", "a": "", "h": "", "d": "", "t": "", "s": "1… e5", "lm": ["e7", "e5"]}, {"fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R", "a": "f3e5 r", "h": "", "d": "", "t": "Develops with an attack on e5.", "s": "2. Nf3", "lm": ["g1", "f3"]}, {"fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R", "a": "", "h": "", "d": "", "t": "Develops with defence.", "s": "2… Nc6", "lm": ["b8", "c6"]}, {"fen": "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R", "a": "c4f7 b", "h": "", "d": "", "t": "The bishop takes aim at f7.", "s": "3. Bc4", "lm": ["f1", "c4"]}, {"fen": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R", "a": "", "h": "", "d": "", "t": "Black mirrors, aiming at f2.", "s": "3… Bc5", "lm": ["f8", "c5"]}, {"fen": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/2P2N2/PP1P1PPP/RNBQK2R", "a": "d2d4 g", "h": "", "d": "", "t": "A quiet pawn move with a big idea: preparing d4 to build a full pawn center.", "s": "4. c3", "lm": ["c2", "c3"]}, {"fen": "r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/2P2N2/PP1P1PPP/RNBQK2R", "a": "", "h": "", "d": "", "t": "Develops and attacks e4.", "s": "4… Nf6", "lm": ["g8", "f6"]}, {"fen": "r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/2PP1N2/PP3PPP/RNBQK2R", "a": "", "h": "", "d": "", "t": "The modern, slow approach: protect e4, keep everything solid, and maneuver.", "s": "5. d3", "lm": ["d2", "d3"]}, {"fen": "r1bqk2r/ppp2ppp/2np1n2/2b1p3/2B1P3/2PP1N2/PP3PPP/RNBQK2R", "a": "", "h": "", "d": "", "t": "", "s": "5… d6", "lm": ["d7", "d6"]}, {"fen": "r1bqk2r/ppp2ppp/2np1n2/2b1p3/2B1P3/2PP1N2/PP3PPP/RNBQ1RK1", "a": "", "h": "g1 g", "d": "", "t": "Castle early. The king is safe; the rook heads toward the center.", "s": "6. O-O", "lm": ["e1", "g1"]}, {"fen": "r1bq1rk1/ppp2ppp/2np1n2/2b1p3/2B1P3/2PP1N2/PP3PPP/RNBQ1RK1", "a": "", "h": "", "d": "", "t": "", "s": "6… O-O", "lm": ["e8", "g8"]}, {"fen": "r1bq1rk1/ppp2ppp/2np1n2/2b1p3/2B1P3/2PP1N2/PP3PPP/RNBQR1K1", "a": "", "h": "", "d": "", "t": "The rook supports e4 and a later d3–d4 push.", "s": "7. Re1", "lm": ["f1", "e1"]}, {"fen": "r1bq1rk1/1pp2ppp/p1np1n2/2b1p3/2B1P3/2PP1N2/PP3PPP/RNBQR1K1", "a": "", "h": "", "d": "", "t": "Makes room for the bishop to retreat.", "s": "7… a6", "lm": ["a7", "a6"]}, {"fen": "r1bq1rk1/1pp2ppp/p1np1n2/2b1p3/4P3/1BPP1N2/PP3PPP/RNBQR1K1", "a": "b3f7 b", "h": "", "d": "", "t": "Tucks the bishop away from ...Na5 and ...d5 tricks while still aiming at f7.", "s": "8. Bb3", "lm": ["c4", "b3"]}, {"fen": "r1bq1rk1/bpp2ppp/p1np1n2/4p3/4P3/1BPP1N2/PP3PPP/RNBQR1K1", "a": "", "h": "", "d": "", "t": "Same idea for Black. Both sides are developed, castled, and ready for the middlegame plans in Part IV.", "s": "8… Ba7", "lm": ["c5", "a7"]}], "stm": "w"}], "qgd": [{"label": "", "frames": [{"fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", "a": "", "h": "", "d": "", "t": "The Queen's Gambit Declined: the reliable answer as Black to 1.d4.", "s": "", "lm": null}, {"fen": "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR", "a": "", "h": "", "d": "", "t": "", "s": "1. d4", "lm": ["d2", "d4"]}, {"fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR", "a": "", "h": "", "d": "", "t": "Claim your share of the center.", "s": "1… d5", "lm": ["d7", "d5"]}, {"fen": "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR", "a": "c4d5 r", "h": "", "d": "", "t": "The \"gambit\": White offers a pawn to pull Black's d-pawn away from the center.", "s": "2. c4", "lm": ["c2", "c4"]}, {"fen": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/8/PP2PPPP/RNBQKBNR", "a": "e6d5 g", "h": "", "d": "", "t": "Declined. The e6 pawn supports d5 like a pillar.", "s": "2… e6", "lm": ["e7", "e6"]}, {"fen": "rnbqkbnr/ppp2ppp/4p3/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR", "a": "", "h": "", "d": "", "t": "", "s": "3. Nc3", "lm": ["b1", "c3"]}, {"fen": "rnbqkb1r/ppp2ppp/4pn2/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR", "a": "", "h": "", "d": "", "t": "", "s": "3… Nf6", "lm": ["g8", "f6"]}, {"fen": "rnbqkb1r/ppp2ppp/4pn2/3p2B1/2PP4/2N5/PP2PPPP/R2QKBNR", "a": "g5d8 r", "h": "", "d": "", "t": "The relative pin from Part II.", "s": "4. Bg5", "lm": ["c1", "g5"]}, {"fen": "rnbqk2r/ppp1bppp/4pn2/3p2B1/2PP4/2N5/PP2PPPP/R2QKBNR", "a": "", "h": "e7 g", "d": "", "t": "Unpins by putting a piece between. Black calmly develops.", "s": "4… Be7", "lm": ["f8", "e7"]}, {"fen": "rnbqk2r/ppp1bppp/4pn2/3p2B1/2PP4/2N1P3/PP3PPP/R2QKBNR", "a": "", "h": "", "d": "", "t": "", "s": "5. e3", "lm": ["e2", "e3"]}, {"fen": "rnbq1rk1/ppp1bppp/4pn2/3p2B1/2PP4/2N1P3/PP3PPP/R2QKBNR", "a": "", "h": "", "d": "", "t": "Castled. Black's plans: ...c5 or ...dxc4 and ...c5 to strike at White's center.", "s": "5… O-O", "lm": ["e8", "g8"]}, {"fen": "rnbq1rk1/ppp1bppp/4pn2/3p2B1/2PP4/2N1PN2/PP3PPP/R2QKB1R", "a": "", "h": "", "d": "", "t": "", "s": "6. Nf3", "lm": ["g1", "f3"]}], "stm": "w"}], "activity": [{"label": "Outpost", "frames": [{"fen": "6k1/pp2bpp1/3p3p/3Np3/4P3/8/PPP2PPP/6K1", "a": "e4d5 g", "h": "d5 g,d6 y,e5 y", "d": "", "t": "Knight versus bishop. White's knight sits on d5, protected by a pawn, and no Black pawn can ever attack it: an <b>outpost<\/b>. Black's bishop is \"bad\": its own pawns on d6 and e5 stand on its color and block it.", "s": "", "lm": null}], "stm": "w"}, {"label": "Rook on the 7th", "frames": [{"fen": "5rk1/pp3ppp/2p5/8/8/8/PP3PPP/3R2K1", "a": "d1d7 g", "h": "", "d": "", "t": "Rooks want open files, and the open file leads somewhere: the 7th rank, where the enemy pawns haven't moved and can't defend each other.", "s": "", "lm": null}, {"fen": "5rk1/pp1R1ppp/2p5/8/8/8/PP3PPP/6K1", "a": "d7b7 r,d7f7 r", "h": "b7 y,f7 y", "d": "", "t": "From d7 the rook hits b7 and f7 and hems the king in.", "s": "1. Rd7", "lm": ["d1", "d7"]}, {"fen": "1r4k1/pp1R1ppp/2p5/8/8/8/PP3PPP/6K1", "a": "", "h": "", "d": "", "t": "Black's rook has to become a passive defender.", "s": "1… Rb8", "lm": ["f8", "b8"]}, {"fen": "1r4k1/pp1R1ppp/2p5/8/8/8/PP3PPP/5K2", "a": "", "h": "", "d": "", "t": "White improves the king at leisure. One active rook has tied down Black's whole army.", "s": "2. Kf1", "lm": ["g1", "f1"]}], "stm": "w"}], "pawns": [{"label": "Isolated", "frames": [{"fen": "6k1/pp3ppp/4p3/8/3P4/8/PP3PPP/6K1", "a": "", "h": "d4 y,d5 g", "d": "", "t": "An isolated pawn has no friendly pawns on neighboring files. It can't be defended by a pawn, and the square in front of it (d5) is a perfect home for an enemy piece. In the middlegame it gives space and open files; in the endgame it's usually just a weakness.", "s": "", "lm": null}], "stm": "w"}, {"label": "Doubled", "frames": [{"fen": "6k1/pp3ppp/8/8/8/2P5/P1P2PPP/6K1", "a": "", "h": "c2 y,c3 y", "d": "", "t": "Doubled pawns: two on one file. They can't protect each other and one can block the other. Often a fair price for an open file or the bishop pair, but not free.", "s": "", "lm": null}], "stm": "w"}, {"label": "Backward", "frames": [{"fen": "6k1/pp4pp/3p4/4p3/4P3/8/PPP2PPP/6K1", "a": "e4d5 g", "h": "d6 r,d5 g", "d": "", "t": "Black's d6 pawn is backward: its neighbor has advanced, and it can't safely advance itself because White controls d5. It's a fixed target, and d5 becomes an outpost.", "s": "", "lm": null}], "stm": "w"}, {"label": "Passed", "frames": [{"fen": "6k1/5ppp/8/1P6/8/8/5PPP/6K1", "a": "b5b8 g", "h": "b8 g", "d": "", "t": "No enemy pawn can stop it on its file or the files next to it. \"Passed pawns must be pushed\" — every step forward costs the opponent more to stop it.", "s": "", "lm": null}], "stm": "w"}, {"label": "Majority", "frames": [{"fen": "6k1/pp3ppp/8/8/8/8/PPP2PPP/6K1", "a": "", "h": "a2 g,b2 g,c2 g,a7 y,b7 y", "d": "", "t": "White has three queenside pawns against two. Advancing a healthy majority eventually creates a passed pawn. This is why simple pawn counts per side matter.", "s": "", "lm": null}], "stm": "w"}, {"label": "Chain", "frames": [{"fen": "rnbqkbnr/pp3ppp/4p3/2ppP3/3P4/2P5/PP3PPP/RNBQKBNR", "a": "c5d4 r,f7f6 r", "h": "d4 y,e5 y", "d": "", "t": "A pawn chain (the French Defence). Chains point at where you should play: White's chain aims at Black's kingside, Black's aims at White's queenside. Attack a chain at its base (d4) with ...c5, and later at its head (e5) with ...f6.", "s": "", "lm": ["c2", "c3"]}], "stm": "w"}], "storm": [{"label": "", "frames": [{"fen": "r1bq1rk1/pp2ppbp/2np1np1/8/3NP3/2N1BP2/PPPQ2PP/2KR1B1R", "a": "h2h4 g,h4h5 g,e3h6 g,g7b2 r,a8c8 r", "h": "g8 y,c1 y", "d": "", "t": "Opposite-side castling (Sicilian Dragon, Yugoslav Attack). White castled long, Black short. Now it's a race: White throws pawns at the Black king (h4–h5, Bh6 to trade Black's best defender), while Black attacks down the c-file and the long diagonal. Pawn storms are safe exactly when your own king isn't behind those pawns.", "s": "", "lm": ["e1", "c1"]}], "stm": "w"}], "carlsbad": [{"label": "", "frames": [{"fen": "r1bqrnk1/pp2bppp/2p2n2/3p2B1/3P4/2NBPN2/PPQ2PPP/1R3RK1", "a": "b2b4 g,b4b5 g,b5c6 g", "h": "c6 y", "d": "", "t": "The Carlsbad structure, and a textbook plan. White's rook on b1 is a signpost: the plan is b4–b5 (a <b>minority attack<\/b>: two pawns against three) to trade on c6 and leave Black with a weak pawn on c6 or d5. Black's counterplay is on the kingside, with pieces like ...Ne4 and ...Ng6.", "s": "", "lm": ["a1", "b1"]}], "stm": "w"}], "kp": [{"label": "Black to move", "frames": [{"fen": "8/8/8/4k3/8/4K3/4P3/8", "a": "", "h": "d4 g,e4 g,f4 g", "d": "", "t": "The amber squares d4, e4, f4 are this pawn's <b>key squares<\/b>: if White's king reaches one, White wins no matter what. With Black to move, Black has to give way.", "s": "", "lm": null}, {"fen": "8/8/8/3k4/8/4K3/4P3/8", "a": "", "h": "", "d": "", "t": "", "s": "1… Kd5", "lm": ["e5", "d5"]}, {"fen": "8/8/8/3k4/5K2/8/4P3/8", "a": "", "h": "f4 g", "d": "", "t": "A key square. It's now a technical win.", "s": "2. Kf4", "lm": ["e3", "f4"]}, {"fen": "8/8/4k3/8/5K2/8/4P3/8", "a": "", "h": "", "d": "", "t": "", "s": "2… Ke6", "lm": ["d5", "e6"]}, {"fen": "8/8/4k3/8/4K3/8/4P3/8", "a": "", "h": "", "d": "", "t": "The kings face each other with one square between: White has the <b>opposition<\/b>, and Black must yield again.", "s": "3. Ke4", "lm": ["f4", "e4"]}, {"fen": "8/8/3k4/8/4K3/8/4P3/8", "a": "", "h": "", "d": "", "t": "", "s": "3… Kd6", "lm": ["e6", "d6"]}, {"fen": "8/8/3k4/5K2/8/8/4P3/8", "a": "", "h": "", "d": "", "t": "", "s": "4. Kf5", "lm": ["e4", "f5"]}, {"fen": "8/4k3/8/5K2/8/8/4P3/8", "a": "", "h": "", "d": "", "t": "", "s": "4… Ke7", "lm": ["d6", "e7"]}, {"fen": "8/4k3/8/4K3/8/8/4P3/8", "a": "", "h": "", "d": "", "t": "", "s": "5. Ke5", "lm": ["f5", "e5"]}, {"fen": "8/5k2/8/4K3/8/8/4P3/8", "a": "", "h": "", "d": "", "t": "", "s": "5… Kf7", "lm": ["e7", "f7"]}, {"fen": "8/5k2/3K4/8/8/8/4P3/8", "a": "", "h": "", "d": "", "t": "King first, pawn second. The king clears the path.", "s": "6. Kd6", "lm": ["e5", "d6"]}, {"fen": "8/8/3K1k2/8/8/8/4P3/8", "a": "", "h": "", "d": "", "t": "", "s": "6… Kf6", "lm": ["f7", "f6"]}, {"fen": "8/8/3K1k2/8/4P3/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "7. e4", "lm": ["e2", "e4"]}, {"fen": "8/5k2/3K4/8/4P3/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "7… Kf7", "lm": ["f6", "f7"]}, {"fen": "8/5k2/3K4/4P3/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "8. e5", "lm": ["e4", "e5"]}, {"fen": "4k3/8/3K4/4P3/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "8… Ke8", "lm": ["f7", "e8"]}, {"fen": "4k3/8/4K3/4P3/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "9. Ke6", "lm": ["d6", "e6"]}, {"fen": "3k4/8/4K3/4P3/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "9… Kd8", "lm": ["e8", "d8"]}, {"fen": "3k4/5K2/8/4P3/8/8/8/8", "a": "", "h": "", "d": "", "t": "The king controls the promotion square.", "s": "10. Kf7", "lm": ["e6", "f7"]}, {"fen": "8/3k1K2/8/4P3/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "10… Kd7", "lm": ["d8", "d7"]}, {"fen": "8/3k1K2/4P3/8/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "11. e6+", "lm": ["e5", "e6"]}, {"fen": "3k4/5K2/4P3/8/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "11… Kd8", "lm": ["d7", "d8"]}, {"fen": "3k4/4PK2/8/8/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "12. e7+", "lm": ["e6", "e7"]}, {"fen": "8/3kPK2/8/8/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "12… Kd7", "lm": ["d8", "d7"]}, {"fen": "4Q3/3k1K2/8/8/8/8/8/8", "a": "", "h": "", "d": "", "t": "Promotion.", "s": "13. e8=Q+", "lm": ["e7", "e8"]}], "stm": "b"}, {"label": "White to move", "frames": [{"fen": "8/8/8/4k3/8/4K3/4P3/8", "a": "", "h": "", "d": "", "t": "Same position, White to move. Now Black has the opposition, and with correct defense it's a draw.", "s": "", "lm": null}, {"fen": "8/8/8/4k3/8/3K4/4P3/8", "a": "", "h": "", "d": "", "t": "", "s": "1. Kd3", "lm": ["e3", "d3"]}, {"fen": "8/8/8/3k4/8/3K4/4P3/8", "a": "", "h": "", "d": "", "t": "Black mirrors, keeping the opposition.", "s": "1… Kd5", "lm": ["e5", "d5"]}, {"fen": "8/8/8/3k4/8/3KP3/8/8", "a": "", "h": "", "d": "", "t": "", "s": "2. e3", "lm": ["e2", "e3"]}, {"fen": "8/8/8/4k3/8/3KP3/8/8", "a": "", "h": "", "d": "", "t": "", "s": "2… Ke5", "lm": ["d5", "e5"]}, {"fen": "8/8/8/4k3/4P3/3K4/8/8", "a": "", "h": "", "d": "", "t": "", "s": "3. e4", "lm": ["e3", "e4"]}, {"fen": "8/8/4k3/8/4P3/3K4/8/8", "a": "", "h": "", "d": "", "t": "", "s": "3… Ke6", "lm": ["e5", "e6"]}, {"fen": "8/8/4k3/8/3KP3/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "4. Kd4", "lm": ["d3", "d4"]}, {"fen": "8/8/3k4/8/3KP3/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "4… Kd6", "lm": ["e6", "d6"]}, {"fen": "8/8/3k4/4P3/3K4/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "5. e5+", "lm": ["e4", "e5"]}, {"fen": "8/8/4k3/4P3/3K4/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "5… Ke6", "lm": ["d6", "e6"]}, {"fen": "8/8/4k3/4P3/4K3/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "6. Ke4", "lm": ["d4", "e4"]}, {"fen": "8/4k3/8/4P3/4K3/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "6… Ke7", "lm": ["e6", "e7"]}, {"fen": "8/4k3/8/3KP3/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "7. Kd5", "lm": ["e4", "d5"]}, {"fen": "8/3k4/8/3KP3/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "7… Kd7", "lm": ["e7", "d7"]}, {"fen": "8/3k4/4P3/3K4/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "8. e6+", "lm": ["e5", "e6"]}, {"fen": "8/4k3/4P3/3K4/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "8… Ke7", "lm": ["d7", "e7"]}, {"fen": "8/4k3/4P3/4K3/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "9. Ke5", "lm": ["d5", "e5"]}, {"fen": "4k3/8/4P3/4K3/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "9… Ke8", "lm": ["e7", "e8"]}, {"fen": "4k3/8/3KP3/8/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "10. Kd6", "lm": ["e5", "d6"]}, {"fen": "3k4/8/3KP3/8/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "10… Kd8", "lm": ["e8", "d8"]}, {"fen": "3k4/4P3/3K4/8/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "11. e7+", "lm": ["e6", "e7"]}, {"fen": "4k3/4P3/3K4/8/8/8/8/8", "a": "", "h": "", "d": "", "t": "", "s": "11… Ke8", "lm": ["d8", "e8"]}, {"fen": "4k3/4P3/4K3/8/8/8/8/8", "a": "", "h": "e8 y", "d": "", "t": "Stalemate. Black has no legal move. Opposition decided the game.", "s": "12. Ke6", "lm": ["d6", "e6"]}], "stm": "w"}], "square": [{"label": "Black to move", "frames": [{"fen": "8/8/8/5k2/P7/8/8/7K", "a": "", "h": "a4 y,a5 y,a6 y,a7 y,a8 y,b4 y,b5 y,b6 y,b7 y,b8 y,c4 y,c5 y,c6 y,c7 y,c8 y,d4 y,d5 y,d6 y,d7 y,d8 y,e4 y,e5 y,e6 y,e7 y,e8 y", "d": "", "t": "The rule of the square: draw a square from the pawn to its promotion rank. If the defending king can step into it, it catches the pawn. Black to move steps in.", "s": "", "lm": null}, {"fen": "8/8/8/4k3/P7/8/8/7K", "a": "", "h": "", "d": "", "t": "Inside the square.", "s": "1… Ke5", "lm": ["f5", "e5"]}, {"fen": "8/8/8/P3k3/8/8/8/7K", "a": "", "h": "", "d": "", "t": "", "s": "2. a5", "lm": ["a4", "a5"]}, {"fen": "8/8/3k4/P7/8/8/8/7K", "a": "", "h": "", "d": "", "t": "", "s": "2… Kd6", "lm": ["e5", "d6"]}, {"fen": "8/8/P2k4/8/8/8/8/7K", "a": "", "h": "", "d": "", "t": "", "s": "3. a6", "lm": ["a5", "a6"]}, {"fen": "8/2k5/P7/8/8/8/8/7K", "a": "", "h": "", "d": "", "t": "", "s": "3… Kc7", "lm": ["d6", "c7"]}, {"fen": "8/P1k5/8/8/8/8/8/7K", "a": "", "h": "", "d": "", "t": "", "s": "4. a7", "lm": ["a6", "a7"]}, {"fen": "8/Pk6/8/8/8/8/8/7K", "a": "", "h": "b7 g", "d": "", "t": "Caught.", "s": "4… Kb7", "lm": ["c7", "b7"]}], "stm": "b"}, {"label": "White to move", "frames": [{"fen": "8/8/8/5k2/P7/8/8/7K", "a": "", "h": "", "d": "", "t": "White to move pushes first, and the square shrinks away from the king.", "s": "", "lm": null}, {"fen": "8/8/8/P4k2/8/8/8/7K", "a": "", "h": "a5 y,d8 y,a8 y,d5 y", "d": "", "t": "The square is now a5–d8. The king on f5 is outside it.", "s": "1. a5", "lm": ["a4", "a5"]}, {"fen": "8/8/4k3/P7/8/8/8/7K", "a": "", "h": "", "d": "", "t": "", "s": "1… Ke6", "lm": ["f5", "e6"]}, {"fen": "8/8/P3k3/8/8/8/8/7K", "a": "", "h": "", "d": "", "t": "", "s": "2. a6", "lm": ["a5", "a6"]}, {"fen": "8/3k4/P7/8/8/8/8/7K", "a": "", "h": "", "d": "", "t": "", "s": "2… Kd7", "lm": ["e6", "d7"]}, {"fen": "8/P2k4/8/8/8/8/8/7K", "a": "", "h": "", "d": "", "t": "", "s": "3. a7", "lm": ["a6", "a7"]}, {"fen": "8/P1k5/8/8/8/8/8/7K", "a": "", "h": "", "d": "", "t": "", "s": "3… Kc7", "lm": ["d7", "c7"]}, {"fen": "Q7/2k5/8/8/8/8/8/7K", "a": "", "h": "", "d": "", "t": "Too late by one move. You can count this instead of calculating it.", "s": "4. a8=Q", "lm": ["a7", "a8"]}], "stm": "w"}], "lucena": [{"label": "", "frames": [{"fen": "1K6/1P1k4/8/8/8/8/r7/2R5", "a": "", "h": "", "d": "", "t": "The Lucena position: the most important winning method in rook endgames. White's king is stuck in front of its pawn and needs shelter from checks.", "s": "", "lm": null}, {"fen": "1K6/1P1k4/8/8/8/8/r7/3R4", "a": "d1d7 r", "h": "", "d": "", "t": "First push Black's king one file further away.", "s": "1. Rd1+", "lm": ["c1", "d1"]}, {"fen": "1K6/1P2k3/8/8/8/8/r7/3R4", "a": "", "h": "", "d": "", "t": "", "s": "1… Ke7", "lm": ["d7", "e7"]}, {"fen": "1K6/1P2k3/8/8/3R4/8/r7/8", "a": "", "h": "d4 g", "d": "", "t": "\"Building a bridge\": the rook goes to the 4th rank to block checks later.", "s": "2. Rd4", "lm": ["d1", "d4"]}, {"fen": "1K6/1P2k3/8/8/3R4/8/8/r7", "a": "", "h": "", "d": "", "t": "", "s": "2… Ra1", "lm": ["a2", "a1"]}, {"fen": "8/1PK1k3/8/8/3R4/8/8/r7", "a": "", "h": "", "d": "", "t": "The king comes out.", "s": "3. Kc7", "lm": ["b8", "c7"]}, {"fen": "8/1PK1k3/8/8/3R4/8/8/2r5", "a": "", "h": "", "d": "", "t": "", "s": "3… Rc1+", "lm": ["a1", "c1"]}, {"fen": "8/1P2k3/1K6/8/3R4/8/8/2r5", "a": "", "h": "", "d": "", "t": "", "s": "4. Kb6", "lm": ["c7", "b6"]}, {"fen": "8/1P2k3/1K6/8/3R4/8/8/1r6", "a": "", "h": "", "d": "", "t": "", "s": "4… Rb1+", "lm": ["c1", "b1"]}, {"fen": "8/1P2k3/2K5/8/3R4/8/8/1r6", "a": "", "h": "", "d": "", "t": "", "s": "5. Kc6", "lm": ["b6", "c6"]}, {"fen": "8/1P2k3/2K5/8/3R4/8/8/2r5", "a": "", "h": "", "d": "", "t": "", "s": "5… Rc1+", "lm": ["b1", "c1"]}, {"fen": "8/1P2k3/8/1K6/3R4/8/8/2r5", "a": "", "h": "", "d": "", "t": "", "s": "6. Kb5", "lm": ["c6", "b5"]}, {"fen": "8/1P2k3/8/1K6/3R4/8/8/1r6", "a": "", "h": "", "d": "", "t": "", "s": "6… Rb1+", "lm": ["c1", "b1"]}, {"fen": "8/1P2k3/8/1K6/1R6/8/8/1r6", "a": "", "h": "b4 g", "d": "", "t": "The bridge. No more checks, and the pawn will queen.", "s": "7. Rb4", "lm": ["d4", "b4"]}], "stm": "w"}], "philidor": [{"label": "", "frames": [{"fen": "3k4/8/1r6/3PK3/8/8/8/7R", "a": "b6h6 b", "h": "b6 g", "d": "", "t": "The Philidor position: the most important drawing method. The defending rook holds the 6th rank so White's king can't advance to it.", "s": "", "lm": null}, {"fen": "3k4/8/1r1P4/4K3/8/8/8/7R", "a": "", "h": "d6 y", "d": "", "t": "White has to push to make progress, but now the pawn no longer shelters the king from checks from behind.", "s": "1. d6", "lm": ["d5", "d6"]}, {"fen": "3k4/8/3P4/4K3/8/8/1r6/7R", "a": "b2e2 b", "h": "", "d": "", "t": "So the rook drops back, ready to check the king from a distance.", "s": "1… Rb2", "lm": ["b6", "b2"]}, {"fen": "3k3R/8/3P4/4K3/8/8/1r6/8", "a": "", "h": "", "d": "", "t": "Check.", "s": "2. Rh8+", "lm": ["h1", "h8"]}, {"fen": "7R/3k4/3P4/4K3/8/8/1r6/8", "a": "", "h": "", "d": "", "t": "", "s": "2… Kd7", "lm": ["d8", "d7"]}, {"fen": "8/3k3R/3P4/4K3/8/8/1r6/8", "a": "", "h": "", "d": "", "t": "Check.", "s": "3. Rh7+", "lm": ["h8", "h7"]}, {"fen": "3k4/7R/3P4/4K3/8/8/1r6/8", "a": "", "h": "", "d": "", "t": "Back again. The king stays in front of the pawn.", "s": "3… Kd8", "lm": ["d7", "d8"]}, {"fen": "3k4/7R/3PK3/8/8/8/1r6/8", "a": "", "h": "", "d": "", "t": "White's king tries to help…", "s": "4. Ke6", "lm": ["e5", "e6"]}, {"fen": "3k4/7R/3PK3/8/8/8/4r3/8", "a": "e2e6 r", "h": "", "d": "", "t": "…and the checks begin.", "s": "4… Re2+", "lm": ["b2", "e2"]}, {"fen": "3k4/7R/3P4/5K2/8/8/4r3/8", "a": "", "h": "", "d": "", "t": "", "s": "5. Kf5", "lm": ["e6", "f5"]}, {"fen": "3k4/7R/3P4/5K2/8/8/5r2/8", "a": "", "h": "", "d": "", "t": "And continue. The king has nowhere to hide, and the pawn can't advance without its support. Draw.", "s": "5… Rf2+", "lm": ["e2", "f2"]}], "stm": "w"}], "rookmate": [{"label": "", "frames": [{"fen": "4k3/8/4K3/8/8/8/8/R7", "a": "", "h": "", "d": "", "t": "King and rook against king: the target picture. Drive the enemy king to the edge, face it with your king, deliver check along the edge.", "s": "", "lm": null}, {"fen": "R3k3/8/4K3/8/8/8/8/8", "a": "a8h8 r", "h": "e8 r", "d": "", "t": "Mate.", "s": "1. Ra8#", "lm": ["a1", "a8"]}], "stm": "w"}], "opera": [{"label": "", "frames": [{"fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", "a": "", "h": "", "d": "", "t": "Morphy vs the Duke of Brunswick and Count Isouard, Paris 1858 (played in an opera box during a performance). Step through it. Nearly every idea in this guide appears.", "s": "", "lm": null}, {"fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR", "a": "", "h": "", "d": "", "t": "", "s": "1. e4", "lm": ["e2", "e4"]}, {"fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR", "a": "", "h": "", "d": "", "t": "", "s": "1… e5", "lm": ["e7", "e5"]}, {"fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R", "a": "", "h": "", "d": "", "t": "", "s": "2. Nf3", "lm": ["g1", "f3"]}, {"fen": "rnbqkbnr/ppp2ppp/3p4/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R", "a": "", "h": "", "d": "", "t": "", "s": "2… d6", "lm": ["d7", "d6"]}, {"fen": "rnbqkbnr/ppp2ppp/3p4/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R", "a": "d4e5 r", "h": "", "d": "", "t": "Striking the center right away.", "s": "3. d4", "lm": ["d2", "d4"]}, {"fen": "rn1qkbnr/ppp2ppp/3p4/4p3/3PP1b1/5N2/PPP2PPP/RNBQKB1R", "a": "", "h": "", "d": "", "t": "Pins the knight.", "s": "3… Bg4", "lm": ["c8", "g4"]}, {"fen": "rn1qkbnr/ppp2ppp/3p4/4P3/4P1b1/5N2/PPP2PPP/RNBQKB1R", "a": "", "h": "", "d": "", "t": "", "s": "4. dxe5", "lm": ["d4", "e5"]}, {"fen": "rn1qkbnr/ppp2ppp/3p4/4P3/4P3/5b2/PPP2PPP/RNBQKB1R", "a": "", "h": "", "d": "", "t": "Black gives up the bishop pair to avoid losing a pawn.", "s": "4… Bxf3", "lm": ["g4", "f3"]}, {"fen": "rn1qkbnr/ppp2ppp/3p4/4P3/4P3/5Q2/PPP2PPP/RNB1KB1R", "a": "f3f7 b", "h": "", "d": "", "t": "Recapturing with the queen: it develops and threatens.", "s": "5. Qxf3", "lm": ["d1", "f3"]}, {"fen": "rn1qkbnr/ppp2ppp/8/4p3/4P3/5Q2/PPP2PPP/RNB1KB1R", "a": "", "h": "", "d": "", "t": "", "s": "5… dxe5", "lm": ["d6", "e5"]}, {"fen": "rn1qkbnr/ppp2ppp/8/4p3/2B1P3/5Q2/PPP2PPP/RNB1K2R", "a": "c4f7 r,f3f7 r", "h": "f7 r", "d": "", "t": "Now Qxf7 is mate. Threat!", "s": "6. Bc4", "lm": ["f1", "c4"]}, {"fen": "rn1qkb1r/ppp2ppp/5n2/4p3/2B1P3/5Q2/PPP2PPP/RNB1K2R", "a": "", "h": "", "d": "", "t": "Blocks the f-file.", "s": "6… Nf6", "lm": ["g8", "f6"]}, {"fen": "rn1qkb1r/ppp2ppp/5n2/4p3/2B1P3/1Q6/PPP2PPP/RNB1K2R", "a": "b3f7 r,b3b7 r", "h": "", "d": "", "t": "Double attack: f7 and b7.", "s": "7. Qb3", "lm": ["f3", "b3"]}, {"fen": "rn2kb1r/ppp1qppp/5n2/4p3/2B1P3/1Q6/PPP2PPP/RNB1K2R", "a": "", "h": "", "d": "", "t": "Defends f7. But the queen now blocks the f8 bishop, and Black's development stalls.", "s": "7… Qe7", "lm": ["d8", "e7"]}, {"fen": "rn2kb1r/ppp1qppp/5n2/4p3/2B1P3/1QN5/PPP2PPP/R1B1K2R", "a": "", "h": "", "d": "", "t": "Morphy doesn't grab b7; he develops instead. Lead in development > pawn.", "s": "8. Nc3", "lm": ["b1", "c3"]}, {"fen": "rn2kb1r/pp2qppp/2p2n2/4p3/2B1P3/1QN5/PPP2PPP/R1B1K2R", "a": "", "h": "", "d": "", "t": "", "s": "8… c6", "lm": ["c7", "c6"]}, {"fen": "rn2kb1r/pp2qppp/2p2n2/4p1B1/2B1P3/1QN5/PPP2PPP/R3K2R", "a": "g5e7 r", "h": "", "d": "", "t": "Pins the f6 knight to the queen.", "s": "9. Bg5", "lm": ["c1", "g5"]}, {"fen": "rn2kb1r/p3qppp/2p2n2/1p2p1B1/2B1P3/1QN5/PPP2PPP/R3K2R", "a": "", "h": "", "d": "", "t": "Black tries to chase the bishop.", "s": "9… b5", "lm": ["b7", "b5"]}, {"fen": "rn2kb1r/p3qppp/2p2n2/1N2p1B1/2B1P3/1Q6/PPP2PPP/R3K2R", "a": "", "h": "", "d": "", "t": "A sacrifice to rip open lines while Black is undeveloped.", "s": "10. Nxb5", "lm": ["c3", "b5"]}, {"fen": "rn2kb1r/p3qppp/5n2/1p2p1B1/2B1P3/1Q6/PPP2PPP/R3K2R", "a": "", "h": "", "d": "", "t": "", "s": "10… cxb5", "lm": ["c6", "b5"]}, {"fen": "rn2kb1r/p3qppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/R3K2R", "a": "b5e8 r", "h": "", "d": "", "t": "Check. Now the queenside is open and Black's king is still in the middle.", "s": "11. Bxb5+", "lm": ["c4", "b5"]}, {"fen": "r3kb1r/p2nqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/R3K2R", "a": "", "h": "", "d": "", "t": "Blocks. The d7 knight is pinned.", "s": "11… Nbd7", "lm": ["b8", "d7"]}, {"fen": "r3kb1r/p2nqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2KR3R", "a": "d1d7 r", "h": "d7 y", "d": "", "t": "Castles long and the rook lands on the open d-file, attacking the pinned knight.", "s": "12. O-O-O", "lm": ["e1", "c1"]}, {"fen": "3rkb1r/p2nqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2KR3R", "a": "", "h": "", "d": "", "t": "Defends d7 again.", "s": "12… Rd8", "lm": ["a8", "d8"]}, {"fen": "3rkb1r/p2Rqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2K4R", "a": "", "h": "", "d": "", "t": "Exchange sacrifice to keep the attack going.", "s": "13. Rxd7", "lm": ["d1", "d7"]}, {"fen": "4kb1r/p2rqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2K4R", "a": "", "h": "", "d": "", "t": "", "s": "13… Rxd7", "lm": ["d8", "d7"]}, {"fen": "4kb1r/p2rqppp/5n2/1B2p1B1/4P3/1Q6/PPP2PPP/2KR4", "a": "d1d7 r,b5d7 r", "h": "", "d": "", "t": "Every White piece is aimed at d7.", "s": "14. Rd1", "lm": ["h1", "d1"]}, {"fen": "4kb1r/p2r1ppp/4qn2/1B2p1B1/4P3/1Q6/PPP2PPP/2KR4", "a": "", "h": "", "d": "", "t": "Unpins the f6 knight so it can defend.", "s": "14… Qe6", "lm": ["e7", "e6"]}, {"fen": "4kb1r/p2B1ppp/4qn2/4p1B1/4P3/1Q6/PPP2PPP/2KR4", "a": "", "h": "", "d": "", "t": "Check. Removing a defender.", "s": "15. Bxd7+", "lm": ["b5", "d7"]}, {"fen": "4kb1r/p2n1ppp/4q3/4p1B1/4P3/1Q6/PPP2PPP/2KR4", "a": "", "h": "", "d": "", "t": "", "s": "15… Nxd7", "lm": ["f6", "d7"]}, {"fen": "1Q2kb1r/p2n1ppp/4q3/4p1B1/4P3/8/PPP2PPP/2KR4", "a": "b8e8 r", "h": "", "d": "", "t": "The last sacrifice: a queen deflection.", "s": "16. Qb8+", "lm": ["b3", "b8"]}, {"fen": "1n2kb1r/p4ppp/4q3/4p1B1/4P3/8/PPP2PPP/2KR4", "a": "", "h": "", "d": "", "t": "Forced.", "s": "16… Nxb8", "lm": ["d7", "b8"]}, {"fen": "1n1Rkb1r/p4ppp/4q3/4p1B1/4P3/8/PPP2PPP/2K5", "a": "d8e8 r", "h": "e8 r,f8 y,h8 y", "d": "", "t": "Checkmate. Black's rook on h8 and bishop on f8 never moved. That's what a lead in development looks like.", "s": "17. Rd8#", "lm": ["d1", "d8"]}], "stm": "w"}]}, "P": [{"id": "p1", "theme": "Back rank", "fen": "3r2k1/4qppp/8/8/8/8/3Q1PPP/3R2K1", "stm": "w", "lines": [[{"m": "d2d8", "fen": "3Q2k1/4qppp/8/8/8/8/5PPP/3R2K1", "s": "1. Qxd8+"}, {"m": "e7f8", "fen": "3Q1qk1/5ppp/8/8/8/8/5PPP/3R2K1", "s": "1… Qf8"}, {"m": "d8f8", "fen": "5Qk1/5ppp/8/8/8/8/5PPP/3R2K1", "s": "2. Qxf8+"}]], "prompt": "White to move and win material.", "hint": "Black's king has no escape square. What does that make the d8 rook?", "explain": "1.Qxd8+! If 1...Qxd8, then 2.Rxd8 is mate. Black's best is 1...Qf8, and 2.Qxf8+ Kxf8 leaves White a full rook ahead."}, {"id": "p2", "theme": "Fork", "fen": "3r2k1/pp1q1p1p/6p1/8/4N3/8/PPP2PPP/4R1K1", "stm": "w", "lines": [[{"m": "e4f6", "fen": "3r2k1/pp1q1p1p/5Np1/8/8/8/PPP2PPP/4R1K1", "s": "1. Nf6+"}, {"m": "g8g7", "fen": "3r4/pp1q1pkp/5Np1/8/8/8/PPP2PPP/4R1K1", "s": "1… Kg7"}, {"m": "f6d7", "fen": "3r4/pp1N1pkp/6p1/8/8/8/PPP2PPP/4R1K1", "s": "2. Nxd7"}]], "prompt": "White is down a queen for a knight. Find the way back.", "hint": "Which square attacks the king and d7 at once?", "explain": "1.Nf6+ forks the king and queen. After the king moves, 2.Nxd7 wins the queen back."}, {"id": "p3", "theme": "Skewer", "fen": "8/8/q2k4/8/8/7R/5PPP/6K1", "stm": "w", "lines": [[{"m": "h3h6", "fen": "8/8/q2k3R/8/8/8/5PPP/6K1", "s": "1. Rh6+"}, {"m": "d6e5", "fen": "8/8/q6R/4k3/8/8/5PPP/6K1", "s": "1… Ke5"}, {"m": "h6a6", "fen": "8/8/R7/4k3/8/8/5PPP/6K1", "s": "2. Rxa6"}]], "prompt": "White to move and win.", "hint": "The king and queen share a rank.", "explain": "1.Rh6+ skewers along the 6th rank. The king steps away and 2.Rxa6 takes the queen."}, {"id": "p4", "theme": "Double check", "fen": "8/3q1ppk/8/8/4N3/3B4/5PPP/6K1", "stm": "w", "lines": [[{"m": "e4f6", "fen": "8/3q1ppk/5N2/8/8/3B4/5PPP/6K1", "s": "1. Nf6+"}, {"m": "h7h6", "fen": "8/3q1pp1/5N1k/8/8/3B4/5PPP/6K1", "s": "1… Kh6"}, {"m": "f6d7", "fen": "8/3N1pp1/7k/8/8/3B4/5PPP/6K1", "s": "2. Nxd7"}], [{"m": "e4f6", "fen": "8/3q1ppk/5N2/8/8/3B4/5PPP/6K1", "s": "1. Nf6+"}, {"m": "h7h8", "fen": "7k/3q1pp1/5N2/8/8/3B4/5PPP/6K1", "s": "1… Kh8"}, {"m": "f6d7", "fen": "7k/3N1pp1/8/8/8/3B4/5PPP/6K1", "s": "2. Nxd7"}]], "prompt": "White to move and win the queen for nothing.", "hint": "Two discovered checks win the queen, but only one gives check twice. Why does that matter?", "explain": "1.Nf6+ is double check: knight and bishop both give check, so the king must move, and 2.Nxd7 wins the queen outright. 1.Nc5+ also attacks the queen, but Black can reply 1...Qxd3, trading queen for bishop. With double check, capturing a checker is never enough."}, {"id": "p5", "theme": "Smothered mate", "fen": "5r1k/6pp/4Q3/6N1/8/8/6PP/6K1", "stm": "w", "lines": [[{"m": "g5f7", "fen": "5r1k/5Npp/4Q3/8/8/8/6PP/6K1", "s": "1. Nf7+"}, {"m": "h8g8", "fen": "5rk1/5Npp/4Q3/8/8/8/6PP/6K1", "s": "1… Kg8"}, {"m": "f7h6", "fen": "5rk1/6pp/4Q2N/8/8/8/6PP/6K1", "s": "2. Nh6+"}, {"m": "g8h8", "fen": "5r1k/6pp/4Q2N/8/8/8/6PP/6K1", "s": "2… Kh8"}, {"m": "e6g8", "fen": "5rQk/6pp/7N/8/8/8/6PP/6K1", "s": "3. Qg8+"}, {"m": "f8g8", "fen": "6rk/6pp/7N/8/8/8/6PP/6K1", "s": "3… Rxg8"}, {"m": "h6f7", "fen": "6rk/5Npp/8/8/8/8/6PP/6K1", "s": "4. Nf7#"}]], "prompt": "White to move and mate in 4.", "hint": "Start with a knight check, and remember the queen can give check from far away.", "explain": "1.Nf7+ Kg8 2.Nh6+ (double check) Kh8 3.Qg8+! Rxg8 4.Nf7#. Philidor's Legacy, a pattern at least 400 years old."}, {"id": "p6", "theme": "Pin", "fen": "4k3/ppp2ppp/2np4/1B6/3P4/8/PPP2PPP/4K3", "stm": "w", "lines": [[{"m": "d4d5", "fen": "4k3/ppp2ppp/2np4/1B1P4/8/8/PPP2PPP/4K3", "s": "1. d5"}, {"m": "b7b6", "fen": "4k3/p1p2ppp/1pnp4/1B1P4/8/8/PPP2PPP/4K3", "s": "1… b6"}, {"m": "d5c6", "fen": "4k3/p1p2ppp/1pPp4/1B6/8/8/PPP2PPP/4K3", "s": "2. dxc6"}]], "prompt": "White to move and win a piece.", "hint": "The c6 knight can't legally move.", "explain": "1.d5! attacks the pinned knight with a pawn. The knight can't leave, and the king can't unpin in time: 2.dxc6 wins a piece."}, {"id": "p7", "theme": "Remove the defender", "fen": "r2q1rk1/pbp2ppp/1p3n2/8/8/3B3Q/PBP2PPP/R4RK1", "stm": "w", "lines": [[{"m": "b2f6", "fen": "r2q1rk1/pbp2ppp/1p3B2/8/8/3B3Q/P1P2PPP/R4RK1", "s": "1. Bxf6"}, {"m": "d8d3", "fen": "r4rk1/pbp2ppp/1p3B2/8/8/3q3Q/P1P2PPP/R4RK1", "s": "1… Qxd3"}, {"m": "c2d3", "fen": "r4rk1/pbp2ppp/1p3B2/8/8/3P3Q/P4PPP/R4RK1", "s": "2. cxd3"}]], "prompt": "White to move. Find the move that wins decisive material.", "hint": "What's the only piece stopping Qxh7#?", "explain": "1.Bxf6! removes h7's only defender and attacks the queen. 1...gxf6 or 1...Qxf6 allows 2.Qxh7#, so Black gives the queen back with 1...Qxd3 2.cxd3."}, {"id": "p8", "theme": "Counting", "fen": "r4rk1/pp3ppp/5n2/3p4/8/2N2B2/PP3PPP/R4RK1", "stm": "w", "lines": [[{"m": "c3d5", "fen": "r4rk1/pp3ppp/5n2/3N4/8/5B2/PP3PPP/R4RK1", "s": "1. Nxd5"}, {"m": "f6d5", "fen": "r4rk1/pp3ppp/8/3n4/8/5B2/PP3PPP/R4RK1", "s": "1… Nxd5"}, {"m": "f3d5", "fen": "r4rk1/pp3ppp/8/3B4/8/8/PP3PPP/R4RK1", "s": "2. Bxd5"}], [{"m": "f3d5", "fen": "r4rk1/pp3ppp/5n2/3B4/8/2N5/PP3PPP/R4RK1", "s": "1. Bxd5"}, {"m": "f6d5", "fen": "r4rk1/pp3ppp/8/3n4/8/2N5/PP3PPP/R4RK1", "s": "1… Nxd5"}, {"m": "c3d5", "fen": "r4rk1/pp3ppp/8/3N4/8/8/PP3PPP/R4RK1", "s": "2. Nxd5"}]], "prompt": "White to move and win the d5 pawn right now.", "hint": "Count attackers and defenders of d5.", "explain": "Two attackers, one defender. Take on d5 with either piece, and White recaptures last with a pawn in hand."}, {"id": "p9", "theme": "Endgame", "fen": "8/8/8/5k2/P7/8/8/7K", "stm": "w", "lines": [[{"m": "a4a5", "fen": "8/8/8/P4k2/8/8/8/7K", "s": "1. a5"}]], "prompt": "White to move and win.", "hint": "Draw the square.", "explain": "1.a5! shrinks the square to a5–d8, and the king on f5 can't get in. Any king move lets Black step into the square and draw."}, {"id": "p10", "theme": "Don't stalemate", "fen": "k7/8/2K5/8/8/8/8/1Q6", "stm": "w", "lines": [[{"m": "b1b7", "fen": "k7/1Q6/2K5/8/8/8/8/8", "s": "1. Qb7#"}]], "prompt": "White to move and mate in one.", "hint": "The king supports the queen.", "explain": "1.Qb7#. The tempting 1.Qb6?? is stalemate."}]};</script>
+<script>(function(){
+"use strict";
+var D = window.__DATA__, FILES="abcdefgh", NS="http://www.w3.org/2000/svg";
+var GLYPH={k:"\u265A",q:"\u265B",r:"\u265C",b:"\u265D",n:"\u265E",p:"\u265F"}, VS="\uFE0E";
+var COL={g:"var(--c-g)",r:"var(--c-r)",b:"var(--c-b)",y:"var(--c-y)"};
+var uid=0;
+function store(k,v){try{if(v===undefined){return localStorage.getItem(k);}localStorage.setItem(k,v);}catch(e){return null;}}
+function el(tag,attrs,parent){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function h(tag,cls,html){var e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
+function parseFen(f){var rows=f.split("/"),m={};for(var r=0;r<8;r++){var c=0;for(var i=0;i<rows[r].length;i++){var ch=rows[r][i];if(/\d/.test(ch)){c+=+ch;}else{m[FILES[c]+(8-r)]=ch;c++;}}}return m;}
+function xy(sq){return[FILES.indexOf(sq[0])*100+50,(8-+sq[1])*100+50];}
+function list(s){return (s||"").split(/[,\s]+/).filter(Boolean);}
+function pairs(s){return (s||"").split(",").map(function(x){return x.trim();}).filter(Boolean).map(function(x){var p=x.split(/\s+/);return [p[0],p[1]||"b"];});}
+
+function drawBoard(svg,fr,sel){
+  while(svg.firstChild)svg.removeChild(svg.firstChild);
+  var id="m"+(++uid),defs=el("defs",{},svg);
+  ["g","r","b","y"].forEach(function(c){var mk=el("marker",{id:id+c,viewBox:"0 0 10 10",refX:"5",refY:"5",markerWidth:"3",markerHeight:"3",orient:"auto"},defs);el("path",{d:"M0,0 L10,5 L0,10 z",fill:COL[c]},mk);});
+  for(var r=0;r<8;r++)for(var c=0;c<8;c++){var light=(r+c)%2===0;el("rect",{x:c*100,y:r*100,width:100,height:100,fill:light?"var(--sq-l)":"var(--sq-d)"},svg);}
+  if(fr.lm)fr.lm.forEach(function(sq){var p=xy(sq);el("rect",{x:p[0]-50,y:p[1]-50,width:100,height:100,fill:"var(--lm)"},svg);});
+  pairs(fr.h).forEach(function(p){var q=xy(p[0]);el("rect",{x:q[0]-50,y:q[1]-50,width:100,height:100,fill:COL[p[1]]||COL.y,opacity:".42"},svg);});
+  if(sel){var q=xy(sel);el("rect",{x:q[0]-47,y:q[1]-47,width:94,height:94,fill:"none",stroke:"var(--c-b)","stroke-width":"6"},svg);}
+  for(var i=0;i<8;i++){
+    el("text",{x:i*100+92,y:792,"class":"coord","text-anchor":"end",fill:(7+i)%2===0?"var(--coord-l)":"var(--coord-d)"},svg).textContent=FILES[i];
+    el("text",{x:6,y:i*100+20,"class":"coord",fill:i%2===0?"var(--coord-l)":"var(--coord-d)"},svg).textContent=8-i;
+  }
+  var m=parseFen(fr.fen);
+  for(var sq in m){var p=xy(sq),ch=m[sq],w=ch===ch.toUpperCase();var t=el("text",{x:p[0],y:p[1]+3,"class":"pc "+(w?"w":"b")},svg);t.textContent=GLYPH[ch.toLowerCase()]+VS;}
+  list(fr.d).forEach(function(sq){var p=xy(sq);el("circle",{cx:p[0],cy:p[1],r:13,fill:"var(--c-b)",opacity:".7"},svg);});
+  pairs(fr.a).forEach(function(p){var a=p[0].slice(0,2),b=p[0].slice(2,4),A=xy(a),B=xy(b),dx=B[0]-A[0],dy=B[1]-A[1],L=Math.hypot(dx,dy),s=(L-34)/L;
+    el("line",{x1:A[0]+dx*18/L,y1:A[1]+dy*18/L,x2:A[0]+dx*s,y2:A[1]+dy*s,stroke:COL[p[1]]||COL.b,"stroke-width":"14","stroke-linecap":"round",opacity:".82","marker-end":"url(#"+id+p[1]+")"},svg);});
+}
+function newSvg(label){var s=el("svg",{viewBox:"0 0 800 800",role:"img","aria-label":label||"Chess diagram"});return s;}
+
+function mountBoard(host){
+  var views=D.B[host.dataset.b];if(!views){host.textContent="Missing diagram";return;}
+  var vi=0,fi=0,tabs=null;
+  if(views.length>1){tabs=h("div","tabs");tabs.setAttribute("role","tablist");views.forEach(function(v,i){var b=h("button","tab",v.label);b.setAttribute("role","tab");b.onclick=function(){vi=i;fi=0;render();};tabs.appendChild(b);});host.appendChild(tabs);}
+  var wrap=h("div","bwrap"),svg=newSvg("Chess diagram");wrap.appendChild(svg);host.appendChild(wrap);
+  var ctl=h("div","ctl"),bS=h("button","btn","\u21BA Start"),bP=h("button","btn","\u2039 Back"),bN=h("button","btn pri","Next \u203A"),ct=h("span","ct");
+  bS.setAttribute("aria-label","Back to start");ctl.append(bS,bP,bN,ct);
+  var cap=h("div","cap");cap.setAttribute("aria-live","polite");
+  host.appendChild(ctl);host.appendChild(cap);
+  bS.onclick=function(){fi=0;render();};bP.onclick=function(){if(fi>0){fi--;render();}};bN.onclick=function(){var n=views[vi].frames.length;if(fi<n-1){fi++;render();}};
+  host.tabIndex=-1;
+  function render(){var v=views[vi],fr=v.frames[fi],n=v.frames.length;drawBoard(svg,fr);
+    cap.innerHTML=(fr.s?'<span class="mv">'+fr.s+'</span>':'')+(fr.t||"");
+    ctl.style.display=n>1?"flex":"none";ct.textContent=n>1?(fi+"/"+(n-1)):"";bP.disabled=fi===0;bS.disabled=fi===0;bN.disabled=fi===n-1;
+    if(tabs)[].forEach.call(tabs.children,function(b,i){b.setAttribute("aria-selected",i===vi?"true":"false");});}
+  render();
+}
+
+var solved=JSON.parse(store("cg:solved")||"{}");
+function updScore(){var e=document.getElementById("pzscore");if(e)e.textContent="Solved: "+Object.keys(solved).length+" of "+D.P.length;}
+function mountPuzzle(host,idx){
+  var P=D.P[idx];host.innerHTML="";
+  var hd=h("div","pz-h",'<b>Puzzle '+(idx+1)+'</b><span>'+P.theme+'</span>');host.appendChild(hd);
+  host.appendChild(h("p","pz-p",P.prompt+' <span style="color:var(--muted)">Tap a piece, then its destination.</span>'));
+  var wrap=h("div","bwrap"),svg=newSvg("Puzzle board");wrap.appendChild(svg);host.appendChild(wrap);
+  var mv=h("div","pz-mv"),msg=h("div","pz-msg"),ctl=h("div","ctl");msg.setAttribute("aria-live","polite");
+  var bH=h("button","btn","Hint"),bSo=h("button","btn","Show solution"),bR=h("button","btn","Reset");ctl.append(bH,bSo,bR);
+  host.append(mv,msg,ctl);
+  var st;function reset(){st={fen:P.fen,ply:0,cand:P.lines.map(function(_,i){return i;}),sel:null,lm:null,sans:[],busy:false,done:false};msg.className="pz-msg";msg.textContent="";draw();}
+  function draw(){drawBoard(svg,{fen:st.fen,lm:st.lm,h:"",a:"",d:""},st.sel);mv.textContent=st.sans.join("  ");host.classList.toggle("done",!!solved[P.id]&&st.done);}
+  function line(){return P.lines[st.cand[0]];}
+  function apply(step){st.fen=step.fen;st.lm=[step.m.slice(0,2),step.m.slice(2,4)];st.sans.push(st.sans.length&&/\u2026/.test(step.s)?step.s.replace(/^\d+\u2026 /,''):step.s);st.ply++;}
+  function finish(){st.done=true;msg.className="pz-msg ok";msg.innerHTML="<b>Solved.</b> "+P.explain;solved[P.id]=1;store("cg:solved",JSON.stringify(solved));updScore();draw();}
+  function afterUser(){if(st.ply>=line().length){finish();return;}st.busy=true;setTimeout(function(){apply(line()[st.ply]);st.busy=false;if(st.ply>=line().length)finish();else draw();},550);draw();}
+  svg.addEventListener("click",function(ev){if(st.busy||st.done)return;var r=svg.getBoundingClientRect(),c=Math.floor((ev.clientX-r.left)/r.width*8),w=Math.floor((ev.clientY-r.top)/r.height*8);if(c<0||c>7||w<0||w>7)return;
+    var sq=FILES[c]+(8-w),m=parseFen(st.fen),pc=m[sq],mine=pc&&((pc===pc.toUpperCase())===(P.stm==="w"));
+    if(!st.sel){if(mine){st.sel=sq;draw();}return;}
+    if(sq===st.sel){st.sel=null;draw();return;}
+    if(mine){st.sel=sq;draw();return;}
+    var u=st.sel+sq;st.sel=null;
+    var ok=st.cand.filter(function(i){var s=P.lines[i][st.ply];return s&&s.m.slice(0,4)===u;});
+    if(!ok.length){msg.className="pz-msg no";msg.textContent="Not that one. Look again: checks, captures, threats.";draw();return;}
+    st.cand=ok;msg.className="pz-msg";msg.textContent="Good.";apply(line()[st.ply]);afterUser();});
+  bH.onclick=function(){msg.className="pz-msg";msg.textContent="Hint: "+P.hint;};
+  bR.onclick=reset;
+  bSo.onclick=function(){reset();st.busy=true;var L=P.lines[0],i=0;(function step(){if(i<L.length){apply(L[i++]);draw();setTimeout(step,700);}else{st.busy=false;st.done=true;msg.className="pz-msg";msg.innerHTML=P.explain;draw();}})();};
+  reset();
+}
+
+function init(){
+  [].forEach.call(document.querySelectorAll(".bd[data-b]"),mountBoard);
+  var pzh=document.getElementById("puzzles");if(pzh){D.P.forEach(function(_,i){var d=h("div","pz");pzh.appendChild(d);mountPuzzle(d,i);});updScore();}
+  // theme
+  var root=document.documentElement,tb=document.getElementById("themeBtn");
+  function setTheme(t){if(t)root.setAttribute("data-theme",t);else root.removeAttribute("data-theme");store("cg:theme",t||"");}
+  var saved=store("cg:theme");if(saved)root.setAttribute("data-theme",saved);
+  tb.onclick=function(){var cur=root.getAttribute("data-theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");setTheme(cur==="dark"?"light":"dark");};
+  // toc
+  var nav=document.getElementById("tocnav"),dr=document.getElementById("drawer"),links=[];
+  [].forEach.call(document.querySelectorAll(".part, .ch"),function(s){var a=document.createElement("a");a.href="#"+s.id;
+    if(s.classList.contains("part")){a.className="p";a.textContent=s.querySelector(".pl").textContent+": "+s.querySelector("h2").textContent;}
+    else{var n=s.querySelector("h3 .n"),t=s.querySelector("h3").textContent.replace(n?n.textContent:"","");a.innerHTML='<span class="n">'+(n?n.textContent:"")+'</span>'+t;links.push([s,a]);}
+    a.onclick=function(){dr.classList.remove("open");};nav.appendChild(a);});
+  document.getElementById("tocBtn").onclick=function(){dr.classList.add("open");var c=nav.querySelector(".cur");if(c)c.scrollIntoView({block:"center"});};
+  dr.querySelector(".scrim").onclick=function(){dr.classList.remove("open");};
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")dr.classList.remove("open");});
+  // progress + current chapter + resume
+  var prog=document.getElementById("prog"),cur=document.getElementById("curch"),last=null,tick=false;
+  function onScroll(){tick=false;var st=window.scrollY,H=document.documentElement.scrollHeight-innerHeight;prog.style.width=(H>0?Math.min(100,st/H*100):0)+"%";
+    var c=null;for(var i=0;i<links.length;i++){if(links[i][0].getBoundingClientRect().top<innerHeight*.35)c=links[i];else break;}
+    if(c!==last){if(last)last[1].classList.remove("cur");last=c;if(c){c[1].classList.add("cur");cur.textContent=c[1].textContent.replace(/^\d+/,"").trim();store("cg:pos",c[0].id);}else cur.textContent="";}}
+  addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(onScroll);}},{passive:true});onScroll();
+  var pos=store("cg:pos"),target=pos&&document.getElementById(pos);
+  if(target&&window.scrollY<100&&!location.hash&&target.id!=="c1"){var ts=h("div","toast"),nm=target.querySelector("h3").textContent.replace(/^\d+/,"").trim();ts.innerHTML="<span>Continue: "+nm+"</span>";var go=h("button","","Go"),x=h("button","","\u2715");x.setAttribute("aria-label","Dismiss");ts.append(go,x);document.body.appendChild(ts);go.onclick=function(){target.scrollIntoView();ts.remove();};x.onclick=function(){ts.remove();};setTimeout(function(){if(ts.parentNode)ts.remove();},12000);}
+  // glossary
+  var gi=document.getElementById("glq");if(gi)gi.addEventListener("input",function(){var q=gi.value.toLowerCase().trim();[].forEach.call(document.querySelectorAll("#gl dt"),function(dt){var dd=dt.nextElementSibling,show=!q||(dt.textContent+" "+dd.textContent).toLowerCase().indexOf(q)>=0;dt.hidden=dd.hidden=!show;});});
+  // checklists persist
+  [].forEach.call(document.querySelectorAll(".cl input"),function(cb,i){cb.onchange=function(){};});
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+})();
+</script>
+</body></html>

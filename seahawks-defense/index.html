@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Dark Side, Diagrammed: A Fan's Guide to Defense</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef1f3;--surf:#ffffff;--surf2:#e3e8eb;--ink:#0b2240;--muted:#4f5e69;--acc:#2c7612;--acc2:#2a64b8;--line:#cdd5da;
+  --turf:#dde8dc;--chalk:rgba(11,34,64,.22);--los:#2a64b8;--def:#2c7612;--defink:#ffffff;--off:#0b2240;--offfill:#f4f7f4;
+  --zdeep:rgba(42,100,184,.15);--zdeepS:rgba(42,100,184,.55);--zund:rgba(44,118,18,.14);--zundS:rgba(44,118,18,.6);
+  --man:rgba(11,34,64,.5);--ball:#b0561a;--hl:#d18f00;
+  --fs-display:"Barlow Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif;
+  --fs-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#06182b;--surf:#0b2340;--surf2:#10304f;--ink:#e3e9ed;--muted:#9eacb6;--acc:#69be28;--acc2:#6aa8ee;--line:#1d3b5b;
+    --turf:#0c2822;--chalk:rgba(227,233,237,.2);--los:#6aa8ee;--def:#69be28;--defink:#06182b;--off:#e3e9ed;--offfill:#0c2822;
+    --zdeep:rgba(106,168,238,.17);--zdeepS:rgba(106,168,238,.6);--zund:rgba(105,190,40,.15);--zundS:rgba(105,190,40,.6);
+    --man:rgba(227,233,237,.5);--ball:#f0a060;--hl:#f2c14e;
+  }
+}
+:root[data-theme="dark"]{
+    --bg:#06182b;--surf:#0b2340;--surf2:#10304f;--ink:#e3e9ed;--muted:#9eacb6;--acc:#69be28;--acc2:#6aa8ee;--line:#1d3b5b;
+    --turf:#0c2822;--chalk:rgba(227,233,237,.2);--los:#6aa8ee;--def:#69be28;--defink:#06182b;--off:#e3e9ed;--offfill:#0c2822;
+    --zdeep:rgba(106,168,238,.17);--zdeepS:rgba(106,168,238,.6);--zund:rgba(105,190,40,.15);--zundS:rgba(105,190,40,.6);
+    --man:rgba(227,233,237,.5);--ball:#f0a060;--hl:#f2c14e;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fs-body);font-size:1.0625rem;line-height:1.7;font-optical-sizing:auto}
+a{color:var(--acc2);text-underline-offset:2px}
+:focus-visible{outline:3px solid var(--acc2);outline-offset:2px;border-radius:4px}
+img,svg{max-width:100%}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar-in{display:flex;align-items:center;gap:.5rem;max-width:46rem;margin:0 auto;padding:.4rem .9rem}
+.bar-title{font-family:var(--fs-display);font-weight:600;font-size:1.05rem;letter-spacing:.01em;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}
+.bar-title b{color:var(--ink);font-weight:700}
+.ibtn{font-family:var(--fs-display);font-weight:600;font-size:1rem;background:var(--surf);color:var(--ink);border:1px solid var(--line);border-radius:999px;min-height:40px;padding:0 .95rem;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem}
+.ibtn:hover{border-color:var(--acc)}
+.prog{height:3px;background:transparent}
+.prog i{display:block;height:100%;width:0;background:var(--acc)}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(3,12,22,.5);z-index:40;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(88vw,23rem);background:var(--surf);z-index:41;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);border-left:1px solid var(--line)}
+.drawer.on{transform:none}
+.drawer-h{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1rem;border-bottom:1px solid var(--line);font-family:var(--fs-display);font-size:1.3rem;font-weight:700}
+.toc{overflow-y:auto;padding:.5rem 0 2rem;-webkit-overflow-scrolling:touch}
+.toc .tp{font-family:var(--fs-display);font-weight:600;color:var(--muted);font-size:.95rem;padding:.9rem 1rem .2rem}
+.toc a{display:flex;gap:.6rem;padding:.45rem 1rem;color:var(--ink);text-decoration:none;font-family:var(--fs-display);font-size:1.12rem;font-weight:500;line-height:1.25}
+.toc a span{color:var(--muted);min-width:1.4rem;text-align:right}
+.toc a.cur{background:var(--surf2);box-shadow:inset 3px 0 0 var(--acc)}
+
+/* layout */
+main{max-width:46rem;margin:0 auto;padding:0 1.15rem 5rem}
+.prose{max-width:38rem}
+h1,h2,h3,h4{font-family:var(--fs-display);line-height:1.05;margin:0}
+h1{font-size:clamp(3rem,13vw,5.4rem);font-weight:700;letter-spacing:-.01em;margin-top:2.2rem}
+.dek{font-size:1.2rem;line-height:1.55;color:var(--muted);margin:.9rem 0 1.4rem;max-width:34rem}
+.part{margin-top:4.5rem;padding-top:1.1rem;border-top:3px solid var(--ink)}
+.part h2{font-size:clamp(2.2rem,8vw,3rem);font-weight:700}
+.part p.pl{font-family:var(--fs-display);font-size:1.15rem;color:var(--muted);font-weight:600;margin:0 0 .15rem}
+.ch{margin-top:3.4rem}
+.ch>h3{display:flex;align-items:baseline;gap:.7rem;font-size:clamp(1.8rem,6.4vw,2.35rem);font-weight:700;margin-bottom:.9rem}
+.ch>h3 .n{font-size:.62em;color:var(--acc);font-weight:700;min-width:1.4em}
+h4{font-size:1.38rem;font-weight:700;margin:1.9rem 0 .5rem}
+p{margin:0 0 1.05rem}
+ul,ol{padding-left:1.25rem;margin:0 0 1.1rem}
+li{margin:.3rem 0}
+strong{font-weight:600}
+.term{font-weight:600;color:var(--ink)}
+em{font-style:italic}
+
+/* callouts */
+.note{background:var(--surf);border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:0 8px 8px 0;padding:1rem 1.1rem .3rem;margin:1.4rem 0;max-width:38rem}
+.note.watch{border-left-color:var(--acc2)}
+.note .nl{display:block;font-family:var(--fs-display);font-weight:700;font-size:1.15rem;margin-bottom:.3rem;color:var(--acc)}
+.note.watch .nl{color:var(--acc2)}
+.note p,.note li{font-size:1rem}
+
+/* tables */
+.tw{overflow-x:auto;margin:1.3rem 0 1.6rem;border:1px solid var(--line);border-radius:8px;background:var(--surf);-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;font-size:.95rem;line-height:1.45;min-width:34rem;width:100%}
+th,td{text-align:left;vertical-align:top;padding:.6rem .7rem;border-bottom:1px solid var(--line)}
+th{font-family:var(--fs-display);font-weight:700;font-size:1.02rem;background:var(--surf2)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+
+/* diagrams */
+.dg{margin:1.6rem -1.15rem 1.8rem;background:var(--surf);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+@media (min-width:720px){.dg{margin:1.8rem 0 2rem;border:1px solid var(--line);border-radius:10px;overflow:hidden}}
+.dg-tabs{display:flex;gap:.35rem;overflow-x:auto;padding:.6rem .75rem 0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.dg-tabs::-webkit-scrollbar{display:none}
+.dg-tab{font-family:var(--fs-display);font-weight:600;font-size:1.02rem;white-space:nowrap;background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:.3rem .85rem;min-height:36px;cursor:pointer}
+.dg-tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.dg-title{font-family:var(--fs-display);font-weight:700;font-size:1.2rem;padding:.7rem .9rem 0}
+.dg svg{display:block;width:100%;height:auto;margin-top:.55rem;background:var(--turf);touch-action:manipulation}
+.dg-cap{padding:.75rem .95rem .2rem;font-size:1rem;line-height:1.55;min-height:4.8em}
+.dg-cap b{font-family:var(--fs-display);font-weight:700;font-size:1.08rem;color:var(--acc);margin-right:.35rem}
+.dg-ctl{display:flex;align-items:center;gap:.4rem;padding:.35rem .8rem .85rem;flex-wrap:wrap}
+.dg-ctl button{font-family:var(--fs-display);font-weight:600;font-size:1.02rem;min-height:40px;min-width:44px;padding:0 .8rem;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.dg-ctl button.pri{background:var(--acc);color:var(--defink);border-color:var(--acc);min-width:5.2rem}
+.dg-ctl button:disabled{opacity:.4;cursor:default}
+.dots{display:flex;gap:.35rem;margin-left:auto}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--acc)}
+.dg-info{margin:0 .95rem .95rem;padding:.75rem .9rem;border-radius:8px;background:var(--surf2);font-size:.98rem;line-height:1.5}
+.dg-info h5{font-family:var(--fs-display);font-size:1.2rem;margin:0 0 .25rem}
+.dg-info p{margin:0 0 .35rem}
+
+/* svg parts */
+.fld{fill:var(--turf)}
+.yl{stroke:var(--chalk);stroke-width:1}
+.hash{stroke:var(--chalk);stroke-width:1}
+.losl{stroke:var(--los);stroke-width:1.6;stroke-dasharray:5 3}
+.pl text{font-family:var(--fs-display);font-weight:700;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.pl.d circle{fill:var(--def);stroke:var(--bg);stroke-width:1}
+.pl.d text{fill:var(--defink)}
+.pl.o circle,.pl.o rect{fill:var(--offfill);stroke:var(--off);stroke-width:1.4}
+.pl.o text{fill:var(--off)}
+.pl.dim{opacity:.32}
+.pl.hl circle{stroke:var(--hl);stroke-width:2.6}
+.pl.tap{cursor:pointer}
+.pl.sel circle{stroke:var(--hl);stroke-width:3}
+.tr{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.tr.o{stroke:var(--off);stroke-width:1.7;opacity:.85}
+.tr.d{stroke:var(--def);stroke-width:1.5;stroke-dasharray:3 2.5;opacity:.95}
+.tr.dim{opacity:.25}
+.zn.deep{fill:var(--zdeep);stroke:var(--zdeepS);stroke-width:1;stroke-dasharray:4 3}
+.zn.under{fill:var(--zund);stroke:var(--zundS);stroke-width:1;stroke-dasharray:4 3}
+.zl{font-family:var(--fs-display);font-weight:600;text-anchor:middle;dominant-baseline:central;fill:var(--ink);opacity:.75}
+.mn{stroke:var(--man);stroke-width:1.1;stroke-dasharray:1.5 2.5}
+.bl{stroke:var(--ball);stroke-width:1.6;fill:none;stroke-dasharray:4 2.5}
+.bb{fill:var(--ball)}
+.mk{font-family:var(--fs-display);font-weight:700;text-anchor:middle;dominant-baseline:central;fill:var(--ink)}
+.mk.g{fill:var(--acc2)}
+.mkl{stroke:var(--chalk);stroke-width:1}
+.arr{fill:var(--off)}
+.arrd{fill:var(--def)}
+
+/* legend */
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:.55rem 1rem;font-size:.95rem;margin:1rem 0 1.4rem;padding:1rem;background:var(--surf);border:1px solid var(--line);border-radius:8px;max-width:38rem}
+.legend div{display:flex;align-items:center;gap:.55rem;line-height:1.3}
+.legend svg{flex:none;width:34px;height:20px}
+
+/* hero */
+.hero-dg{margin-top:.4rem}
+
+/* resume */
+.resume{display:none;align-items:center;gap:.8rem;flex-wrap:wrap;margin:0 0 1.2rem;padding:.8rem 1rem;background:var(--surf);border:1px solid var(--line);border-radius:8px;font-size:1rem}
+.resume.on{display:flex}
+.resume button{margin-left:auto}
+
+/* widget: if-then */
+.chips{display:flex;flex-wrap:wrap;gap:.45rem;margin:1rem 0 .8rem}
+.chip{font-family:var(--fs-display);font-weight:600;font-size:1.02rem;border:1px solid var(--line);background:var(--surf);color:var(--ink);border-radius:999px;padding:.35rem .9rem;min-height:40px;cursor:pointer;text-align:left}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.ans{background:var(--surf);border:1px solid var(--line);border-radius:8px;padding:1rem 1.1rem .4rem;max-width:38rem;min-height:7rem}
+.ans h5{font-family:var(--fs-display);font-size:1.25rem;margin:0 0 .4rem}
+.ans p{font-size:1rem}
+
+/* checklist */
+.steps{list-style:none;padding:0;counter-reset:s;max-width:38rem}
+.steps li{counter-increment:s;position:relative;padding:0 0 .9rem 2.6rem;margin:0}
+.steps li::before{content:counter(s);position:absolute;left:0;top:.05rem;width:1.9rem;height:1.9rem;border-radius:50%;background:var(--ink);color:var(--bg);font-family:var(--fs-display);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:1.05rem}
+.steps li b{font-family:var(--fs-display);font-size:1.18rem;display:block;line-height:1.3}
+
+/* quiz */
+.qz{margin:1.6rem 0 2.2rem}
+.qz .qh{font-family:var(--fs-display);font-weight:700;font-size:1.3rem;margin:0 0 .3rem}
+.qz .opts{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;padding:0 .8rem .8rem}
+.qz .opt{font-family:var(--fs-display);font-weight:600;font-size:1.05rem;min-height:44px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;padding:.3rem .5rem}
+.qz .opt.right{background:var(--acc);border-color:var(--acc);color:var(--defink)}
+.qz .opt.wrong{text-decoration:line-through;opacity:.55}
+.qz .fb{padding:0 .95rem .95rem;font-size:1rem;display:none}
+.qz .fb.on{display:block}
+.score{font-family:var(--fs-display);font-size:1.25rem;font-weight:700}
+
+/* glossary */
+.gsearch{width:100%;max-width:38rem;font:inherit;font-size:1.05rem;padding:.7rem .9rem;border-radius:8px;border:1px solid var(--line);background:var(--surf);color:var(--ink);margin:.4rem 0 1rem}
+dl.gl{max-width:38rem;margin:0}
+dl.gl dt{font-family:var(--fs-display);font-weight:700;font-size:1.2rem;margin-top:1rem}
+dl.gl dd{margin:.1rem 0 0;font-size:1rem}
+.src li{font-size:.97rem;word-break:break-word}
+footer{color:var(--muted);font-size:.95rem;margin-top:3rem;border-top:1px solid var(--line);padding-top:1rem}
+
+@media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-in">
+    <div class="bar-title"><b>The Dark Side, diagrammed</b> <span id="curch"></span></div>
+    <button class="ibtn" id="themeBtn" aria-label="Switch light or dark theme">Theme</button>
+    <button class="ibtn" id="tocBtn" aria-expanded="false" aria-controls="drawer">Contents</button>
+  </div>
+  <div class="prog"><i id="progbar"></i></div>
+</header>
+<div class="scrim" id="scrim"></div>
+<nav class="drawer" id="drawer" aria-label="Contents">
+  <div class="drawer-h">Contents <button class="ibtn" id="tocClose">Close</button></div>
+  <div class="toc" id="toc"></div>
+</nav>
+
+<main>
+<section id="top">
+  <h1>The Dark Side, diagrammed</h1>
+  <p class="dek">How NFL defenses decide who rushes, who covers and who is lying about it — and why Mike Macdonald's Seahawks do all three better than anybody.</p>
+  <div class="resume" id="resume"><span id="resumeTxt">Pick up where you left off.</span><button class="ibtn" id="resumeBtn">Continue reading</button></div>
+  <div class="dg hero-dg" data-scenes="HERO"></div>
+  <div class="prose">
+  <p>That little animation is the whole idea of this guide in two beats. Before the snap, the quarterback sees two safeties sitting deep — a shell that usually means the middle of the field is open. At the snap, one safety races to the middle and the other drops down toward the line. The coverage he read isn't the coverage he's facing, and he has maybe two and a half seconds to figure that out.</p>
+  <p>As of late September 2026, Seattle is the defending champion. The 2025 Seahawks allowed the fewest points in the NFL (17.2 a game), then smothered New England 29–13 in Super Bowl LX, and opened 2026 by beating the Patriots again and blowing out Arizona 31–7. The defense adopted the nickname "The Dark Side" to build its own identity apart from the Legion of Boom. This guide explains the machinery underneath: how a defense is organized, how it reads the offense, how defenders pass receivers to each other, how calls get from the sideline to eleven people in a loud stadium, and what you can watch for on TV to tell what's coming.</p>
+  <p>It's long on purpose. Read it in order the first time; each chapter leans on the vocabulary before it. After that, use the Contents button to jump around.</p>
+  </div>
+</section>
+
+<!-- PART I -->
+<section class="part" id="p1">
+  <p class="pl">Part I</p>
+  <h2>The language of defense</h2>
+</section>
+
+<section class="ch prose" id="c1">
+  <h3><span class="n">1</span>How to read the diagrams</h3>
+  <p>Every diagram is drawn from behind the defense's end zone looking down at the field, the way coaches watch the "All-22" film (the broadcast-free angle that keeps all 22 players in frame). The offense is at the bottom, moving up the screen. The dashed blue line is the line of scrimmage, and the faint horizontal lines are five yards apart. The whole width of the field is shown, sideline to sideline, unless a diagram zooms in on the trenches.</p>
+  <div class="legend" aria-label="Diagram legend">
+    <div><svg viewBox="0 0 34 20"><circle cx="17" cy="10" r="8" fill="var(--def)"/><text x="17" y="10.5" font-size="8" text-anchor="middle" dominant-baseline="central" fill="var(--defink)" font-family="Barlow Condensed" font-weight="700">M</text></svg>Defender</div>
+    <div><svg viewBox="0 0 34 20"><circle cx="17" cy="10" r="7" fill="var(--offfill)" stroke="var(--off)" stroke-width="1.5"/></svg>Offensive player</div>
+    <div><svg viewBox="0 0 34 20"><path d="M3 15 L25 5" stroke="var(--off)" stroke-width="2" fill="none"/><path d="M30 3 L22 3 L26 9 Z" fill="var(--off)"/></svg>Route or run path</div>
+    <div><svg viewBox="0 0 34 20"><path d="M3 15 L31 5" stroke="var(--def)" stroke-width="2" stroke-dasharray="4 3" fill="none"/></svg>Defender's movement</div>
+    <div><svg viewBox="0 0 34 20"><ellipse cx="17" cy="10" rx="15" ry="7" fill="var(--zdeep)" stroke="var(--zdeepS)" stroke-dasharray="3 2"/></svg>Deep zone</div>
+    <div><svg viewBox="0 0 34 20"><ellipse cx="17" cy="10" rx="15" ry="7" fill="var(--zund)" stroke="var(--zundS)" stroke-dasharray="3 2"/></svg>Underneath zone</div>
+    <div><svg viewBox="0 0 34 20"><path d="M3 15 L31 5" stroke="var(--man)" stroke-width="1.6" stroke-dasharray="1.5 3" fill="none"/></svg>Man assignment</div>
+    <div><svg viewBox="0 0 34 20"><path d="M3 15 Q17 0 31 8" stroke="var(--ball)" stroke-width="2" stroke-dasharray="4 3" fill="none"/></svg>The throw</div>
+  </div>
+  <p>Defenders are labeled by role: <span class="term">E</span> for edge rushers, <span class="term">N</span> and <span class="term">T</span> for the interior linemen (nose and 3-technique), <span class="term">M</span> and <span class="term">W</span> for the MIKE and WILL linebackers, <span class="term">NB</span> for the nickel back, <span class="term">C</span> for cornerbacks, and <span class="term">FS</span>/<span class="term">SS</span> for the safeties. Receivers are <span class="term">X</span>, <span class="term">Z</span> (outside receivers), <span class="term">H</span> (slot), <span class="term">Y</span> (tight end), <span class="term">R</span> (running back) and <span class="term">Q</span>.</p>
+  <p>Most diagrams are a short sequence. Tap <strong>Play</strong> to run it, or <strong>Next</strong> and <strong>Back</strong> to step through beat by beat; the caption changes with each beat. Diagrams with pill-shaped tabs across the top show variations of the same idea — flip between them and notice what changes and what doesn't. Some defenders fade out when they're not part of the lesson.</p>
+  <p>One honest caveat: teams don't publish their playbooks. Seattle's actual call names are private, so this guide uses the standard vocabulary coaches and film analysts use across the league. Where a specific Seahawks tendency is described, it comes from published film study, team interviews or charting data, listed in the sources at the end.</p>
+</section>
+
+<section class="ch prose" id="c2">
+  <h3><span class="n">2</span>The field through a defense's eyes</h3>
+  <p>A fan watches the ball. A defense watches <em>structure</em>: where the offense has put its players, and what that arrangement makes possible. Before any call can make sense, you need five ideas.</p>
+  <h4>The box</h4>
+  <p>The box is the rectangle roughly from tackle to tackle (or out to the tight end) and about five to seven yards deep. Defenders in the box are primarily run defenders. The single most important number in run defense is how many defenders are in the box versus how many blockers the offense has there. You'll hear "six-man box," "seven-man box," "loaded box." More on that math in Chapter 6.</p>
+  <h4>Strength</h4>
+  <p>Before every snap, the defense declares one side of the formation "strong." The rule varies by team and by call — it might be the tight end's side, the side with more receivers, or the wide side of the field — but everyone has to agree, because every assignment is written relative to strength. A linebacker yelling "right, right!" or pointing is usually setting the strength. If the offense shifts or motions and the strength flips, the defense has to re-declare, and that is exactly the chaos offenses are trying to create.</p>
+  <h4>Numbering receivers</h4>
+  <p>Coverage rules never say "cover the tight end." They say "you have #2." Receivers are counted from the sideline in on each side: the widest is #1, the next is #2, then #3. A tight end with one receiver outside him is #2; if a running back swings out, he may become #3. Numbering lets one rule work against every formation the offense can invent.</p>
+  <h4>Gaps</h4>
+  <p>The spaces between offensive linemen are gaps, lettered from the center outward: the <span class="term">A-gap</span> between center and guard, the <span class="term">B-gap</span> between guard and tackle, the <span class="term">C-gap</span> outside the tackle (or between tackle and tight end), and the <span class="term">D-gap</span> outside the tight end. There's one of each on both sides. Run defense is, at bottom, a promise that every gap belongs to somebody.</p>
+  <h4>Techniques</h4>
+  <p>Defensive linemen describe where they line up with a number called a <span class="term">technique</span>. A 0-technique is head-up on the center. A 1-technique shades the center's shoulder. A 3-technique sits on the outside shoulder of a guard; a 5-technique on the outside shoulder of a tackle; a 9-technique outside the tight end. An "i" means the inside shoulder, so a 4i sits on the inside shade of a tackle. Numbering varies a little between coaching trees, but these are close to universal.</p>
+</section>
+<div class="dg" data-scenes="GAPS" data-title="Gaps (below the line) and techniques (above it)"></div>
+<section class="prose">
+  <p>Why does alignment matter so much? Because it tells a lineman which gap he owns and which blocker he's attacking. A 3-technique is built to shoot the B-gap and punish a guard who can't move him. A 1-technique makes the center's life miserable and clogs the A-gap. When fans say a team "moved Leonard Williams inside," that's a technique change, and it changes what the offensive line has to do on every snap.</p>
+  <div class="note"><span class="nl">In Seattle</span><p>Macdonald's fronts are built to hide which four players will rush. Linebackers "mug" the A-gaps (stand right on the line in them), edge players align in two-point stances like linebackers, and interior linemen shift between techniques. The offensive line has to decide who to block before the snap, and the front is designed to make that decision wrong.</p></div>
+</section>
+
+<section class="ch prose" id="c3">
+  <h3><span class="n">3</span>The eleven</h3>
+  <p>Seattle lives in a nickel defense — four down linemen or edge rushers, two linebackers and five defensive backs — so that's the base picture for this guide. Tap any green defender for what the position does and who plays it for the 2026 Seahawks.</p>
+</section>
+<div class="dg" data-scenes="POS" data-title="Seattle's nickel, position by position"></div>
+<section class="prose">
+  <h4>The front: linemen and edges</h4>
+  <p>The interior linemen win with power and quickness in a phone booth. Their first job on a run is to own a gap and, ideally, to demand two blockers. Their job on a pass is to collapse the pocket from the inside, which is what makes quarterbacks uncomfortable fastest because they can't step up. Edge rushers win with speed and bend around the tackle. On runs, the edge player is usually the one who has to "set the edge" — keep the ball from bouncing outside him.</p>
+  <p>In a 3-4 vocabulary (which Macdonald's system grew out of), the edges are called outside linebackers and one of them is the <span class="term">Rush</span>, the premier pass rusher. That's why Seattle's depth chart lists DeMarcus Lawrence as the Rush end.</p>
+  <h4>The second level: linebackers</h4>
+  <p>The <span class="term">MIKE</span> (middle linebacker) is the quarterback of the defense. He usually wears the helmet with the radio, sets the front and strength, and makes run and pass checks. The <span class="term">WILL</span> (weak-side linebacker) is typically the faster one who flows to the ball and covers backs. The SAM, the strong-side linebacker of a base defense, is often replaced by the nickel back in sub packages.</p>
+  <h4>The back end: corners, nickel and safeties</h4>
+  <p>Cornerbacks cover the outside receivers. The <span class="term">nickel</span> (fifth defensive back) covers the slot and increasingly acts as a hybrid linebacker, blitzer and run defender. Safeties are the last line: in two-deep coverages they split the field in halves; in single-high coverages one plays the deep middle and the other comes down into the box. Modern safeties are often labeled by side ("field" and "boundary") rather than free and strong, because they flip roles constantly.</p>
+  <div class="note"><span class="nl">In Seattle</span><p>The nickel is where Seattle's defense is most unusual. Nick Emmanwori, a 6-foot-3, 220-pound safety who ran a 4.38 at the combine, was a Defensive Rookie of the Year finalist in 2025 playing a "big nickel" role: slot defender on one snap, linebacker on the next, pass rusher on the one after. Devon Witherspoon, nominally a cornerback, also kicks inside and was the blitzing star of Super Bowl LX. Having two defenders who can play the slot, the box and the edge is what lets the rest of the scheme work.</p></div>
+</section>
+
+<section class="ch prose" id="c4">
+  <h3><span class="n">4</span>Personnel and packages</h3>
+  <p>Before the offense even lines up, the defense has a choice to make based on who ran onto the field. Offensive personnel is described with two digits: the number of running backs, then the number of tight ends. The rest are wide receivers.</p>
+</section>
+<div class="tw prose"><table>
+<thead><tr><th>Offense</th><th>Who's on the field</th><th>What it threatens</th><th>Typical defensive answer</th></tr></thead>
+<tbody>
+<tr><td>11</td><td>1 RB, 1 TE, 3 WR</td><td>The league's default. Spread passing with a real run threat.</td><td>Nickel (5 DBs)</td></tr>
+<tr><td>12</td><td>1 RB, 2 TE, 2 WR</td><td>Heavier runs, play-action, and tight ends who can flex out wide.</td><td>Base (4 DBs) or "big nickel"</td></tr>
+<tr><td>21</td><td>2 RB (often a fullback), 1 TE</td><td>Downhill runs with a lead blocker.</td><td>Base</td></tr>
+<tr><td>13 / 22</td><td>3 TE, or 2 RB + 2 TE</td><td>Short yardage and goal line power.</td><td>Base or goal-line package</td></tr>
+<tr><td>10 / 00</td><td>No TE; four or five receivers</td><td>Spread-out passing, empty backfields.</td><td>Dime (6 DBs)</td></tr>
+</tbody></table></div>
+<section class="prose">
+  <p>Defensive packages are named for the number of defensive backs. <span class="term">Base</span> has four (a 4-3 or 3-4). <span class="term">Nickel</span> has five, <span class="term">dime</span> has six, and <span class="term">quarter</span> or "dollar" packages have seven for desperation passing downs. A <span class="term">big nickel</span> uses a third safety as the fifth DB instead of a smaller slot corner, which gives you a player who can hold up against the run and still cover.</p>
+  <p>The cat-and-mouse is simple to state: offenses want to put in big personnel and throw against a slow base defense, or put in small personnel and run against a light nickel. Defenses want to match: heavy against heavy, light against light. The whole league has drifted toward nickel as the true base defense because offenses spend most of their snaps in 11 personnel.</p>
+  <div class="note"><span class="nl">In Seattle</span><p>Seattle takes this further than anyone. Midway through 2025 the Seahawks led the NFL in nickel usage by almost ten percentage points (about 87%), and across the full season they stayed in sub packages about 91% of the time, lining up in a base 3-4 on only about 6% of snaps, the lowest rate in the league. The reason they can do it is the big nickel: when an offense brings in a second tight end to punish a small defense, the "small" defender is a 220-pound safety who fits the run like a linebacker. That also makes Seattle close to "sub-proof" against hurry-up offenses that try to trap a defense in the wrong package.</p></div>
+</section>
+
+<!-- PART II -->
+<section class="part" id="p2">
+  <p class="pl">Part II</p>
+  <h2>Stopping the run</h2>
+</section>
+
+<section class="ch prose" id="c5">
+  <h3><span class="n">5</span>Fronts</h3>
+  <p>A <span class="term">front</span> is the alignment of the players near the line: which techniques the linemen play and where the linebackers stack. Fronts come in two broad families. <span class="term">Even</span> fronts put four players on the line with a gap in the middle (no one on the center's nose). <span class="term">Odd</span> fronts put someone head-up or shaded on the center, often with five players across the line.</p>
+  <p>Within the even family, the two classics are <span class="term">Over</span> and <span class="term">Under</span>. In an Over front, the 3-technique goes to the strength of the formation and the nose shades to the weak side. In an Under front, it's flipped: the 3-technique goes weak and the nose shades strong. Each creates a different "bubble" — an uncovered offensive lineman who can release to block a linebacker — and puts a different linebacker in charge of the strong-side gaps.</p>
+  <p>The odd family's modern star is the <span class="term">Tite</span> (or "Mint") front: two 4i-techniques and a 0-technique, which squeeze the inside gaps closed and dare the offense to run outside, where fast edge players and safeties are waiting. It's the signature front of the Vic Fangio family that Macdonald's Baltimore system sits beside.</p>
+</section>
+<div class="dg" data-scenes="F_OVER,F_UNDER,F_TITE,F_BIG" data-labels="Over|Under|Tite (odd)|Big nickel vs 12" data-title="Four fronts against the same offense"></div>
+<section class="prose">
+  <p>You don't need to memorize these. The point is that every front is a trade: it gives the offense one kind of run and takes away another. That's why fronts shift and move right before the snap, and why a lot of "pressure" is really just a front that moves late so the offensive line's blocking rules are pointed at the wrong people.</p>
+</section>
+
+<section class="ch prose" id="c6">
+  <h3><span class="n">6</span>Run fits and the math of the box</h3>
+  <p>A <span class="term">run fit</span> is each defender's assignment against the run: which gap he's responsible for, and what he does when a blocker comes at him. The principle is <span class="term">gap integrity</span>. If every gap has exactly one defender and nobody abandons his gap, a running back has nowhere to go. Most long runs happen because one player guessed.</p>
+  <h4>Box math and the plus-one</h4>
+  <p>Count the offense's blockers in the box (five linemen plus any tight ends or fullbacks) and count the defenders. If the offense has six blockers and the defense has seven defenders, the defense has a "plus-one" — one defender who can be unblocked and make the tackle. The classic way to get that seventh or eighth defender is to drop a safety into the box, which leaves only one safety deep: a single-high coverage like Cover 1 or Cover 3.</p>
+  <p>The quarterback also counts. Because the QB doesn't block, a defense technically has an extra player against a handoff. Offenses reclaim that player with read options and RPOs (run-pass options) that make one defender wrong whether he plays the run or the pass. Modern run defense is largely about who handles that conflict.</p>
+  <h4>Spill, box and the alley</h4>
+  <p>When a pulling guard or a lead blocker comes at an edge defender, he has a choice built into the call: <span class="term">spill</span> the play (hit the blocker's inside shoulder to force the ball to bounce outside, where fast pursuit is waiting) or <span class="term">box/force</span> it (keep his outside arm free and turn the ball back inside to the linebackers). The <span class="term">alley</span> is the lane between the edge player and the next defender outside; safeties and nickel backs "fit the alley" from depth.</p>
+</section>
+<div class="dg" data-scenes="RUN" data-title="Six in the box, two deep, and still no gain"></div>
+<section class="prose">
+  <p>That diagram is the core of how two-high defenses survive. On paper, a six-man box against six blockers is even, and even is bad for the defense. But if the two interior linemen each draw a double team, two defenders have occupied four blockers. Now the offense is short, the linebackers can flow freely, and the safety arrives from depth as the extra man. The safety is "late," but he's also unblocked — offensive linemen can't get to a player who starts 13 yards away.</p>
+  <div class="note"><span class="nl">In Seattle</span><p>Before the Super Bowl, Kyle Shanahan, whose 49ers had failed to score a touchdown against Seattle in their last two meetings, described the problem precisely: Seattle stays in a two-deep look all day, and you can't normally stop the run that way, but they do. The reason is up front. Leonard Williams and Byron Murphy II draw double teams, so the Seahawks can play with a six-man box and let the nickel and WILL linebacker arrive late as leverage players. Macdonald's shorthand for the philosophy is "Stop the run, have some fun": kill the run early, force obvious passing downs, and then unleash the pressure package. In Super Bowl LX the Patriots had 33 rushing yards on 11 carries at halftime.</p></div>
+</section>
+<!-- PART III -->
+<section class="part" id="p3">
+  <p class="pl">Part III</p>
+  <h2>Coverage</h2>
+</section>
+
+<section class="ch prose" id="c7">
+  <h3><span class="n">7</span>Man, zone and the space between</h3>
+  <p>Every pass coverage answers two questions: <em>how many defenders are deep</em>, and <em>is each underneath defender responsible for a person or a place</em>?</p>
+  <p>In <span class="term">man coverage</span>, a defender's rule is a player: "you have #2 wherever he goes." It's tight and aggressive, but defenders turn their backs to the quarterback to chase their man, so scrambles and crossing routes hurt. In <span class="term">zone coverage</span>, the rule is a place: "you have the flat," "you have the deep third." Defenders see the quarterback and break on the ball, but receivers can sit in the soft spots between zones. <span class="term">Match coverage</span> (pattern-matching) is the modern hybrid: it starts as zone and turns into man based on how the routes unfold. Almost every NFL zone call today has some match rules inside it.</p>
+  <h4>Middle of the field: open or closed</h4>
+  <p>Coaches sort coverages into two families by what happens in the deep middle. If one safety sits in the middle, the middle of the field is <span class="term">closed</span> (MOFC, "single-high"): Cover 1 and Cover 3. If the two safeties split the field and nobody's in the middle, it's <span class="term">open</span> (MOFO, "two-high" or "split-field"): Cover 2, Cover 4, Cover 6 and their relatives. This is the first thing a quarterback checks before the snap and the first thing you should check too. It's also exactly what disguise attacks.</p>
+  <p>The numbers in coverage names mostly describe the deep defenders: Cover 2 has two deep halves, Cover 3 has three deep thirds, Cover 4 has four deep quarters. Cover 1 is man coverage with one deep safety; Cover 0 is man with nobody deep. Cover 6 is half Cover 4 and half Cover 2 (four plus two). Flip through all eight below. Each opens on the look the offense sees before the snap, then shows where everyone goes.</p>
+</section>
+<div class="dg" data-scenes="C0,C1,C2,T2,C3,C4,C6,C2M" data-labels="Cover 0|Cover 1|Cover 2|Tampa 2|Cover 3|Quarters|Cover 6|2-Man" data-title="Coverage explorer"></div>
+<div class="tw prose"><table>
+<thead><tr><th>Coverage</th><th>Deep</th><th>Under</th><th>Strength</th><th>Where it bleeds</th></tr></thead>
+<tbody>
+<tr><td>Cover 0</td><td>None</td><td>All man</td><td>Six-plus rushers; the ball has to come out now</td><td>Any win by a receiver can go the distance</td></tr>
+<tr><td>Cover 1</td><td>1 (middle)</td><td>Man, plus a "rat" or "robber"</td><td>Tight coverage with help on deep middle throws</td><td>Rubs, crossers, a great receiver on an island</td></tr>
+<tr><td>Cover 2</td><td>2 halves</td><td>5 zones</td><td>Takes away short outside throws; corners jam and sit</td><td>Deep middle seam; the hole between corner and safety</td></tr>
+<tr><td>Tampa 2</td><td>2 halves + MIKE in the middle</td><td>4 zones</td><td>Patches Cover 2's middle hole</td><td>Asks a lot of the MIKE's speed; intermediate outside</td></tr>
+<tr><td>Cover 3</td><td>3 thirds</td><td>4 zones</td><td>Extra run defender in the box; sound deep</td><td>Seams, curl-flat conflicts, floods</td></tr>
+<tr><td>Quarters</td><td>4 quarters</td><td>3 zones</td><td>Safeties can fit the run and still bracket vertical routes</td><td>Play-action on safeties' eyes; flat routes</td></tr>
+<tr><td>Cover 6</td><td>Quarter-quarter-half</td><td>4 zones</td><td>Match the strength with quarters, cloud the weak side</td><td>Formations that flip strength late</td></tr>
+<tr><td>2-Man</td><td>2 halves</td><td>All man, trailing</td><td>Brutal on third-and-medium; underneath defenders can trail</td><td>QB scrambles; running backs on linebackers</td></tr>
+</tbody></table></div>
+<section class="prose">
+  <div class="note"><span class="nl">In Seattle</span><p>Seattle is a split-field team first. Its most distinctive call is Cover 6: in 2025 the Seahawks led the NFL in Cover 6 usage at roughly 23% of snaps, per analyst Cody Alexander's charting. Their Cover 2 shell also "clouds" the corners, meaning the corners squat near the line and become extra run and short-pass defenders against the tight formations NFL offenses love. And the unit was good in both families: at midseason 2025 it ranked first in the league in yards allowed per snap in man coverage and second in zone.</p></div>
+</section>
+
+<section class="ch prose" id="c8">
+  <h3><span class="n">8</span>Pattern matching: how defenders hand off receivers</h3>
+  <p>Here's the problem with pure zone: four vertical routes against Cover 3 put two receivers in the middle deep third, and one safety can't cover both. Here's the problem with pure man: crossing routes and stacked receivers make defenders run into each other. <span class="term">Pattern matching</span> solves both by giving defenders rules that say, in effect, "play your zone until a route declares itself, then lock onto the receiver who threatens it, and hand him off when he leaves."</p>
+  <h4>The vocabulary of a handoff</h4>
+  <ul>
+    <li><span class="term">Carry</span>: follow a vertical route up the field until a deeper defender can take it. A hook defender might carry a seam to 12 yards.</li>
+    <li><span class="term">Wall</span>: get in front of a receiver who's trying to cross your face and force him to take a longer path. Linebackers wall the tight end off the line.</li>
+    <li><span class="term">Sink</span>: drop with depth under a deep route to take away the throw behind you.</li>
+    <li><span class="term">Pass / zone off</span>: release a crossing receiver to the next defender in his path ("cross!") rather than chasing him across the field.</li>
+    <li><span class="term">Read #2</span>: the key for many split-field defenders. What the second receiver does tells the safety whether he's playing man on #2, helping on #1 or fitting the run.</li>
+    <li><span class="term">Banjo / in-out</span>: two defenders against two stacked or bunched receivers; the inside defender takes whoever breaks in first, the outside defender takes whoever breaks out.</li>
+  </ul>
+  <p>Some teams use names from Nick Saban's Cover 3 match system, where a corner in <span class="term">MOD</span> ("man only deep") plays man if #1 goes vertical but passes off short routes, and <span class="term">MEG</span> ("man everywhere he goes") plays true man on him. The labels differ by team, but the logic is universal: react to the route distribution, not just the zone.</p>
+  <h4>Quarters: the safety reads #2</h4>
+  <p>Quarters is the purest example. The safety aligns at 10–12 yards and reads the #2 receiver (on the right here, the tight end). If #2 goes vertical, the safety takes him deep, essentially man coverage. If #2 goes flat or blocks, the safety is freed to help the corner on #1, or to hammer the run. Flip between the two tabs.</p>
+</section>
+<div class="dg" data-scenes="Q2V,Q2F" data-labels="#2 goes vertical|#2 goes to the flat" data-title="Quarters: one read, two outcomes"></div>
+<section class="prose">
+  <h4>Zone off the crosser</h4>
+  <p>Crossing routes are the engine of modern NFL offenses because they're poison for man coverage: a defender chasing across the field gets picked or outrun. In zone and match coverages, linebackers pass crossers from one to the next with a loud call. The first defender walls the route and carries it to the edge of his area, then yells "cross!" while the next defender takes over. The first defender sinks back to his spot to look for the next route coming in behind.</p>
+</section>
+<div class="dg" data-scenes="XCROSS" data-title="Passing a shallow cross from WILL to MIKE"></div>
+<section class="prose">
+  <h4>Banjo against stacks and bunches</h4>
+  <p>Offenses stack receivers one behind the other, or bunch three in a cluster, specifically to make man defenders collide and to make zone defenders argue about who has whom. The answer is a banjo: decide who breaks which way, not who lined up where. The two tabs below use the same stack; only the route breaks change, and so do the assignments.</p>
+</section>
+<div class="dg" data-scenes="BAN1,BAN2" data-labels="Point in, back out|Point out, back in" data-title="Banjo: the defenders never cross"></div>
+<section class="prose">
+  <div class="note"><span class="nl">In Seattle</span><p>This is where continuity shows up. Defensive coordinator Aden Durde has said the back end became far more connected in 2025, and that entering 2026 the whole defense understands why each teammate is doing what he's doing, not just their own job. Ernest Jones IV described the next level as anticipation: knowing where the soft spots are in a given coverage and getting there to cover for them. Those are descriptions of pattern-matching mastery. Julian Love's fourth-quarter interception in the 2026 opener, jumping a throw over the middle intended for DeMario Douglas, was that kind of read.</p></div>
+</section>
+
+<section class="ch prose" id="c9">
+  <h3><span class="n">9</span>Disguise and rotation</h3>
+  <p>A quarterback's pre-snap read tells him three things: whether the middle is open or closed, where the pressure might come from, and which side to work. Every one of those answers gets him a head start. Disguise takes the head start away.</p>
+  <p>The basic tool is <span class="term">rotation</span>: showing one shell and moving to another at the snap. The terms describe who rotates where. In a <span class="term">sky</span> rotation the safety comes down to the flat; in a <span class="term">buzz</span> rotation a safety drops down to the hook/curl area; in a <span class="term">cloud</span> the corner takes the flat and a safety takes the deep half over him. <span class="term">Spin</span> usually describes one safety rotating to the deep middle while the other drops into a robber spot. Rotations can go to the strength or away from it.</p>
+  <p>Timing is everything. Rotate too early and the quarterback just reads the new shell. Rotate too late and a safety is still traveling when the ball is thrown, which is a big play waiting to happen. Elite disguise teams start moving as the center's hands tighten on the ball or as the quarterback's eyes drop to the snap, so the picture changes in the exact instant he stops looking.</p>
+  <p>The three tabs below all start from the same picture: two safeties at 13 yards, corners off at seven, nickel over the slot. Only the post-snap movement differs.</p>
+</section>
+<div class="dg" data-scenes="R6,R3,R1" data-labels="Stays two-high: Cover 6|Buzz to Cover 3|Spin to Cover 1 robber" data-title="One look, three coverages"></div>
+<section class="prose">
+  <h4>The Fangio family trick</h4>
+  <p>The two-high revolution that started around 2020 with Vic Fangio's defenses (and his protégé Brandon Staley) isn't all quarters, which is a common misunderstanding. The system uses depth as a disguise tool and still plays a lot of Cover 3, rotated away from the strength. Fangio's split-field call "8" (Cover 2 to the passing strength with a poach safety on the backside) and his weak Cover 3 call "9" look identical at the snap. Cover 6 in that tree is called "Stuff," typically used to get two defenders on a lone receiver. As offenses have gotten heavier, two-high coverage hasn't gone away: charting services put the league's split-field rate somewhere between 36% and 43% in 2025.</p>
+  <div class="note"><span class="nl">In Seattle</span><p>Going into Super Bowl LX, New England had drilled film of Seattle's late rotations and drops that punished quarterbacks for trusting their first read, and it didn't matter. Seattle's secret is how the coverages sync with the front: the rotation behind the line is married to a stunt or pressure in front of it. In the 2026 opener, Macdonald leaned on Cover 6 on about 41% of snaps against Drake Maye, who in 2025 led the league in interceptions, sacks and scrambles against split-field coverage. Maye saw it on 21 dropbacks and produced two interceptions and three scrambles. That's a game plan built on one quarterback's weakness.</p></div>
+</section>
+<!-- PART IV -->
+<section class="part" id="p4">
+  <p class="pl">Part IV</p>
+  <h2>Pressure</h2>
+</section>
+
+<section class="ch prose" id="c10">
+  <h3><span class="n">10</span>Four-man rush, blitz and everything between</h3>
+  <p>A <span class="term">blitz</span>, strictly speaking, is any rush of five or more. But the most interesting pressure in the modern NFL is the stuff that isn't a blitz at all. Here's the full menu.</p>
+  <ul>
+    <li><span class="term">Four-man rush</span>: the four linemen rush, seven drop. The baseline.</li>
+    <li><span class="term">Stunt</span> (also "game" or "twist"): the four rushers exchange gaps. One lineman slants to occupy a blocker, another loops behind him into the space that opens.</li>
+    <li><span class="term">Simulated pressure</span> ("sim"), or <span class="term">creeper</span>: still only four rushers, but not the four the offense expected. A linebacker or nickel rushes and a lineman drops into coverage. The offense's protection is built to block the obvious four, so an unexpected rusher often comes free, while the defense still has seven in coverage.</li>
+    <li><span class="term">Fire zone</span>: a five-man pressure with three deep and three under zone defenders behind it. It's safer than a man blitz because nobody is on an island.</li>
+    <li><span class="term">Man blitz</span>: five or six rushers with man coverage behind, often Cover 1 or Cover 0. High risk, high reward.</li>
+    <li><span class="term">Green dog</span> (or "hug"): a man-coverage defender whose assigned back stays in to block rushes instead, so the blocker is occupied and the defender adds pressure.</li>
+    <li><span class="term">Mug</span> looks: linebackers stand in the A-gaps before the snap threatening to rush. Sometimes they do. Often they bail.</li>
+  </ul>
+  <h4>The stunt</h4>
+  <p>The most common game is the T-E stunt ("tackle-end"): the defensive tackle crashes outside into the offensive tackle, and the end loops inside behind him into the gap the guard just vacated. If the guard and tackle don't pass the stunt between them cleanly, the looper runs free.</p>
+</section>
+<div class="dg" data-scenes="STUNT" data-title="T-E stunt on the right side"></div>
+<section class="prose">
+  <h4>Simulated pressure</h4>
+  <p>The sim is the heart of Macdonald's scheme. Look at what the offense is shown before the snap: two linebackers mugged in the A-gaps, meaning as many as six could rush. The protection has to account for them. Then at the snap one mugged backer rushes, the nickel comes off the edge, and a lineman and an edge player drop out. It's still a four-man rush with seven in coverage, but the protection slid toward the wrong people.</p>
+</section>
+<div class="dg" data-scenes="SIM" data-title="A creeper: four rush, but not the four you blocked"></div>
+<section class="prose">
+  <h4>A five-man pressure with rotation behind it</h4>
+  <p>When Seattle does send five, the coverage behind it usually rotates. Here the nickel blitzes from the slot, and the safety on that side rotates down to take the area the nickel vacated while the other safety spins to the deep middle. That's the family of nickel pressures Macdonald ran repeatedly in the Super Bowl.</p>
+</section>
+<div class="dg" data-scenes="NCAT" data-title="Nickel pressure with the safety replacing him"></div>
+<section class="prose">
+  <div class="note"><span class="nl">In Seattle</span><p>The numbers describe a sniper, not a machine gun. In 2025 Seattle blitzed only about 22% of the time, yet ranked third in the NFL in pressure rate (40.1%). It was third in stunt rate at roughly a quarter of snaps. Analyst Cody Alexander calls it "passive pressure": the structure and compression of the defense matter more than the volume of the blitz package. When the Seahawks do send extra rushers it tends to hit. Through eight weeks of 2025 they were the only team that hadn't allowed a touchdown pass when blitzing, and opponents completed just 53.3% of their passes against Seattle pressure. The one situation where Seattle really leans on the blitz is third-and-long, at around 40%. Film analysts have documented pressure families with names like "Pick," "Chucky" and "Palms" in Seattle's tape; whatever the real names are, the pattern is the same: pressure paths aimed at the B-gaps, where modern protections are thinnest.</p></div>
+</section>
+
+<section class="ch prose" id="c11">
+  <h3><span class="n">11</span>Protections and the quarterback's clock</h3>
+  <p>To understand pressure, you have to know what it's attacking. Pass protections come in a few flavors:</p>
+  <ul>
+    <li><span class="term">Slide</span>: the line blocks zones, sliding one direction as a unit. The running back takes the first threat on the opposite side. Great against stunts on the slide side, vulnerable to overloads on the back side.</li>
+    <li><span class="term">Man / "big on big"</span>: each lineman takes a specific defender; backs take linebackers. Clear rules, but a stunt or a late-moving linebacker can confuse who is whose.</li>
+    <li><span class="term">Half-slide</span>: part man, part slide, the most common NFL answer.</li>
+    <li><span class="term">Max protect</span>: keep the tight end and back in to block, sending only two or three receivers. Good against blitzes, but the defense can drop eight into coverage.</li>
+  </ul>
+  <p>The center usually sets the protection by identifying the MIKE ("54 is the mike!"). Watch for that call — it tells you who the offense thinks is the most dangerous second-level player. Defenses that swap linebackers late, walk safeties down or mug the A-gaps are specifically trying to make that identification wrong.</p>
+  <p>If more defenders rush than the offense can block, somebody is <span class="term">hot</span>: the quarterback has to throw immediately to a receiver who adjusts his route (a "sight adjustment") into the space the blitzer vacated. That's why a blitzing defense wants the vacated space to be filled by someone else, which is exactly what the rotation in the previous diagram does.</p>
+  <h4>The clock</h4>
+  <p>Most NFL pass plays are designed around a clock of roughly two and a half to three seconds. Pressure doesn't need to produce a sack to win; it only needs to make the quarterback throw before the route develops or to a place the defense chose. A checkdown to a running back for three yards on third-and-eight is a defensive win.</p>
+  <div class="note"><span class="nl">In Seattle</span><p>Seattle's defense seems built around that idea. In 2025 it ranked third in the league in checkdown rate (about 14%), and when it sent pressure it held opponents to around four yards per dropback regardless of the coverage behind it. As film analysts have put it, receivers were "open" exactly where the coverage wanted the ball to go: low, short of the sticks and in front of a secondary that tackles well.</p></div>
+</section>
+
+<!-- PART V -->
+<section class="part" id="p5">
+  <p class="pl">Part V</p>
+  <h2>The operation</h2>
+</section>
+
+<section class="ch prose" id="c12">
+  <h3><span class="n">12</span>Reading keys: what each defender watches</h3>
+  <p>Defenders don't watch the ball. Each has a <span class="term">key</span>, a specific player or area whose first movement tells him what the play is. The key comes from his position and the call.</p>
+  <ul>
+    <li><span class="term">Defensive linemen</span> read the blocker in front of them. If the lineman pops up ("high hat"), it's probably a pass. If he fires out low ("low hat") or drives laterally, it's a run, and the angle of his helmet tells the direction.</li>
+    <li><span class="term">Linebackers</span> usually read the guards and the running back's path together. A guard pulling across the formation says "gap scheme, follow him." All linemen stepping the same way says "zone." A guard setting back says "pass; get to your drop."</li>
+    <li><span class="term">Safeties</span> often read #2 (as in quarters) or the "triangle": the nearest offensive tackle, the back and the quarterback.</li>
+    <li><span class="term">Cornerbacks</span> read the #1 receiver's release and, in zone, the quarterback's drop. A three-step drop means the ball is coming out quickly; a play-action fake means eyes back to your receiver immediately.</li>
+  </ul>
+  <p>Offenses attack keys. <span class="term">Play-action</span> shows run keys (low hats, a back taking a handoff) so linebackers and safeties step forward, then throws behind them. <span class="term">RPOs</span> leave one defender unblocked and let the quarterback decide after the snap whether that defender played the run or the pass. <span class="term">Bootlegs</span> send the flow one way and the quarterback the other. Every one of these is a bet that a defender will trust his key a split-second too long.</p>
+  <h4>If the offense does this, the defense does that</h4>
+  <p>Tap any offensive action to see the defense's standard answer.</p>
+  <div class="chips" id="ifChips" role="group" aria-label="Offensive actions"></div>
+  <div class="ans" id="ifAns" aria-live="polite"><h5>Pick an action above</h5><p>Each one shows the defense's usual counter, and how Seattle handles it.</p></div>
+</section>
+
+<section class="ch prose" id="c13">
+  <h3><span class="n">13</span>Communication: from the headset to the snap</h3>
+  <p>A defensive call has to get from the play-caller's mouth to eleven players, get adjusted to whatever the offense shows, and survive crowd noise, all in about 25 seconds. Here's the chain.</p>
+  <h4>The call</h4>
+  <p>In Seattle, head coach Mike Macdonald calls the defense himself. Defensive coordinator Aden Durde's role, as he's described it, is to take weight off the play-caller: see around corners, handle the areas he's strongest in, and support the call rather than make it. Macdonald has framed it as a team effort where he's simply the one hitting the button.</p>
+  <p>The call goes through the coach-to-player radio to one defender wearing a helmet marked with a green dot. Most teams give that helmet to the middle linebacker, which in Seattle's lineup is Ernest Jones IV. The radio cuts off automatically when the play clock hits 15 seconds, so anything the defense needs to know after that has to happen on the field.</p>
+  <p>A defensive call typically stacks three pieces: the <span class="term">front</span> (alignment and strength rule), any <span class="term">movement or pressure</span> (a stunt, a sim, a blitz), and the <span class="term">coverage</span>. A made-up example in that shape would be "Over, Tex, Six": Over front, a tackle-end stunt, Cover 6. Many defensive players also wear a wristband with a numbered call card so a short number can stand in for a long call.</p>
+  <h4>On the field</h4>
+  <p>The green-dot linebacker relays the call in the huddle or with signals. Once the offense breaks the huddle and shows its formation, the second wave of communication starts:</p>
+  <ul>
+    <li>The linebackers declare the strength and any front adjustment to the linemen.</li>
+    <li>The safeties confirm the coverage and any checks with the corners and nickel. Against certain formations, a call might "check" automatically (for example, from quarters to a cloud coverage against a trips formation).</li>
+    <li>If the offense motions, someone makes the adjustment call: "lock" or "travel" (man; follow him), "bump" (zone; everyone slides), or a rotation change.</li>
+    <li>After the snap, route calls fly: "cross!", "wheel!", "under!", "switch!" These are the handoffs from Chapter 8, spoken aloud.</li>
+  </ul>
+  <p>Much of this is nonverbal: hand signals, pointing, eye contact. It has to be, because a home crowd can drown out the defense too.</p>
+  <div class="note"><span class="nl">In Seattle</span><p>Lumen Field's noise is famous for wrecking opposing offenses, but Leonard Williams has noted that it also complicates Seattle's own defensive communication, so the team works on verbal and nonverbal systems specifically for home games. Durde listed communicating through crowd noise as a training-camp emphasis heading into 2026. Continuity is the advantage: with 10 of 11 Super Bowl starters back in Year 3, players can operate on what Durde calls an unspoken understanding. Jones added that the group can now take more into a game mentally and do more with it.</p></div>
+</section>
+
+<section class="ch prose" id="c14">
+  <h3><span class="n">14</span>Personnel rotation and substitution</h3>
+  <p>Between plays, a coach on the sidelines watches which offensive players are running onto the field and signals the defensive personnel group. If the offense substitutes, the officials must give the defense a chance to substitute too; that's why you'll see an official stand over the ball. Offenses counter with <span class="term">tempo</span>: stay in the same personnel and snap quickly, trapping the defense in whatever package it had on the field. That's the value of a package, like Seattle's big nickel, that is reasonable against both heavy and light groups.</p>
+  <p>Defensive linemen rotate constantly because pass rushing is exhausting. Many teams rotate by series or by a snap count; top rushers often play 60–75% of snaps, and specialists come in for passing downs. Seattle's 2026 front is deep enough to rotate freely: Leonard Williams, Byron Murphy II, Jarran Reed and second-year Rylie Mills inside; DeMarcus Lawrence, Uchenna Nwosu, Derick Hall and veteran Dante Fowler Jr. on the edges. In the Super Bowl, ten different Seahawks recorded a pressure, and Mills, who had played one playoff snap before the game, got a sack.</p>
+  <p>Rotation also happens within a play call. A defense might have one player who aligns as a linebacker on first down and an edge rusher on third down, which is why depth charts for defenses like Seattle's can be misleading: Derick Hall is listed as a backup but plays like a starter.</p>
+</section>
+
+<section class="ch prose" id="c15">
+  <h3><span class="n">15</span>Situational football</h3>
+  <p>The same defense plays very differently depending on down, distance, field position and the clock. The call sheet is organized by situation, not by play.</p>
+  <ul>
+    <li><span class="term">First and ten</span>: the offense can do anything, so defenses play sound, balanced calls built to stop the run. Seattle's blitz rate is lowest on early downs.</li>
+    <li><span class="term">Second and long</span>: offenses often run to "stay on schedule" or throw screens. Defenses can mix in pressure and disguise.</li>
+    <li><span class="term">Third and short</span> (1–3 yards): heavier fronts, tighter man coverage, run-stopping first.</li>
+    <li><span class="term">Third and medium</span> (4–7): the home of 2-Man, sim pressures and match coverages that defend the sticks.</li>
+    <li><span class="term">Third and long</span> (8+): the defense can sit deep and rally, or blitz to force a quick throw short of the marker. Seattle blitzed about 40% of the time here in 2025.</li>
+    <li><span class="term">Red zone</span>: the field shrinks, so deep zones become end-zone zones. Expect more man, more brackets, and more aggressive underneath defenders because nothing can get behind them.</li>
+    <li><span class="term">Two-minute</span>: keep everything in front, tackle in bounds, force the offense to use timeouts. Rushing three and dropping eight is common here.</li>
+    <li><span class="term">Backed up / goal line</span>: heavy personnel, everyone crowding the line.</li>
+  </ul>
+  <p>Coaches also call "sequences": showing a look early in a game specifically so they can run something different out of it later. A pressure a defense has shown three times becomes a perfect disguise for a coverage-only call on the fourth.</p>
+  <div class="note"><span class="nl">In Seattle</span><p>Colleagues describe Macdonald as coaching defense the way offensive coaches coach offense: plays with specific roles for every player, a heavy emphasis on situations, and disguises and pressures that can come from anywhere. In the Super Bowl he flipped his usual script, blitzing about 33% of the time in the first half and only 8% in the second, after the lead forced New England to throw into his coverage rotations.</p></div>
+</section>
+<!-- PART VI -->
+<section class="part" id="p6">
+  <p class="pl">Part VI</p>
+  <h2>The Seahawks way</h2>
+</section>
+
+<section class="ch prose" id="c16">
+  <h3><span class="n">16</span>Where this defense comes from</h3>
+  <p>Macdonald is a product of the Baltimore Ravens' in-house coaching pipeline, one of the most prolific in the league. He started there as an intern in 2014, became an assistant, coached defensive backs, and took over as linebackers coach in 2018 when Wink Martindale became coordinator. In 2021 he left to be Jim Harbaugh's defensive coordinator at Michigan, where the defense went from 116th in one advanced efficiency ranking to 12th in a single year.</p>
+  <p>In 2022 John Harbaugh brought him back to Baltimore to replace Martindale, whose defense had slid to 28th in DVOA and leaned heavily on blitzing and man coverage. Macdonald streamlined the calls, rewrote the teaching and moved the defense toward zone and disguised pressure. By 2023 the Ravens led the NFL with 60 sacks and finished first in DVOA. Analysts sometimes call this the "Ravens 2.0" system.</p>
+  <p>Seattle hired him in 2024 as the league's youngest head coach. The pattern repeated: the defense struggled early in Year 1, then climbed from 20th to 11th in EPA per play over the second half, and in Year 2 became the best scoring defense in football: 17.2 points a game, 4.4 yards per play allowed, 47 sacks and 18 interceptions in the regular season, and seven more takeaways in the playoffs.</p>
+</section>
+
+<section class="ch prose" id="c17">
+  <h3><span class="n">17</span>Seven things Seattle does differently</h3>
+  <h4>1. Two-high shell, light box, run still dies</h4>
+  <p>Most teams that play two deep safeties give up rushing yards and accept it. Seattle doesn't, because its interior linemen command double teams and its nickel and WILL arrive late as extra run defenders. This is the complaint Shanahan made before the Super Bowl, and it's the foundation for everything else.</p>
+  <h4>2. Nickel is base</h4>
+  <p>Roughly 91% of Seattle's 2025 snaps came in sub packages, with the base 3-4 on about 6%. The big nickel is why they can.</p>
+  <h4>3. Pressure without blitzing</h4>
+  <p>Third in pressure rate on one of the league's lowest blitz rates. Stunts, sims and front movement do the work that other teams need a sixth rusher for.</p>
+  <h4>4. The sniper blitz</h4>
+  <p>When the blitz comes, it's timed to the situation (third-and-long) or aimed at a specific weakness found on film. Devon Witherspoon explained after Super Bowl LX that the staff had found tells in how New England's guards and tackles set, including whether they would overset against certain rushes, and built the blitzes around them.</p>
+  <h4>5. Pressure married to rotation</h4>
+  <p>Almost every pressure comes with a disguise or rotation behind it, which is why quarterbacks under Seattle pressure check the ball down rather than find a hot receiver running free.</p>
+  <h4>6. Game-plan specificity</h4>
+  <p>Seattle doesn't play one defense every week. It played Cover 6 on 41% of snaps against Drake Maye in the 2026 opener because Maye struggled against split-field coverage, far above its already league-leading season rate. It blitzed a third of the time in the first half of the Super Bowl because it had found protection tells. The menu is the same; the order changes by opponent.</p>
+  <h4>7. Fundamentals under the complexity</h4>
+  <p>None of the disguise works if players miss tackles or blow assignments. Seattle's defensive backs tackle well enough to let short completions die, and continuity gives the unit the shared understanding to execute complex calls fast. Jones has said the team's standard is perfection: it doesn't want to give up a yard, and it gets angry when it does.</p>
+</section>
+
+<section class="ch prose" id="c18">
+  <h3><span class="n">18</span>Legion of Boom vs. the Dark Side</h3>
+  <p>Seattle has now had two historically great defenses in one generation, and they could hardly be more different. Pete Carroll's teams led the league in scoring defense four straight years (2012–2015) with a system famous for its simplicity; Macdonald's won it in 2025 with a system famous for its complexity.</p>
+</section>
+<div class="tw prose"><table>
+<thead><tr><th></th><th>Legion of Boom (2012–15)</th><th>Dark Side (2025– )</th></tr></thead>
+<tbody>
+<tr><td>Core shell</td><td>Single-high. Cover 3 with an elite free safety in the middle.</td><td>Split-field. Two-high looks that rotate into anything, heavy on Cover 6.</td></tr>
+<tr><td>Philosophy</td><td>Few calls, perfect execution. Let the offense know what's coming and beat it anyway.</td><td>Many calls from the same look. Make the quarterback hesitate before he can execute.</td></tr>
+<tr><td>Corners</td><td>Long, physical press corners who jammed and funneled receivers.</td><td>Versatile corners who press, cloud, play the slot and blitz.</td></tr>
+<tr><td>Safeties</td><td>A rangy center fielder plus an enforcer who played like a linebacker.</td><td>Interchangeable safeties who rotate, fit the run from depth and read #2.</td></tr>
+<tr><td>Front</td><td>A 4-3 Under family with a speed "Leo" rusher off the edge.</td><td>A multiple nickel front with mugs and movement to hide the four rushers.</td></tr>
+<tr><td>Pressure</td><td>Mostly a four-man rush with a physical secondary behind it.</td><td>Mostly a four-man rush, but disguised through stunts and sims, with rare, targeted blitzes.</td></tr>
+<tr><td>Signature image</td><td>The Super Bowl XLVIII rout of Denver.</td><td>The Super Bowl LX dismantling of New England.</td></tr>
+</tbody></table></div>
+<section class="prose">
+  <p>Both share one thing: a defense that tackles and hits. One Super Bowl writeup called it a loud echo of the Legion of Boom at its peak, even as the scheme underneath is almost the opposite.</p>
+</section>
+
+<section class="ch prose" id="c19">
+  <h3><span class="n">19</span>The 2026 roster, by role</h3>
+  <p>Seattle returned 10 of 11 Super Bowl starters. The losses were safety Coby Bryant, corner Riq Woolen and edge rusher Boye Mafe in free agency; the additions include pass rusher Dante Fowler Jr., veteran corner Trevon Diggs and rookie corners Julian Neal and Avery Smith. Rookie safety Bud Clark was lost to a preseason injury.</p>
+</section>
+<div class="tw prose"><table>
+<thead><tr><th>Role</th><th>Players</th><th>What they bring to the scheme</th></tr></thead>
+<tbody>
+<tr><td>Interior line</td><td>Leonard Williams, Byron Murphy II, Jarran Reed, Rylie Mills</td><td>Double-team magnets that make the six-man box work, and push from the inside on passing downs.</td></tr>
+<tr><td>Edges</td><td>DeMarcus Lawrence, Uchenna Nwosu, Derick Hall, Dante Fowler Jr.</td><td>Speed rush, edge setting, and the ability to drop into coverage on sims.</td></tr>
+<tr><td>Linebackers</td><td>Ernest Jones IV, Drake Thomas, Tyrice Knight</td><td>Jones runs the huddle; Thomas broke out in 2025 with 96 tackles and 10 for loss.</td></tr>
+<tr><td>Nickel / hybrid</td><td>Nick Emmanwori, Devon Witherspoon</td><td>The big nickel and the blitzing star; Emmanwori missed the start of 2026 injured.</td></tr>
+<tr><td>Corners</td><td>Devon Witherspoon, Josh Jobe, Nehemiah Pritchett, Trevon Diggs, Julian Neal, Avery Smith</td><td>Press, cloud and trail. Pritchett and Jobe both picked off Maye in the 2026 opener.</td></tr>
+<tr><td>Safeties</td><td>Julian Love, Ty Okada, Rodney Thomas II</td><td>Love, the veteran of the room, is a downhill run defender and reliable cover safety; Okada started 11 games in 2025.</td></tr>
+</tbody></table></div>
+
+<section class="ch prose" id="c20">
+  <h3><span class="n">20</span>Film room: two games against the same quarterback</h3>
+  <h4>Super Bowl LX: Seattle 29, New England 13</h4>
+  <p>Seattle came out swinging. It blitzed about 33% of the time in the first half, far above its norm, and over the game Macdonald dialed up six variations of a nickel blitz with Witherspoon as the missile. Nothing in the plan was exotic; it attacked the soft spot in the Patriots' B-gaps and the tells Witherspoon described. At halftime Drake Maye was 6-of-11 for 48 yards, had been sacked three times, and had completed just two of five throws beyond five yards. New England had 33 rushing yards. The score was only 9–0, but the game was over structurally.</p>
+  <p>In the second half, with the Patriots forced to throw, Seattle's blitz rate dropped to about 8% and the coverage rotations took over. The knockout came with 4:27 left: Witherspoon screamed off the edge on another nickel blitz, jarred the ball loose as Maye threw, and Uchenna Nwosu intercepted the loose ball and returned it 45 yards for a touchdown. Final tally: six sacks by four different players, three takeaways, ten players with a pressure, six with a pass breakup, and a shutout through three quarters. The defense was still annoyed about two late touchdowns.</p>
+  <h4>2026 Week 1: Seattle 13, New England 10</h4>
+  <p>The rematch was a completely different game plan. Instead of blitzing, Seattle sat in split-field coverage, playing Cover 6 on about 41% of snaps. New England stayed conservative and led 10–3 entering the fourth quarter, with Seattle down to backup quarterback Drew Lock after Sam Darnold's hip injury on the opening drive.</p>
+  <p>Then the coverage started winning. On the second play of the fourth quarter, Nehemiah Pritchett intercepted a deep shot to Romeo Doubs, setting up Lock's 45-yard touchdown to Jaxon Smith-Njigba. On the next Patriots drive, Julian Love read a throw over the middle to DeMario Douglas and picked it, setting up the go-ahead field goal. And with 26 seconds left, facing third-and-5 at the Seattle 16, Maye was flushed from the pocket and forced a ball into the end zone that Josh Jobe intercepted. Three interceptions in one quarter, the first time Seattle had done that since Richard Sherman and Earl Thomas did it in 2016.</p>
+  <p>Same opponent, same quarterback, opposite plans: pressure-heavy in February, coverage-heavy in September. That flexibility is the scheme.</p>
+</section>
+<!-- PART VII -->
+<section class="part" id="p7">
+  <p class="pl">Part VII</p>
+  <h2>Watching the game</h2>
+</section>
+
+<section class="ch prose" id="c21">
+  <h3><span class="n">21</span>The pre-snap scan</h3>
+  <p>The broadcast gives you a few seconds of the formation before the snap, often from a high angle. Here's the scan, in the order that gives you the most information fastest. With practice it takes about as long as the play clock's last ten seconds.</p>
+  <ol class="steps">
+    <li><b>Count the defensive backs.</b>Five DBs is nickel, six is dime. If a big safety is playing the slot, that's Seattle's big nickel, and it means the defense isn't worried about the offense's size.</li>
+    <li><b>Count the safeties deep.</b>One in the middle at 12–15 yards: closed middle (Cover 1 or 3). Two split at 12–15 yards: open middle (2, 4, 6). Then keep watching, because this is what disguise changes.</li>
+    <li><b>Check safety depth and width.</b>Wide on the hashes and deep (14+) suggests Cover 2 halves. Tighter and shallower (10–12) suggests quarters, where safeties need to fit the run. One safety creeping toward the box late suggests a rotation to single-high.</li>
+    <li><b>Look at the corners.</b>Pressed, inside leverage, eyes on the receiver: man. Off at 7+ yards, eyes on the quarterback: zone. Squatting at 5 yards with outside leverage: Cover 2 or a cloud corner in Cover 6. A corner who's shallower on one side than the other is a clue about which side is the "half" side.</li>
+    <li><b>Find the nickel.</b>Is he over the slot, inside the slot (hinting at a blitz path), or walked into the box like a linebacker?</li>
+    <li><b>Check the linebackers.</b>Normal depth is about 5 yards. Linebackers standing in the A-gaps are a mug look. Linebackers creeping forward as the clock runs down may be coming, or may be selling it.</li>
+    <li><b>Count the box.</b>Six versus seven or eight tells you how much the defense respects the run and whether it has a safety to spare.</li>
+    <li><b>Look at the line's stances.</b>Edge rushers in wide alignments with weight forward are pass-rush alignments. A defensive tackle who has shifted from a 3-technique to a 4i may be setting up a stunt.</li>
+    <li><b>Check down and distance.</b>Third-and-long changes everything. Seattle's blitz rate roughly doubles there.</li>
+    <li><b>Watch the snap, not the ball.</b>The last half-second before the snap is where the defense shows its real hand. Safeties that start moving as the center grips the ball are rotating.</li>
+  </ol>
+  <div class="note watch"><span class="nl">What to watch for</span><p>The single best habit: when the broadcast shows the pre-snap look, pick a safety and watch only him at the snap. Where he goes in the first two steps tells you the coverage family better than anything else on the field.</p></div>
+</section>
+
+<section class="ch prose" id="c22">
+  <h3><span class="n">22</span>Motion: the offense's truth serum</h3>
+  <p>Offenses use pre-snap motion partly to answer the question "man or zone?" If a receiver motions across the formation and a defender runs with him, that's almost always man coverage. If the defenders instead shuffle over a few steps each ("bump"), passing responsibility along, it's zone or match. Watch both tabs.</p>
+</section>
+<div class="dg" data-scenes="MMAN,MZONE" data-labels="Man: somebody travels|Zone: everybody bumps" data-title="Same motion, two answers"></div>
+<section class="prose">
+  <p>Defenses know this, of course. Good defenses use "lock and bump" mixes, where the motion receiver's defender travels only part of the way before passing him off, or where a man coverage uses a safety to take the motion man so the corner doesn't have to cross the formation. Motion also forces the defense to re-declare strength, which is when miscommunication happens. If you see two defenders pointing at each other after a motion, something is about to go wrong or right.</p>
+  <div class="note watch"><span class="nl">What to watch for</span><p>Motion right at the snap ("jet" or "orbit" motion) is a different weapon: it's designed to change the run fit and stress the defenders who have to chase it. Watch whether Seattle's safeties or nickel react to it, or whether the defense lets it go and trusts its structure.</p></div>
+</section>
+
+<section class="ch prose" id="c23">
+  <h3><span class="n">23</span>The first two seconds after the snap</h3>
+  <p>If you missed the pre-snap look, the first two seconds still tell you almost everything. Here's where to look, in order.</p>
+  <ul>
+    <li><span class="term">The safeties' first steps.</span> Both backpedal and widen: two-high, likely Cover 2 or 6. Both backpedal but stay tight, reading: quarters. One sprints to the middle and one drives down: rotation to Cover 3 or Cover 1.</li>
+    <li><span class="term">The corners' hips.</span> A corner who turns and runs with the receiver from the line is in man or deep-third coverage. A corner who sits and keeps his eyes in the backfield is playing the flat, which means Cover 2 or a cloud side.</li>
+    <li><span class="term">The linebackers' depth.</span> If the MIKE sprints straight back 15 yards to the middle of the field, it's Tampa 2. If linebackers are running with backs or tight ends, it's man.</li>
+    <li><span class="term">Count the rushers.</span> Four or five? Did a linebacker or nickel rush while a lineman dropped out? That's a sim. Replays from the end-zone angle are perfect for this.</li>
+    <li><span class="term">Where the quarterback looks.</span> Quarterbacks usually look first where the pre-snap read told them to. If he pumps and then checks down, the rotation probably took away his first read.</li>
+  </ul>
+  <div class="note watch"><span class="nl">What to watch for in Seattle games</span><p>Watch the defensive lineman aligned over the guard on obvious passing downs. If he drops into coverage, you're watching a sim. Watch Witherspoon and Emmanwori before the snap: where they align inside or outside the slot hints at a blitz path. And watch the checkdowns. When the opposing quarterback dumps it short on third down and the running back is tackled immediately, that's the design working.</p></div>
+</section>
+
+<section class="ch prose" id="c24">
+  <h3><span class="n">24</span>How offenses attack each coverage</h3>
+  <p>Every coverage has a structural weakness, and offensive coordinators have a "beater" concept for each. When you see the offense run one of these, you're seeing its guess about what the defense is playing. The four tabs below show classic examples.</p>
+</section>
+<div class="dg" data-scenes="SMASH,FLOOD,MESH,PAQ" data-labels="Smash vs Cover 2|Flood vs Cover 3|Mesh vs Cover 1|Play-action vs Quarters" data-title="Coverage beaters"></div>
+<div class="tw prose"><table>
+<thead><tr><th>If the defense plays</th><th>Offenses like to run</th><th>Why it works</th></tr></thead>
+<tbody>
+<tr><td>Cover 0 / heavy blitz</td><td>Quick slants, hot routes, screens, max protect with a deep shot</td><td>More rushers than blockers means the ball must come out, and no one is deep.</td></tr>
+<tr><td>Cover 1</td><td>Mesh, rubs, crossers, isolation routes to the best receiver, QB scrambles</td><td>Man defenders get picked or outrun, and their backs are turned to the quarterback.</td></tr>
+<tr><td>Cover 2</td><td>Smash, deep seams between the safeties, runs against the light box</td><td>Corners sit short and the deep middle is open.</td></tr>
+<tr><td>Tampa 2</td><td>Deep outside throws in the hole between the corner and safety; the "dagger" (seam plus dig)</td><td>The MIKE can't take away everything in the middle at once.</td></tr>
+<tr><td>Cover 3</td><td>Four verticals, flood, curl-flat, seams</td><td>Three deep defenders can't cover four vertical routes, and flat defenders face two-route conflicts.</td></tr>
+<tr><td>Quarters</td><td>Play-action, post-wheel, routes that pull #2's reader forward</td><td>Safeties reading #2 or the run can be manipulated into the wrong decision.</td></tr>
+<tr><td>Cover 6</td><td>Motion and shifts that flip strength late, attacking the half side</td><td>The call is set to the strength; move the strength and the defense has to re-declare.</td></tr>
+<tr><td>Disguise in general</td><td>Tempo, quick game, motion at the snap</td><td>Snapping fast forces the defense to show its hand early, and quick throws beat rotations that haven't finished.</td></tr>
+</tbody></table></div>
+<section class="prose">
+  <div class="note"><span class="nl">In Seattle</span><p>Watch for opponents using tempo and snap-count tricks against the Seahawks. It's the standard answer to disguise-heavy defenses, since a defense that doesn't have time to set up its disguise has to play something simpler. Seattle's answer has been a nickel package that doesn't need to substitute, and a call menu players know well enough to line up fast.</p></div>
+</section>
+
+<section class="ch prose" id="c25">
+  <h3><span class="n">25</span>Test yourself</h3>
+  <p>Each picture shows where defenders went after the snap, with zones and man assignments hidden. Name the coverage or the idea. Your score updates as you go.</p>
+  <p class="score" id="qscore">0 of 7 correct</p>
+  <div id="quiz"></div>
+</section>
+
+<section class="ch prose" id="gloss">
+  <h3><span class="n"></span>Glossary</h3>
+  <input class="gsearch" id="gsearch" type="search" placeholder="Search terms, like 'mug' or 'cloud'" aria-label="Search glossary">
+  <dl class="gl" id="glist"></dl>
+</section>
+
+<section class="ch prose" id="srcs">
+  <h3><span class="n"></span>Sources and further reading</h3>
+  <p>Seattle-specific numbers and tendencies come from these reports and film studies. Cody Alexander's MatchQuarters is the best ongoing source on Macdonald's scheme if you want to go deeper.</p>
+  <ul class="src">
+    <li><a href="https://www.matchquarters.com/p/mike-macdonald-super-bowl-lx-defense-masterclass">MatchQuarters: Mike Macdonald's Pressure Masterclass at Super Bowl LX</a></li>
+    <li><a href="https://www.matchquarters.com/p/mike-macdonald-cover-6-blueprint-drake-maye">MatchQuarters: Mike Macdonald's Cover 6 Blueprint Against Drake Maye (Week 1, 2026)</a></li>
+    <li><a href="https://www.matchquarters.com/p/how-mike-macdonald-transformed-seahawks-defense-blitz-package-texans">MatchQuarters: Less is More, on Seattle's pressure packages (2025)</a></li>
+    <li><a href="https://www.matchquarters.com/p/the-seattle-seahawks-3-buzz-cut-up-mike-macdonald">MatchQuarters: Inside Mike Macdonald's Seahawks Defense and the 3-Buzz concept</a></li>
+    <li><a href="https://www.matchquarters.com/p/seahawks-checkdown-loop-efficient-blitz-system">MatchQuarters: How the Seahawks manufactured the NFL's most efficient pressures</a></li>
+    <li><a href="https://www.seahawks.com/news/seahawks-defense-knows-there-s-a-deeper-level-to-uncover-in-year-3-under-mike-macdonald">Seahawks.com: Seahawks defense knows there's a deeper level to uncover in Year 3</a></li>
+    <li><a href="https://www.seahawks.com/news/dark-side-defense-leads-seahawks-into-postseason-it-s-a-special-group">Seahawks.com: Dark Side defense leads Seahawks into postseason</a></li>
+    <li><a href="https://www.seahawks.com/news/seahawks-offensive-and-defensive-coordinators-head-into-week-1-full-of-anticipation">Seahawks.com: Coordinators head into Week 1 (play-calling roles)</a></li>
+    <li><a href="https://www.seahawks.com/news/12-numbers-of-note-from-the-seahawks-season-opening-win-over-the-patriots">Seahawks.com: 12 numbers of note from the 2026 opener</a></li>
+    <li><a href="https://www.theringer.com/2026/02/09/nfl/seattle-seahawks-defense-mike-macdonald-dark-side">The Ringer: How the Seahawks' Dark Side defense turned Super Bowl LX into a blowout</a></li>
+    <li><a href="https://mattlombardonfl.substack.com/p/the-dark-side-rises-how-mike-macdonald">4 Downs: The Dark Side Rises</a></li>
+    <li><a href="https://coachkoufootball.substack.com/p/mike-macdonald-defense-welcome-to">Coach Kou: Welcome to the Dark Side</a></li>
+    <li><a href="https://nbcsports.com/nfl/profootballtalk/rumor-mill/news/nfl-kickoff-2026-seahawks-beat-patriots-13-10-but-lose-sam-darnold-to-hip-injury">ProFootballTalk: Seahawks beat Patriots 13–10 in the 2026 opener</a></li>
+    <li><a href="https://heavy.com/sports/nfl/seattle-seahawks/seahawks-aden-durde-overlooked-hiring-cycle/">Heavy: Aden Durde and Seattle's 2025 defensive numbers</a></li>
+    <li><a href="https://athlonsports.com/nfl/seattle-seahawks/seahawks-updated-depth-chart-following-roster-cuts">Athlon: Seahawks depth chart after 2026 roster cuts</a></li>
+  </ul>
+  <footer>Written in September 2026. Statistics are as reported by the sources above; charting services differ slightly on coverage and blitz rates. Seattle's internal call names aren't public, so play and coverage names here are standard league terminology.</footer>
+</section>
+</main>
+<script>
+(function(){
+"use strict";
+var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var YD=6.75, LOS=200, NS='http://www.w3.org/2000/svg';
+function sx(x){return x*YD}
+function sy(y){return LOS-y*YD}
+function el(tag,a,p){var e=document.createElementNS(NS,tag);if(a)for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function mix(){var o={};for(var i=0;i<arguments.length;i++){var s=arguments[i];for(var k in s)o[k]=s[k]}return o}
+
+/* ---------- base formations ---------- */
+var OFF={LT:[23.55,-.7],LG:[25.1,-.7],C:[26.67,-.7],RG:[28.25,-.7],RT:[29.8,-.7],Y:[31.6,-.9],QB:[26.67,-5],RB:[28.8,-5.2],X:[4.5,-.8],H:[13,-1.1],Z:[48.8,-.8]};
+var OLAB={LT:'',LG:'',C:'',RG:'',RT:'',Y:'Y',QB:'Q',RB:'R',X:'X',H:'H',Z:'Z'};
+var DEF={DE1:[22.6,.9],DT1:[25.9,.9],DT2:[29,.9],DE2:[32.9,.9],W:[24.2,5.2],M:[28.4,5.2],NB:[14.2,4.6],CB1:[4.8,6.8],CB2:[48.6,6.8],FS:[17.5,13],SS:[36,13]};
+var DLAB={DE1:'E',DT1:'N',DT2:'T',DE2:'E',W:'W',M:'M',NB:'NB',CB1:'C',CB2:'C',FS:'FS',SS:'SS'};
+var OL=['LT','LG','C','RG','RT'];
+var PRO={LT:[23.3,-2.4],LG:[25,-1.8],C:[26.67,-1.6],RG:[28.3,-1.8],RT:[30.1,-2.4],QB:[26.67,-7]};
+var RUSH={DE1:[23.2,-3.8],DT1:[26.1,-2.3],DT2:[28.7,-2.3],DE2:[31.2,-4]};
+var PASS=mix(PRO,RUSH);
+
+/* zones */
+function Z(t,x,y,rx,ry,l,b){return {t:t,x:x,y:y,rx:rx,ry:ry,l:l,b:b==null?1:b}}
+var THIRDS=[Z('deep',8.9,20,8.6,5.3,'Deep third'),Z('deep',26.67,20.5,8.6,5.3,'Deep middle'),Z('deep',44.4,20,8.6,5.3,'Deep third')];
+var HALVES=[Z('deep',13.3,20,12.8,5.4,'Deep half'),Z('deep',40,20,12.8,5.4,'Deep half')];
+function zb(arr,b){return arr.map(function(z){var c=mix(z);c.b=b;return c})}
+
+/* ---------- scenes ---------- */
+var S={};
+var twoHighPre={FS:[17.5,13],SS:[36,13],CB1:[4.8,7],CB2:[48.6,7]};
+
+S.C0={beats:['<b>Before the snap</b>Everyone is tight: corners pressed, the nickel on the slot, a safety down on the tight end, the other safety low over the back, both linebackers mugged in the A-gaps. Nobody is deep.','<b>At the snap</b>Both linebackers rush, making six rushers against six blockers at best. Every eligible receiver has a man on him. The ball has to come out fast.'],
+ set:{CB1:[4.8,1.6],CB2:[48.6,1.6],NB:[13.4,1.8],SS:[32.3,3.4],FS:[28.8,7.5],M:[27.4,1.8],W:[25.9,1.8]},
+ k:{1:mix(PASS,{M:[27.3,-2.9],W:[25.9,-2.9],CB1:[4.8,2.4],CB2:[48.6,2.4],NB:[13.4,2.6],SS:[32.2,3.2],FS:[29,1.5]})},
+ man:[['CB1','X'],['CB2','Z'],['NB','H'],['SS','Y'],['FS','RB']]};
+S.C1={beats:['<b>Before the snap</b>One safety deep in the middle (closed middle). The other safety is down near the tight end and the corners are pressed with inside leverage.','<b>At the snap</b>Man coverage underneath: each receiver has a defender, the MIKE takes the back, and the WILL sits in the low "rat" hole to rob crossers. The free safety protects the deep middle.'],
+ set:{FS:[26.67,14],SS:[33.6,7],CB1:[4.8,2],CB2:[48.6,2],NB:[13.6,2.5],M:[28.6,5],W:[24.4,5]},
+ k:{1:mix(PASS,{FS:[26.67,19],SS:[32.4,4],CB1:[4.8,3],CB2:[48.6,3],NB:[13.4,3.5],M:[28.6,3.2],W:[26.67,9]})},
+ zones:[Z('deep',26.67,19.5,12,5.5,'Deep middle'),Z('under',26.67,9,4.8,2.6,'Rat')],
+ man:[['CB1','X'],['CB2','Z'],['NB','H'],['SS','Y'],['M','RB']]};
+S.C2={beats:['<b>Before the snap</b>Two safeties deep and wide, near the hashes. The corners are pressed with outside leverage, looking inside at the quarterback.','<b>At the snap</b>The safeties split the deep field in halves. The corners jam and sit in the flats. Five defenders zone the short area: flat, curl, middle hook, curl, flat.'],
+ set:{FS:[13,13.5],SS:[40.3,13.5],CB1:[4,2.5],CB2:[49.4,2.5]},
+ k:{1:mix(PASS,{FS:[12.5,20],SS:[40.8,20],CB1:[4.8,6.5],CB2:[48.6,6.5],NB:[15,9.5],W:[26.67,10.5],M:[38,9.5]})},
+ zones:HALVES.concat([Z('under',5,6.5,4.6,2.8,'Flat'),Z('under',15,9.5,5,2.8,'Curl'),Z('under',26.67,10.5,5.2,2.8,'Hook'),Z('under',38,9.5,5,2.8,'Curl'),Z('under',48.3,6.5,4.6,2.8,'Flat')])};
+S.T2={beats:['<b>Before the snap</b>Identical to Cover 2: two deep, wide safeties and squatting corners. Nothing tells you yet that it\'s different.','<b>At the snap</b>The MIKE turns and sprints to the deep middle, the one hole Cover 2 can\'t cover. The nickel and WILL take the curls, the corners take the flats.'],
+ set:{FS:[13,13.5],SS:[40.3,13.5],CB1:[4,2.5],CB2:[49.4,2.5]},
+ k:{1:mix(PASS,{FS:[12,20],SS:[41.3,20],CB1:[4.8,6.5],CB2:[48.6,6.5],NB:[15,9.5],W:[36,9.8],M:[26.67,16.5]})},
+ zones:HALVES.concat([Z('deep',26.67,16.5,5,3.2,'Middle (MIKE)'),Z('under',5,6.5,4.6,2.8,'Flat'),Z('under',15,9.5,5,2.8,'Curl'),Z('under',36,9.8,5,2.8,'Curl'),Z('under',48.3,6.5,4.6,2.8,'Flat')])};
+S.C3={beats:['<b>Before the snap</b>One safety deep in the middle; the strong safety is down at about 8 yards on the tight end\'s side. Corners are off at 7 yards with their eyes on the quarterback.','<b>At the snap</b>The corners bail to the outside deep thirds and the free safety takes the middle third. Four defenders spread across the underneath zones. It\'s sound deep, and the strong safety starts close enough to help against the run.'],
+ set:{FS:[26.67,14.5],SS:[35.5,8.5],CB1:[4.8,7.5],CB2:[48.6,7.5],NB:[14,4.8]},
+ k:{1:mix(PASS,{CB1:[8.9,19],CB2:[44.4,19],FS:[26.67,21],SS:[40.5,8.5],NB:[11,8.3],W:[21.5,10],M:[31.5,10]})},
+ zones:THIRDS.concat([Z('under',10.5,8,5.8,3,'Curl/flat'),Z('under',21.5,10,4.8,2.8,'Hook'),Z('under',31.8,10,4.8,2.8,'Hook'),Z('under',41.5,8,5.8,3,'Curl/flat')])};
+S.C4={beats:['<b>Before the snap</b>Two safeties, but closer together and shallower (10 to 12 yards) than in Cover 2. They need to be close enough to hit the run. Corners are off.','<b>At the snap</b>Four defenders split the deep field in quarters, but each safety is reading #2: if #2 runs deep he\'s the safety\'s man, if not the safety helps elsewhere. Three defenders play underneath.'],
+ set:{FS:[19.5,11.5],SS:[34.5,11.5],CB1:[4.8,7.8],CB2:[48.6,7.8]},
+ k:{1:mix(PASS,{CB1:[6.5,18.5],FS:[20,17],SS:[33.3,17],CB2:[46.8,18.5],NB:[11,7.5],W:[24.5,9.5],M:[35,8]})},
+ zones:[Z('deep',6.7,18.5,6.4,5,'Quarter'),Z('deep',20,18.5,6.4,5,'Quarter'),Z('deep',33.3,18.5,6.4,5,'Quarter'),Z('deep',46.6,18.5,6.4,5,'Quarter'),Z('under',10.5,7.5,5.6,3,'Curl/flat'),Z('under',24.5,9.5,5.4,2.8,'Hook'),Z('under',36,8,5.6,3,'Curl/flat')]};
+S.C6={beats:['<b>Before the snap</b>Two high safeties. The tell: the corner on the side away from the tight end is squatting at 5 yards, shallower than the other corner.','<b>At the snap</b>Quarters to the strength (the tight end\'s side), Cover 2 to the weak side: the squatting corner takes the flat and the free safety takes the whole deep half over him. Quarter, quarter, half.'],
+ set:{CB1:[4.2,5]},
+ k:{1:mix(PASS,{FS:[13.3,20],CB1:[5,6.8],NB:[15,9],W:[25.5,10],M:[35.5,8],SS:[33.3,17],CB2:[46.8,18.5]})},
+ zones:[Z('deep',13.3,20,12.8,5.4,'Deep half'),Z('deep',33.3,18.5,6.4,5,'Quarter'),Z('deep',46.6,18.5,6.4,5,'Quarter'),Z('under',5,6.8,4.6,2.8,'Flat'),Z('under',15,9,4.8,2.8,'Curl'),Z('under',25.5,10,4.8,2.8,'Hook'),Z('under',36,8,5.2,2.8,'Curl/flat')]};
+S.C2M={beats:['<b>Before the snap</b>Two deep safeties like Cover 2, but the corners and nickel are pressed tight with inside leverage, and the linebackers are eyeing the tight end and back.','<b>At the snap</b>Man underneath, with defenders playing a step behind and inside ("trail") because they know two safeties are over the top. Every short route is contested.'],
+ set:{FS:[13,13.5],SS:[40.3,13.5],CB1:[5.2,1.5],CB2:[48.2,1.5],NB:[13.6,1.8],M:[30.6,4],W:[27.8,4.5]},
+ k:{1:mix(PASS,{FS:[12.5,20],SS:[40.8,20],CB1:[5.3,3.2],CB2:[48.1,3.2],NB:[13.6,3.4],M:[31.8,3],W:[28.7,1.8]})},
+ zones:HALVES,
+ man:[['CB1','X'],['CB2','Z'],['NB','H'],['M','Y'],['W','RB']]};
+
+/* rotations from identical two-high look */
+var R_PRE=['<b>Before the snap</b>Two safeties at 13 yards, corners off at 7, nickel over the slot. Middle of the field looks open.'];
+S.R6={beats:R_PRE.concat(['<b>Cover 6</b>Nothing rotates. The strong side plays quarters; on the weak side the corner squeezes down to the flat and the free safety takes the deep half. The quarterback\'s read was right, but now he has to figure out which side is the "half."']),
+ set:twoHighPre, k:{1:mix(PASS,S.C6.k[1])}, zones:S.C6.zones};
+S.R3={beats:R_PRE.concat(['<b>Buzz to Cover 3</b>At the snap the free safety sprints to the middle and the strong safety "buzzes" down to the curl-flat. The quarterback who read an open middle now finds it closed.']),
+ set:twoHighPre, k:{1:mix(PASS,S.C3.k[1])}, zones:S.C3.zones};
+S.R1={beats:R_PRE.concat(['<b>Spin to Cover 1 robber</b>The strong safety spins to the deep middle, the free safety drops into a "robber" spot to jump crossers and digs, and everyone else plays man. What looked like zone is man.']),
+ set:twoHighPre,
+ k:{1:mix(PASS,{SS:[26.67,19.5],FS:[23,9.5],CB1:[4.8,5],CB2:[48.6,5],NB:[13.4,3.4],M:[32,3.6],W:[28.6,1.6]})},
+ zones:[Z('deep',26.67,19.5,11.5,5.3,'Deep middle'),Z('under',23,9.5,5,2.6,'Robber')],
+ man:[['CB1','X'],['CB2','Z'],['NB','H'],['M','Y'],['W','RB']]};
+S.HERO={beats:['<b>What the quarterback sees</b>Two safeties deep. The middle of the field looks open, so the post and deep middle routes look like the place to go.','<b>What actually happens</b>At the snap the free safety sprints to the middle and the other safety drops down: it\'s Cover 3. The middle just closed.'],
+ set:twoHighPre, k:{1:mix(PASS,S.C3.k[1])}, zones:zb(THIRDS,1), hideZ:false};
+
+/* quarters #2 read */
+var Q4POST={CB1:[6.5,18.5],FS:[20,17],NB:[11,7.5],W:[24.5,9.5]};
+var Q4PRE={FS:[19.5,11.5],SS:[34.5,11.5],CB1:[4.8,7.8],CB2:[48.6,7.8]};
+S.Q2V={beats:['<b>Before the snap</b>Quarters. The strong safety (SS) is keyed on #2 to his side, the tight end.','<b>Snap</b>The tight end releases up the seam. The MIKE walls him to slow his release; the safety holds and reads.','<b>#2 is vertical</b>Once the tight end passes about 8–10 yards and keeps going, the safety locks on. This is now man coverage on #2.','<b>Result</b>Tight end covered by the safety, #1 covered by the corner. Two vertical routes, two defenders, no hole.'],
+ set:Q4PRE, focus:['SS','CB2','M','Y','Z','QB'],
+ k:{1:mix(PASS,Q4POST,{Y:[32.3,5],Z:[48.6,6],SS:[34.5,12],CB2:[48.4,9],M:[31.8,5.5]}),
+    2:{Y:[33.5,12],Z:[48.3,13],SS:[34,14.8],CB2:[48,15],M:[32.5,7.5]},
+    3:{Y:[34.2,21],Z:[47.8,22],SS:[34.5,21],CB2:[47.6,22.3]}}};
+S.Q2F={beats:['<b>Before the snap</b>Same quarters call, same key: the safety reads #2.','<b>Snap</b>The tight end releases flat instead of vertical.','<b>#2 is out</b>The safety sees #2 go outside and short, so he is freed. His eyes go to #1, the receiver running a dig in front of the corner.','<b>Result</b>The safety drives on the dig and takes it away from the inside while the corner stays on top. The MIKE (or curl/flat defender) takes the flat. Two defenders bracket one receiver.'],
+ set:Q4PRE, focus:['SS','CB2','M','Y','Z','QB'],
+ k:{1:mix(PASS,Q4POST,{Y:[33.5,1.2],Z:[48.6,6],SS:[34.5,12],CB2:[48.4,9],M:[31.8,5]}),
+    2:{Y:[38.5,2.2],Z:[48,11.5],SS:[36.5,12.4],CB2:[47.8,13],M:[36,4]},
+    3:{Y:[44,2.6],Z:[40.5,13.5],SS:[40,14.4],CB2:[45.5,16.5],M:[42.5,3.6]}}};
+
+/* zone handoff of crosser */
+S.XCROSS={beats:['<b>Before the snap</b>Cover 3. Watch the slot receiver (H), the WILL and the MIKE.','<b>Snap</b>H releases inside on a shallow cross. The WILL walls him, getting in his path so he has to go under.','<b>Carry</b>The WILL carries H across his hook area.','<b>"Cross!"</b>At the edge of his zone the WILL yells "cross!" and passes H to the MIKE, who is waiting.','<b>Handoff complete</b>The MIKE carries the crosser; the WILL sinks back into his hook zone to look for anything coming behind. No one chased across the whole field.'],
+ set:{FS:[26.67,14.5],SS:[35.5,8.5],CB1:[4.8,7.5],CB2:[48.6,7.5],NB:[14,4.8]},
+ focus:['H','W','M','QB'],
+ k:{1:mix(PASS,{CB1:[8.9,12],CB2:[44.4,12],FS:[26.67,19],SS:[40,8],NB:[11,7.5],H:[16,3],W:[22.3,6.6],M:[30,7.3],X:[5,6],Z:[48.4,6]}),
+    2:{H:[22.5,5],W:[22.6,6.2],M:[30.5,8],X:[5.3,12],Z:[48,12],CB1:[8.9,17],CB2:[44.4,17],FS:[26.67,21],NB:[10.5,8]},
+    3:{H:[29,5.5],W:[26,6.8],M:[30.6,6.4],X:[5.6,18],Z:[47.6,18],CB1:[8.9,20]},
+    4:{H:[38,6],W:[23,9.8],M:[37.2,6.6],X:[5.8,23],Z:[47.3,23]}},
+ zones:[Z('under',21.5,10,4.8,2.8,'Hook',3),Z('under',31.8,10,4.8,2.8,'Hook',3)]};
+
+/* banjo */
+var BAN_SET={Z:[43,-.8],H:[43.8,-3.2],NB:[41,5],CB2:[45.8,5.2],SS:[37,12],FS:[20,13]};
+var BAN_OFF_BASE={Z:[43,-.8],H:[43.8,-3.2]};
+S.BAN1={beats:['<b>Before the snap</b>Two receivers stacked on the right. The nickel is inside, the corner outside. They\'ve called "banjo": assignments are decided by the routes, not by who lined up where.','<b>Release</b>Both receivers push vertically. Neither defender commits yet.','<b>The break</b>The front receiver breaks in, the back receiver breaks out. Inside defender takes in, outside takes out.','<b>Result</b>Both routes covered, and the defenders never crossed paths, so there\'s nothing to pick them off with.'],
+ set:BAN_SET, focus:['Z','H','NB','CB2','QB'],
+ k:{1:mix(PASS,{Z:[43,4],H:[44.2,2],NB:[41,5.6],CB2:[45.8,5.3]}),2:{Z:[39,8],H:[48,4.8],NB:[38.8,7.8],CB2:[48.2,5.3]},3:{Z:[32.5,10],H:[52,5.2],NB:[33,9.3],CB2:[51.3,5.5]}}};
+S.BAN2={beats:['<b>Before the snap</b>Same stack, same banjo call.','<b>Release</b>Both receivers push vertically.','<b>The break</b>This time the front receiver breaks out and the back receiver breaks in. The rule doesn\'t change: inside takes in, outside takes out.','<b>Result</b>The assignments flipped, but the defenders\' paths didn\'t. In man coverage, these two would have had to cross each other through traffic.'],
+ set:BAN_SET, focus:['Z','H','NB','CB2','QB'],
+ k:{1:mix(PASS,{Z:[43.4,4],H:[43.8,2],NB:[41,5.6],CB2:[45.8,5.5]}),2:{Z:[47.5,6.2],H:[40.2,6],NB:[40,6.9],CB2:[47.6,6.7]},3:{Z:[51.5,6.4],H:[33.5,8],NB:[34,8.6],CB2:[51,7]}}};
+
+/* fronts */
+S.F_OVER={view:[9.5,44,-6.5,15],r:4.8,beats:['<b>Over front</b>The 3-technique (T) lines up on the strong side, toward the tight end; the nose (N) shades the center to the weak side. The strong-side end is wide outside the tight end.'],single:true};
+S.F_UNDER={view:[9.5,44,-6.5,15],r:4.8,beats:['<b>Under front</b>Flipped: the 3-technique goes to the weak side and the nose shades the center toward the strength. The strong-side end tightens to the tackle, and the MIKE shifts over the tight end.'],single:true,
+ set:{DT1:[24.45,.9],DT2:[27.35,.9],DE1:[21.8,.9],DE2:[30.5,.9],M:[31,5],W:[26.5,5.2]}};
+S.F_TITE={view:[9.5,44,-6.5,15],r:4.8,beats:['<b>Tite front</b>Five across: two 4i-techniques and a 0-technique pinch the inside gaps shut, with edge players outside. It dares the offense to run wide, where speed is waiting.'],single:true,
+ set:{DE1:[24,.9],DT1:[26.67,.9],DT2:[29.35,.9],DE2:[32.4,.9],W:[21.3,1.1],M:[27.2,5.3],SS:[34.5,8]}};
+S.F_BIG={view:[9.5,44,-6.5,15],r:4.8,beats:['<b>Big nickel against 12 personnel</b>The offense brings in a second tight end (the H is now attached on the left). Seattle stays in nickel, but the nickel is a 220-pound safety who aligns like a linebacker over the second tight end.'],single:true,
+ lab:{H:'Y'},
+ set:{H:[21.7,-.9],NB:[20.2,4.5],DE1:[20.6,.9],W:[24.8,5.2]}};
+
+/* positions */
+S.POS={beats:['<b>Tap a defender</b>Each green circle is a role in Seattle\'s nickel. Tap one for what the position does and who plays it in 2026.'],single:true,tap:true,
+ info:{
+  DE1:['Edge (weak side)','Uchenna Nwosu, Derick Hall, Dante Fowler Jr.','Rushes the passer, sets the edge on runs, and drops into short zones on simulated pressures. In a 3-4 vocabulary these are outside linebackers. Nwosu returned the Super Bowl pick-six.'],
+  DT1:['Nose / 1-technique','Byron Murphy II, Jarran Reed, Rylie Mills','Shades the center and clogs the A-gap. If he draws a double team, a linebacker is free to make the tackle.'],
+  DT2:['3-technique','Leonard Williams, Byron Murphy II','Lines up on the guard\'s outside shoulder and attacks the B-gap. The most disruptive interior spot in football. Williams was a 2025 second-team All-Pro.'],
+  DE2:['Edge (strong side / Rush)','DeMarcus Lawrence, Derick Hall','The "Rush" end: premier pass rusher, and the player who keeps runs from bouncing outside the tight end.'],
+  M:['MIKE linebacker','Ernest Jones IV','The defense\'s quarterback. Most teams give the MIKE the green-dot radio helmet. Sets the front, fits inside runs, carries crossers and seams. 2025 second-team All-Pro.'],
+  W:['WILL linebacker','Drake Thomas, Tyrice Knight','Faster weak-side linebacker who flows to the ball, covers running backs and fills late. Thomas broke out in 2025 with 96 tackles and 10 for loss.'],
+  NB:['Nickel','Nick Emmanwori, Devon Witherspoon','Covers the slot, fits the run like a linebacker and blitzes off the edge. Emmanwori is the "big nickel"; Witherspoon kicks inside too and led the Super Bowl blitz plan.'],
+  CB1:['Cornerback','Devon Witherspoon, Nehemiah Pritchett','Covers outside receivers in press, off or cloud technique. Witherspoon was a 2025 second-team All-Pro.'],
+  CB2:['Cornerback','Josh Jobe, Trevon Diggs, Julian Neal, Avery Smith','Jobe sealed the 2026 opener with an end-zone interception. Diggs and the rookies add depth after Riq Woolen\'s departure.'],
+  FS:['Safety','Ty Okada, Rodney Thomas II','Plays deep halves, quarters or the middle third depending on the call, and rotates at the snap. Okada started 11 games in 2025.'],
+  SS:['Safety','Julian Love','Reads #2 in quarters, rotates down to the box or the curl-flat. Intercepted Drake Maye in the 2026 opener.']}};
+
+/* gaps */
+S.GAPS={beats:['<b>Reading the chart</b>Letters below the line are gaps. Numbers above are techniques on the right side: head-up spots on the top row, outside shades in the middle, inside shades ("i") on the bottom.'],single:true,
+ view:[18.3,35.2,-3.4,5.4], r:3.1, fs:2.6, hideD:true, lab:{LT:'T',LG:'G',C:'C',RG:'G',RT:'T',Y:'Y'},
+ marks:[['A',25.9,-2.3,'g'],['A',27.45,-2.3,'g'],['B',24.3,-2.3,'g'],['B',29,-2.3,'g'],['C',21.9,-2.3,'g'],['C',30.7,-2.3,'g'],['D',32.9,-2.3,'g'],
+  ['0',26.67,4.4],['2',28.25,4.4],['4',29.8,4.4],['6',31.6,4.4],['1',27.35,2.9],['3',28.95,2.9],['5',30.5,2.9],['9',32.35,2.9],['2i',27.72,1.55],['4i',29.3,1.55],['7',31.05,1.55]]};
+
+/* run fit */
+S.RUN={beats:['<b>Before the snap</b>Six defenders in the box against six blockers (five linemen and the tight end). Two safeties deep. On paper, the offense has enough blockers.','<b>Snap: inside zone right</b>The whole line steps right. The nose and 3-technique each draw a double team, so two defenders are occupying four blockers.','<b>Linebackers fit</b>With no one free to reach them yet, the MIKE shoots the front-side gap and the WILL flows over the top. The strong safety triggers down from 13 yards into the alley.','<b>The plus-one</b>The back cuts, meets the MIKE, and the safety arrives as the unblocked extra defender. A two-yard gain from a "light" box.'],
+ view:[13,41,-6.5,14.5], r:3.9, fs:3.3,
+ set:{RB:[24.6,-5.2]}, focus:['DT1','DT2','M','W','SS','RB','LG','C','RG','RT','Y','LT','DE1','DE2','QB','FS'],
+ k:{1:{LT:[24.2,-.9],LG:[25.8,-.3],C:[26.5,-.1],RG:[28.6,-.2],RT:[29.5,-.3],Y:[32.3,0],QB:[26.2,-5.2],RB:[25.9,-4.6],DT1:[26.1,.35],DT2:[29.1,.25],DE1:[23.8,-.1],DE2:[33,.2],M:[28.8,3.8],W:[25.8,4],SS:[34.8,9],FS:[19,12]},
+    2:{RB:[28.2,-1.2],C:[26.4,2.1],RT:[30.3,1.4],M:[29.2,1.3],W:[26.6,2.7],SS:[33.2,4.8],FS:[21,10]},
+    3:{RB:[29.5,1.2],M:[29.4,1.9],SS:[30.8,2.6],W:[27.6,2.4]}}};
+
+/* stunt */
+S.STUNT={beats:['<b>Before the snap</b>The 3-technique (T) is on the right guard\'s outside shoulder, the edge (E) outside the right tackle.','<b>The crash</b>At the snap the 3-technique slants hard outside into the tackle. The tackle has to take him. The end takes a short, hard step upfield to hold the guard\'s attention.','<b>The loop</b>The end wraps behind the crashing tackle into the gap that just opened. The guard, who had nobody, is late to see him.','<b>Free</b>If the guard and tackle don\'t switch cleanly, the looper has a clean lane to the quarterback.'],
+ view:[20.2,36.2,-8.5,3.8], r:3.1, fs:2.7, focus:['DT2','DE2','RG','RT','QB'],
+ k:{1:mix(PASS,{DT2:[30.6,-.5],RT:[30.5,-1.8],RG:[28.4,-1.7],DE2:[32.3,.2],DE1:[23.3,-2.6],DT1:[26.1,-1.5]}),
+    2:{DT2:[31,-2],RT:[30.9,-2.7],RG:[28.2,-2],DE2:[29.6,-.4],DE1:[23.2,-3.6],DT1:[26.1,-2.2]},
+    3:{DE2:[27.6,-6.1],RG:[28,-2.5],DT2:[31.1,-2.4],RT:[31,-3]}}};
+
+/* sim pressure */
+S.SIM={beats:['<b>Before the snap</b>Both linebackers are "mugged" in the A-gaps and the nickel is inched inside the slot. Counting the line, as many as seven could rush. The protection has to plan for the worst.','<b>Snap</b>The WILL and the nickel rush. The left edge and the nose drop into coverage. The left tackle sets on an end who is running away from him, and the protection has no one for the nickel.','<b>Four rushed, seven covered</b>Only four came, but the nickel is unblocked. Behind it, three deep and four under: no hot throw is open. The quarterback eats it or throws it away.'],
+ set:{M:[27.4,1.7],W:[25.9,1.7],NB:[14.9,3],FS:[17.5,13],SS:[36,13],CB1:[4.8,7],CB2:[48.6,7]},
+ k:{1:mix(PRO,{W:[25.6,-1.3],NB:[19.8,-1.5],DE1:[19.8,4.2],DT1:[26.3,3.4],M:[30.8,6.6],SS:[38.5,10],FS:[22,17],CB1:[7,13.5],CB2:[46.5,13.5],DT2:[28.7,-2.3],DE2:[31.2,-3.8],LT:[22.9,-2.3],LG:[25.3,-1.6],C:[27.1,-1.6],RG:[28.6,-1.8],RT:[30.3,-2.4],RB:[28.2,-4.4]}),
+    2:{NB:[23.9,-6],W:[25.4,-2.1],DE1:[16,8.5],DT1:[26.67,5],M:[32.5,8.5],SS:[40.5,8.5],FS:[26.67,21],CB1:[8.9,19],CB2:[44.4,19],LT:[22.7,-2.6],RB:[28.4,-4.6]}},
+ zones:zb(THIRDS,2).concat([Z('under',14,8,6,3,'Curl/flat',2),Z('under',26.67,5,4.6,2.4,'Low hole',2),Z('under',32.5,9,4.8,2.8,'Hook',2),Z('under',41.5,8,5.6,3,'Curl/flat',2)])};
+
+/* nickel pressure with rotation */
+S.NCAT={beats:['<b>Before the snap</b>Two-high shell. The nickel is creeping inside the slot receiver.','<b>Snap</b>The nickel blitzes off the edge: five rushers. The free safety rotates down toward the slot the nickel just left; the strong safety spins to the deep middle.','<b>Replace the blitzer</b>The slot runs his hot route into the space the nickel vacated, and the free safety is already there. The nickel is unblocked at the quarterback.'],
+ set:{NB:[15.3,3.6],FS:[17.5,13],SS:[36,13],CB1:[4.8,7],CB2:[48.6,7]},
+ k:{1:mix(PASS,{NB:[19.3,-1.6],FS:[15.2,9.5],SS:[30.5,17],CB1:[7,14],CB2:[46.8,14],W:[22.5,8],M:[32,8.5],H:[14,3],RB:[27.9,-5.2]}),
+    2:{NB:[23.9,-6.2],FS:[14.4,8.2],SS:[26.67,21],CB1:[8.9,19],CB2:[44.4,19],W:[23,10],M:[37,8.5],H:[15,7]}},
+ zones:zb(THIRDS,2).concat([Z('under',12.5,8,5.6,3,'Curl/flat',2),Z('under',24,10,5,2.8,'Hook',2),Z('under',37,8.5,5.6,3,'Curl/flat',2)])};
+
+/* motion */
+var MAN_PRE={FS:[26.67,14],SS:[33.6,7],CB1:[4.8,2],CB2:[48.6,2],NB:[13.6,2.5],M:[28.6,5],W:[24.4,5]};
+S.MMAN={beats:['<b>Before the motion</b>The slot receiver (H) is about to motion across the formation.','<b>Motion</b>H runs across behind the line. The nickel runs right with him, mirroring every step.','<b>Set</b>The nickel ended up on the other side of the field, still on H. That\'s man coverage announced before the snap.'],
+ set:MAN_PRE, focus:['H','NB'],
+ k:{1:{H:[22,-2.9],NB:[22,4]},2:{H:[38.5,-1.1],NB:[38.2,2.8]}}};
+S.MZONE={beats:['<b>Before the motion</b>Same motion coming. This time the defense is in a two-high zone.','<b>Motion</b>Nobody runs with H. Instead each defender slides a few steps toward the new strength.','<b>Set</b>The nickel stayed on the left, the MIKE bumped out over the new slot, and the safeties shifted over. Everyone passed responsibility down the line: zone or match.'],
+ focus:['H','NB','M','W','SS','FS'],
+ k:{1:{H:[22,-2.9],NB:[15.5,5],W:[25.5,5.3],M:[30.5,5.4],SS:[36.8,12.6],FS:[18.6,13.4]},2:{H:[38.5,-1.1],NB:[18.2,5.8],W:[27.4,5.5],M:[34.5,5.6],SS:[38,12],FS:[21,13.8]}}};
+
+/* beaters */
+S.SMASH={beats:['<b>Before the snap</b>Cover 2 look: two deep safeties, corners squatting.','<b>Stems</b>The outside receiver runs a quick hitch; the slot pushes vertically. The corner sits on the hitch, as Cover 2 teaches him to.','<b>The throw</b>The slot breaks to the corner, behind the squatting corner and in front of the safety, who is too wide and too deep to get there in time. The corner can\'t cover both.'],
+ set:{FS:[13,13.5],SS:[40.3,13.5],CB1:[4,2.5],CB2:[49.4,2.5]}, focus:['X','H','CB1','FS','NB','QB'],
+ k:{1:mix(PASS,{X:[4.8,4.5],H:[13.8,8],CB1:[5,5],FS:[12.8,17.5],NB:[13.5,8],W:[26.67,10.5],M:[38,9.5],SS:[40.8,20],CB2:[48.6,6.5]}),
+    2:{X:[5,5.3],H:[6.8,15.3],CB1:[5.3,6],FS:[10.2,18.5],NB:[12,10]}},
+ ball:{b:2,to:[6.8,15.3]}};
+S.FLOOD={beats:['<b>Before the snap</b>Cover 3 look: single-high safety, strong safety down on the right.','<b>Three levels</b>The outside receiver runs deep to carry the corner away. The tight end runs a deep out (sail) at 11 yards. The back swings to the flat. All three are on the right.','<b>The conflict</b>The curl/flat defender can take the sail or the flat, not both. He jumps the flat, so the sail is open.'],
+ set:{FS:[26.67,14.5],SS:[35.5,8.5],CB1:[4.8,7.5],CB2:[48.6,7.5]}, focus:['Z','Y','RB','SS','CB2','M','QB'],
+ k:{1:mix(PASS,{Z:[48.5,8],CB2:[47.5,11],Y:[33,7],RB:[34,-2],SS:[39.5,7.5],M:[31,9],CB1:[8.9,19],FS:[26.67,21],NB:[11,8.3],W:[21.5,10]}),
+    2:{Z:[48,20],CB2:[46.8,19.5],Y:[42,11],RB:[43,1.5],SS:[42.5,3.8],M:[33.5,10]}},
+ ball:{b:2,to:[42,11]}};
+S.MESH={beats:['<b>Before the snap</b>Cover 1: one safety deep, man coverage underneath.','<b>The crossers</b>The slot and the tight end run shallow crosses toward each other at about 5 yards, brushing past each other in the middle.','<b>Traffic</b>The man defenders have to fight through the crossing receivers (and each other). The nickel gets caught in the wash, and his receiver comes out the other side open.'],
+ set:MAN_PRE, focus:['H','Y','NB','SS','W','QB'],
+ k:{1:mix(PASS,{H:[20,4],Y:[29.5,5],NB:[19,3],SS:[31,4.2],FS:[26.67,19],M:[28.6,3.2],W:[26.67,9],CB1:[4.8,3],CB2:[48.6,3]}),
+    2:{H:[35,5.2],Y:[16,5.8],NB:[27,3.4],SS:[19,4.6],W:[25,7.5]}},
+ ball:{b:2,to:[35,5.4]}};
+S.PAQ={beats:['<b>Before the snap</b>Quarters. The strong safety reads #2, the tight end, for run or pass.','<b>The fake</b>Play-action. The tight end blocks down like it\'s a run, and the safety\'s key screams "run." He triggers downhill. The MIKE bites on the fake too.','<b>Behind him</b>The outside receiver runs a post into the space the safety just left. The corner, playing outside leverage, is trailing.'],
+ set:Q4PRE, focus:['Z','Y','SS','CB2','M','QB','RB'],
+ k:{1:{QB:[26.9,-5],RB:[27.4,-3.6],Y:[32.3,.3],SS:[34.5,7.6],M:[29,3.3],Z:[48.3,7],CB2:[48.4,9],FS:[20,15],CB1:[6.5,15]},
+    2:{QB:[26.3,-8],RB:[27.6,-3.3],Z:[36.5,17],SS:[33.8,5.4],CB2:[43.6,15],M:[29.5,4],FS:[21.5,16]}},
+ ball:{b:2,to:[36.5,17]}};
+
+/* ---------- renderer ---------- */
+function framesFor(sc){
+  var n=sc.beats.length, pl=[], i, id;
+  function add(id,side,base){
+    if(side==='d'&&sc.hideD)return;
+    var f=[(sc.set&&sc.set[id])||base];
+    for(var b=1;b<n;b++){var kb=sc.k&&sc.k[b];f.push((kb&&kb[id])||f[b-1])}
+    var moved=false;for(i=1;i<n;i++){if(f[i][0]!==f[0][0]||f[i][1]!==f[0][1]){moved=true;break}}
+    pl.push({id:id,side:side,f:f,moved:moved});
+  }
+  for(id in OFF)add(id,'o',OFF[id]);
+  for(id in DEF)add(id,'d',DEF[id]);
+  return pl;
+}
+function ease(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2}
+function posAt(f,t){var n=f.length;if(t>=n-1)return f[n-1];var b=Math.floor(t),u=ease(t-b);return [f[b][0]+(f[b+1][0]-f[b][0])*u,f[b][1]+(f[b+1][1]-f[b][1])*u]}
+var uid=0;
+function build(svg,sc,opts){
+  opts=opts||{};
+  while(svg.firstChild)svg.removeChild(svg.firstChild);
+  var v=sc.view||[0,53.33,-8.5,27.5];
+  var vx=sx(v[0]),vw=sx(v[1])-sx(v[0]),vy=sy(v[3]),vh=sy(v[2])-sy(v[3]);
+  svg.setAttribute('viewBox',vx.toFixed(1)+' '+vy.toFixed(1)+' '+vw.toFixed(1)+' '+vh.toFixed(1));
+  var z=vw/360, R=sc.r||6.6, FS=sc.fs||(R*.88);
+  var id='m'+(uid++);
+  var defs=el('defs',null,svg);
+  var mk=el('marker',{id:id+'o',viewBox:'0 0 10 10',refX:'6',refY:'5',markerWidth:'4.2',markerHeight:'4.2',orient:'auto-start-reverse'},defs);el('path',{d:'M0 0 L10 5 L0 10 z','class':'arr'},mk);
+  el('rect',{x:vx-2,y:vy-2,width:vw+4,height:vh+4,'class':'fld'},svg);
+  var sw=z;
+  for(var yy=-5;yy<=25;yy+=5){if(yy===0)continue;el('line',{x1:0,x2:sx(53.33),y1:sy(yy),y2:sy(yy),'class':'yl','stroke-width':sw},svg)}
+  for(var h=-8;h<=27;h++){[23.58,29.75].forEach(function(hx){el('line',{x1:sx(hx-.35),x2:sx(hx+.35),y1:sy(h),y2:sy(h),'class':'hash','stroke-width':sw},svg)});
+    el('line',{x1:sx(.3),x2:sx(1),y1:sy(h),y2:sy(h),'class':'hash','stroke-width':sw},svg);el('line',{x1:sx(52.33),x2:sx(53.03),y1:sy(h),y2:sy(h),'class':'hash','stroke-width':sw},svg)}
+  el('line',{x1:0,x2:sx(53.33),y1:sy(0),y2:sy(0),'class':'losl','stroke-width':1.6*z,'stroke-dasharray':(5*z)+' '+(3*z)},svg);
+  var gZ=el('g',null,svg),gM=el('g',null,svg),gT=el('g',null,svg),gB=el('g',null,svg),gP=el('g',null,svg),gK=el('g',null,svg);
+  var zones=(opts.hideZones?[]:(sc.zones||[])).map(function(zz){
+    var g=el('g',null,gZ);
+    el('ellipse',{cx:sx(zz.x),cy:sy(zz.y),rx:sx(zz.rx),ry:zz.ry*YD,'class':'zn '+zz.t,'stroke-width':z},g);
+    if(zz.l){var tx=el('text',{x:sx(zz.x),y:sy(zz.y+zz.ry*.62),'class':'zl','font-size':(sc.view?FS*.9:6.2)},g);tx.textContent=zz.l}
+    return {z:zz,g:g};});
+  (sc.marks||[]).forEach(function(m){
+    var t=el('text',{x:sx(m[1]),y:sy(m[2]),'class':'mk'+(m[3]?' '+m[3]:''),'font-size':FS*1.05},gK);t.textContent=m[0];
+    if(!m[3])el('line',{x1:sx(m[1]),x2:sx(m[1]),y1:sy(m[2]-.45),y2:sy(.45),'class':'mkl','stroke-width':z*.6},gK);
+  });
+  var pl=framesFor(sc), byId={};
+  var focus=sc.focus?{}:null;if(focus)sc.focus.forEach(function(f){focus[f]=1});
+  pl.forEach(function(p){
+    byId[p.id]=p;
+    var dim=focus&&!focus[p.id];
+    var isOL=OL.indexOf(p.id)>=0;
+    if(p.moved&&!isOL&&p.id!=='QB'){
+      p.tr=el('polyline',{'class':'tr '+p.side+(dim?' dim':''),'stroke-width':(p.side==='o'?1.7:1.5)*Math.max(z,.55)},gT);
+      if(p.side==='o')p.tr.setAttribute('marker-end','url(#'+id+'o)');
+      if(p.side==='d')p.tr.setAttribute('stroke-dasharray',(3*Math.max(z,.55))+' '+(2.5*Math.max(z,.55)));
+    }
+    var g=el('g',{'class':'pl '+p.side+(dim?' dim':'')},gP);
+    if(p.id==='C'){var rr=Math.min(R*.85,4.3);el('rect',{x:-rr,y:-rr,width:rr*2,height:rr*2,rx:R*.2,'stroke-width':1.3*Math.max(z,.6)},g)}
+    else{if(sc.tap&&p.side==='d')el('circle',{r:R*2,fill:'transparent',stroke:'none'},g);var c=el('circle',{r:(p.side==='o'?(isOL?Math.min(R*.9,4.8):R*.9):R),'stroke-width':(p.side==='o'?1.3:1)*Math.max(z,.6)},g)}
+    var lab=(sc.lab&&sc.lab[p.id]!=null)?sc.lab[p.id]:(p.side==='o'?OLAB[p.id]:DLAB[p.id]);
+    if(lab){var t=el('text',{'font-size':(lab.length>1?FS*.8:FS)},g);t.textContent=lab}
+    if(sc.tap&&p.side==='d'){g.classList.add('tap');g.setAttribute('tabindex','0');g.setAttribute('role','button');g.setAttribute('aria-label',(sc.info[p.id]||[''])[0]);}
+    p.g=g;
+  });
+  var mans=(opts.hideMan?[]:(sc.man||[])).map(function(m){return {a:byId[m[0]],b:byId[m[1]],l:el('line',{'class':'mn','stroke-width':1.1*Math.max(z,.6)},gM)}});
+  var ball=null;
+  if(sc.ball){ball={b:sc.ball.b,to:sc.ball.to,p:el('path',{'class':'bl','stroke-width':1.6*z},gB),c:el('ellipse',{rx:2.6*z,ry:1.7*z,'class':'bb'},gB)}}
+  function render(t){
+    pl.forEach(function(p){
+      var q=posAt(p.f,t);p.g.setAttribute('transform','translate('+sx(q[0]).toFixed(2)+','+sy(q[1]).toFixed(2)+')');
+      if(p.tr){var pts=[],b=Math.floor(t),n=p.f.length;for(var i=0;i<=Math.min(b,n-1);i++)pts.push(p.f[i]);if(t<n-1)pts.push(q);
+        var s=pts.map(function(a){return sx(a[0]).toFixed(1)+','+sy(a[1]).toFixed(1)}).join(' ');
+        p.tr.setAttribute('points',s);p.tr.style.display=pts.length>1&&t>0.02?'':'none';}
+    });
+    zones.forEach(function(o){var a=Math.max(0,Math.min(1,(t-(o.z.b-.55))/.55));o.g.style.opacity=a});
+    mans.forEach(function(m){if(!m.a||!m.b)return;var a=posAt(m.a.f,t),b=posAt(m.b.f,t);m.l.setAttribute('x1',sx(a[0]));m.l.setAttribute('y1',sy(a[1]));m.l.setAttribute('x2',sx(b[0]));m.l.setAttribute('y2',sy(b[1]));m.l.style.opacity=Math.max(0,Math.min(1,(t-.45)/.5))});
+    if(ball){var qb=byId.QB, s0=qb.f[ball.b-1], u=Math.max(0,Math.min(1,(t-(ball.b-.45))/.45));
+      if(u<=0){ball.p.style.display='none';ball.c.style.display='none'}else{
+        var x0=sx(s0[0]),y0=sy(s0[1]),x1=sx(ball.to[0]),y1=sy(ball.to[1]),mx=(x0+x1)/2,my=Math.min(y0,y1)-18*z;
+        var bx=(1-u)*(1-u)*x0+2*(1-u)*u*mx+u*u*x1, by=(1-u)*(1-u)*y0+2*(1-u)*u*my+u*u*y1;
+        var cx1=x0+(mx-x0)*u, cy1=y0+(my-y0)*u;
+        ball.p.setAttribute('d','M'+x0+' '+y0+' Q'+cx1.toFixed(1)+' '+cy1.toFixed(1)+' '+bx.toFixed(1)+' '+by.toFixed(1));
+        ball.c.setAttribute('cx',bx);ball.c.setAttribute('cy',by);ball.p.style.display='';ball.c.style.display='';}}
+  }
+  return {render:render,players:pl,n:sc.beats.length};
+}
+
+/* interactive diagram */
+function Diagram(host){
+  var ids=host.getAttribute('data-scenes').split(','), labels=(host.getAttribute('data-labels')||'').split('|'), title=host.getAttribute('data-title');
+  var cur=0, t=0, anim=null, playing=false, api=null, sc=null;
+  if(title){var h=document.createElement('div');h.className='dg-title';h.textContent=title;host.appendChild(h)}
+  var tabs=null;
+  if(ids.length>1){tabs=document.createElement('div');tabs.className='dg-tabs';tabs.setAttribute('role','tablist');
+    ids.forEach(function(sid,i){var b=document.createElement('button');b.className='dg-tab';b.type='button';b.setAttribute('role','tab');b.textContent=labels[i]||sid;b.setAttribute('aria-selected',i===0?'true':'false');b.addEventListener('click',function(){select(i)});tabs.appendChild(b)});
+    host.appendChild(tabs)}
+  var svg=el('svg',{role:'img'});host.appendChild(svg);
+  var cap=document.createElement('p');cap.className='dg-cap';cap.setAttribute('aria-live','polite');host.appendChild(cap);
+  var info=document.createElement('div');info.className='dg-info';info.hidden=true;host.appendChild(info);
+  var ctl=document.createElement('div');ctl.className='dg-ctl';
+  function mkb(txt,lab,cls){var b=document.createElement('button');b.type='button';b.textContent=txt;b.setAttribute('aria-label',lab);if(cls)b.className=cls;ctl.appendChild(b);return b}
+  var bRe=mkb('Restart','Restart'),bBk=mkb('Back','Previous beat'),bPl=mkb('Play','Play','pri'),bNx=mkb('Next','Next beat');
+  var dots=document.createElement('div');dots.className='dots';ctl.appendChild(dots);host.appendChild(ctl);
+  function stop(){if(anim)cancelAnimationFrame(anim);anim=null;playing=false;if(api)bPl.textContent=(t>=api.n-1-1e-3&&api.n>1)?'Replay':'Play'}
+  function draw(){api.render(t);var ci=Math.min(api.n-1,Math.max(0,Math.ceil(t-.35)));cap.innerHTML=sc.beats[ci];
+    [].forEach.call(dots.children,function(d,i){d.classList.toggle('on',i<=ci)});
+    bBk.disabled=t<=0;bNx.disabled=t>=api.n-1;}
+  function animTo(target,cb){if(anim)cancelAnimationFrame(anim);
+    if(RM){t=target;draw();if(cb)cb();return}
+    var t0=t,d=Math.abs(target-t0)*1150,st=null;if(d===0){draw();if(cb)cb();return}
+    function step(ts){if(!st)st=ts;var u=Math.min(1,(ts-st)/d);t=t0+(target-t0)*u;draw();if(u<1)anim=requestAnimationFrame(step);else{anim=null;if(cb)cb()}}
+    anim=requestAnimationFrame(step)}
+  function play(){if(t>=api.n-1-1e-3){t=0;draw()}playing=true;bPl.textContent='Pause';
+    (function nxt(){if(!playing)return;var tg=Math.floor(t+1e-3)+1;if(tg>api.n-1){stop();return}
+      animTo(tg,function(){if(!playing)return;if(tg>=api.n-1){stop();return}setTimeout(nxt,RM?900:500)})})()}
+  bPl.addEventListener('click',function(){if(playing){stop();}else play()});
+  bNx.addEventListener('click',function(){stop();animTo(Math.min(api.n-1,Math.floor(t+1e-3)+1),function(){bPl.textContent=t>=api.n-1?'Replay':'Play'})});
+  bBk.addEventListener('click',function(){stop();animTo(Math.max(0,Math.ceil(t-1e-3)-1),function(){bPl.textContent='Play'})});
+  bRe.addEventListener('click',function(){stop();t=0;draw();bPl.textContent='Play'});
+  function select(i){stop();cur=i;sc=S[ids[i]];t=0;info.hidden=true;
+    if(tabs)[].forEach.call(tabs.children,function(b,j){b.setAttribute('aria-selected',j===i?'true':'false')});
+    api=build(svg,sc);svg.setAttribute('aria-label',(title||'Diagram')+(labels[i]?': '+labels[i]:''));
+    dots.innerHTML='';for(var k=0;k<api.n;k++)dots.appendChild(document.createElement('i'));
+    ctl.style.display=api.n>1?'':'none';
+    if(sc.tap){api.players.forEach(function(p){if(p.side!=='d')return;function show(){api.players.forEach(function(q){q.g.classList.remove('sel')});p.g.classList.add('sel');var d=sc.info[p.id];info.hidden=false;info.innerHTML='<h5>'+d[0]+'</h5><p><strong>2026:</strong> '+d[1]+'</p><p>'+d[2]+'</p>'}
+      p.g.addEventListener('click',show);p.g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();show()}})})}
+    bPl.textContent='Play';draw()}
+  select(0);
+  return {play:play,stop:stop,reset:function(){stop();t=0;draw()},isPlaying:function(){return playing},atEnd:function(){return t>=api.n-1-1e-3}};
+}
+var diagrams=[];
+document.querySelectorAll('.dg[data-scenes]').forEach(function(h){var d=Diagram(h);h._d=d;diagrams.push(d)});
+
+/* hero autoplay loop */
+(function(){var h=document.querySelector('.hero-dg');if(!h||RM)return;var d=h._d,vis=false,timer=null,user=false;
+  h.addEventListener('pointerdown',function(){user=true});
+  function loop(){if(!vis||user)return;d.reset();timer=setTimeout(function(){if(!vis||user)return;d.play();timer=setTimeout(loop,4200)},1400)}
+  new IntersectionObserver(function(es){vis=es[0].isIntersecting;clearTimeout(timer);if(vis)loop();},{threshold:.4}).observe(h)})();
+
+/* ---------- if/then widget ---------- */
+var IF=[
+ ['Motion across the formation','The defense has to answer "who has him now?" In man, a defender travels with the motion man (or a safety swaps in). In zone, defenders bump over and re-declare the strength. Watch for pointing and shouting: that\'s the adjustment call.','Seattle mixes both answers, and some rotations are designed to look like a bump before becoming man at the snap. Motion is the offense\'s best tool for reading Macdonald, which is why disguising the response matters.'],
+ ['Play-action fake','Linebackers and quarters safeties who read run keys step forward. The defense counters with "eyes" discipline: second-level players are coached to read the guards (who can\'t go downfield on a pass) rather than the back.','Seattle\'s structure limits the damage: two deep safeties mean a biting linebacker doesn\'t leave the deep field empty.'],
+ ['An RPO','The offense leaves one defender, usually a linebacker, nickel or apex safety, unblocked and throws or hands off based on what he does. Defenses answer by "exchanging" responsibilities after the snap, so the defender the QB reads isn\'t the one who has the gap or the route.','This is a big reason Seattle likes an athletic big nickel. A 220-pound nickel can play the run and still cover, so the read defender isn\'t wrong either way.'],
+ ['Empty backfield (five wide)','Five receivers means the quarterback is the only blocker-free threat, and protection has only five blockers. Defenses love to pressure empty with a sim or fire zone and play match coverage behind it.','Expect a sim or a mugged look. Empty gives Seattle a clear count of blockers to attack.'],
+ ['Heavy personnel (12 or 13)','Traditional answer: bring in base personnel with bigger linebackers. Risk: the offense then spreads its tight ends out and throws against slower defenders.','Seattle mostly refuses to leave nickel. Its big nickel matches heavy personnel without giving up coverage.'],
+ ['Hurry-up / no-huddle','The defense can\'t substitute, and complex disguises get harder to set. Teams use simpler "tempo" calls with one-word signals.','A nickel-first team is naturally tempo-resistant. Year 3 familiarity also lets Seattle line up faster.'],
+ ['Screen pass','Defensive linemen are coached to "retrace" when they\'re let through too easily: an unblocked path to the QB is often a trap. Defensive backs "rally" through blockers, and a designated defender (often the nickel or a linebacker) plays screen responsibility.','Seattle\'s secondary tackles well in space, and pass rushers who drop on sims are frequently in position to blow up screens.'],
+ ['Max protection','The offense keeps seven or eight in to block and sends two or three receivers deep. The answer is to rush four and drop seven or eight, doubling the few receivers who do release.','A four-man rush plus rotations is Seattle\'s default anyway, so max protect mostly helps the defense.'],
+ ['Bunch or stacked receivers','Man coverage gets picked; zone gets confused. Defenses use banjo or "bunch" rules with in/out and short/deep assignments decided by the routes.','See Chapter 8. Seattle\'s DBs are notably connected in these handoffs.'],
+ ['Quick three-step drop','The ball will be out in about two seconds, so pressure won\'t get home. Corners squeeze routes, linebackers get hands up, and the defense tackles immediately.','Seattle wants this. Short completions to the sidelines at four yards per dropback are exactly its checkdown loop.']
+];
+(function(){var c=document.getElementById('ifChips'),a=document.getElementById('ifAns');if(!c)return;
+ IF.forEach(function(r,i){var b=document.createElement('button');b.type='button';b.className='chip';b.textContent=r[0];b.setAttribute('aria-pressed','false');
+  b.addEventListener('click',function(){[].forEach.call(c.children,function(x){x.setAttribute('aria-pressed','false')});b.setAttribute('aria-pressed','true');
+   a.innerHTML='<h5>'+r[0]+'</h5><p>'+r[1]+'</p><p><strong>In Seattle:</strong> '+r[2]+'</p>'});c.appendChild(b)})})();
+
+/* ---------- quiz ---------- */
+var QZ=[
+ ['C3',1,{hideZones:1},'Name the coverage','Cover 3',['Cover 2','Cover 3','Quarters','Cover 1'],'Three defenders are deep: both corners bailed to the outside thirds and one safety is in the middle. Four defenders spread underneath.'],
+ ['T2',1,{hideZones:1},'Name the coverage','Tampa 2',['Cover 2','Tampa 2','Cover 3','Cover 6'],'Two deep halves and squatting corners say Cover 2, but the MIKE sprinted to the deep middle. That\'s Tampa 2.'],
+ ['C1',1,{hideZones:1,hideMan:1},'Name the coverage','Cover 1',['Cover 0','Cover 1','Cover 3','2-Man'],'One safety deep in the middle, every receiver shadowed closely, and a linebacker sitting in the low hole: Cover 1.'],
+ ['C4',1,{hideZones:1},'Name the coverage','Quarters',['Cover 2','Quarters','Cover 3','Tampa 2'],'Four defenders deep and evenly spaced, with the safeties starting shallow enough to fit the run. Quarters.'],
+ ['C6',1,{hideZones:1},'Name the coverage','Cover 6',['Cover 6','Quarters','Cover 2','Cover 3'],'Two defenders deep on the right in quarters, one deep half on the left, and the left corner sitting in the flat: quarter, quarter, half.'],
+ ['MMAN',2,{},'The nickel followed the motion. What does that tell you?','Man coverage',['Man coverage','Zone coverage','A blitz is coming','Nothing'],'A defender running across the formation with a motion receiver is the classic man tell.'],
+ ['SIM',2,{hideZones:1},'How many rushed, and what is this?','4: sim pressure',['4: sim pressure','5: fire zone','6: Cover 0','4: base rush'],'Four rushers, but the nickel and a linebacker replaced a lineman and an edge who dropped. That\'s a simulated pressure.']
+];
+(function(){var host=document.getElementById('quiz');if(!host)return;var right=0,done=0,sc=document.getElementById('qscore');
+ QZ.forEach(function(q,qi){var box=document.createElement('div');box.className='dg qz';
+  var h=document.createElement('div');h.className='dg-title';h.textContent=(qi+1)+'. '+q[3];box.appendChild(h);
+  var svg=el('svg',{role:'img','aria-label':'Quiz diagram '+(qi+1)});box.appendChild(svg);
+  var o=document.createElement('div');o.className='opts';o.style.paddingTop='.75rem';box.appendChild(o);
+  var fb=document.createElement('p');fb.className='fb';box.appendChild(fb);host.appendChild(box);
+  var a=build(svg,S[q[0]],q[2]);a.render(q[1]);
+  var answered=false;
+  q[5].forEach(function(opt){var b=document.createElement('button');b.type='button';b.className='opt';b.textContent=opt;
+   b.addEventListener('click',function(){if(answered){return}answered=true;done++;
+    var ok=opt===q[4];if(ok)right++;
+    [].forEach.call(o.children,function(x){if(x.textContent===q[4])x.classList.add('right');else if(x===b)x.classList.add('wrong');x.disabled=x.textContent!==q[4]&&x!==b});
+    fb.innerHTML='<strong>'+(ok?'Correct.':'Not quite: it\'s '+q[4]+'.')+'</strong> '+q[6];fb.classList.add('on');
+    sc.textContent=right+' of '+QZ.length+' correct'+(done===QZ.length?(right===QZ.length?'. Perfect film study.':'. Scroll up to review, then try again after the next game.'):'');});
+   o.appendChild(b)})})})();
+
+/* ---------- glossary ---------- */
+var GL=[
+['A-gap, B-gap, C-gap, D-gap','The spaces between offensive linemen, lettered from the center out: A between center and guard, B between guard and tackle, C outside the tackle, D outside the tight end.'],
+['Alley','The running lane between the edge defender and the next defender outside. Safeties and nickels "fit the alley."'],
+['Apex','An alignment halfway between the last box player and the slot receiver, used by nickels and outside linebackers to defend both run and pass.'],
+['Banjo','A two-defender rule against stacked or bunched receivers: the inside defender takes the first receiver breaking in, the outside defender takes the first breaking out.'],
+['Big nickel','A nickel package that uses a third safety instead of a slot corner as the fifth defensive back. Seattle\'s default with Nick Emmanwori.'],
+['Blitz','A rush of five or more defenders.'],
+['Box','The area near the line of scrimmage, roughly tackle to tackle and five to seven yards deep. Box count is how many defenders are there.'],
+['Bump','A zone adjustment to motion where defenders each slide over one spot instead of one defender following the motion man.'],
+['Buzz','A rotation where a safety drops down to the hook/curl area at the snap, usually turning a two-high look into Cover 3.'],
+['Carry','Following a vertical route up the field until a deeper defender can take him.'],
+['Checkdown','A short throw, usually to a running back, when the quarterback\'s first reads are covered.'],
+['Cloud','A coverage side where the cornerback plays the flat and a safety plays the deep half over him.'],
+['Cover 0 / 1 / 2 / 3 / 4 / 6','Coverage names that mostly count deep defenders. 0: man, nobody deep. 1: man, one deep. 2: two deep halves. 3: three deep thirds. 4 (quarters): four deep. 6: quarters on one side, Cover 2 on the other.'],
+['Creeper','Another name for a simulated pressure: four rushers, but including a second-level player while a lineman drops.'],
+['DVOA / EPA','Advanced efficiency stats. DVOA compares every play to league average for the situation; EPA (expected points added) measures how much a play changed the expected score.'],
+['Edge','The outermost rusher on each side, responsible for rushing the passer and keeping runs inside ("setting the edge").'],
+['Fire zone','A five-man pressure with three deep and three underneath zone defenders behind it.'],
+['Front','The alignment of players near the line of scrimmage. Over, Under and Tite are common fronts.'],
+['Green dot','The single defensive player whose helmet has a radio receiver for the coach\'s call. It cuts out with 15 seconds on the play clock.'],
+['Green dog / hug','A man defender who rushes when the player he\'s covering stays in to block.'],
+['Hot','A receiver or route the quarterback must throw to immediately because there are more rushers than blockers.'],
+['Leverage','Which side of a receiver a defender aligns on (inside or outside), indicating which way he\'s taking away and where his help is.'],
+['Man coverage','Each defender is assigned a specific receiver.'],
+['Match coverage','Zone coverage with rules that turn it into man based on the routes. Also called pattern-matching.'],
+['MIKE / WILL / SAM','Middle, weak-side and strong-side linebackers.'],
+['MOFO / MOFC','Middle of the field open (two-high) and middle of the field closed (single-high).'],
+['Mug','Linebackers standing in the A-gaps before the snap to threaten a rush.'],
+['Nickel / dime','Packages with five or six defensive backs. Also the name of the slot defender.'],
+['Over / Under','Even fronts. Over puts the 3-technique to the offense\'s strength; Under puts it away from the strength.'],
+['Personnel (11, 12, 21...)','Offensive groupings described by number of running backs, then tight ends.'],
+['Plus-one','An extra, unblocked defender against the run.'],
+['Rat / robber','An underneath defender, often a linebacker or safety in Cover 1, who sits in the middle to take away crossing routes and digs.'],
+['Rotation','Moving from one coverage shell pre-snap to another at the snap. Buzz, sky, spin and cloud are rotation types.'],
+['RPO','Run-pass option: a play where the quarterback decides after the snap whether to hand off or throw, based on one defender\'s reaction.'],
+['Rush (position)','In 3-4 terminology, the premier pass-rushing edge player. DeMarcus Lawrence\'s listed position in Seattle.'],
+['Sim pressure','Simulated pressure: four rushers that include an unexpected player (linebacker, nickel, safety) while a lineman drops into coverage.'],
+['Sky','A rotation where a safety comes down to play the flat.'],
+['Slide protection','A pass protection where offensive linemen block zones by sliding in one direction together.'],
+['Spill / box','Two ways to defeat a lead blocker: spill forces the ball outside to pursuit; box (or force) turns it back inside.'],
+['Spin','A rotation where one safety spins to the deep middle and the other drops to a robber spot.'],
+['Stunt / game / twist','Pass rushers exchanging gaps after the snap, such as the T-E stunt where the tackle crashes out and the end loops in.'],
+['Tampa 2','Cover 2 in which the MIKE linebacker runs to the deep middle to close the hole between the safeties.'],
+['Technique','Numbers describing where a defensive lineman aligns relative to offensive linemen (0 head-up center, 3 outside the guard, 5 outside the tackle, 9 outside the tight end).'],
+['Tite front','An odd front with two 4i-techniques and a 0-technique that closes the inside gaps.'],
+['Two-high','Any shell with two deep safeties. Cover 2, 4 and 6 are two-high coverages.'],
+['Wall','Getting in a receiver\'s path to force him to take a longer route, especially against crossers.'],
+['Zone coverage','Each defender is assigned an area rather than a receiver.']
+];
+(function(){var dl=document.getElementById('glist'),q=document.getElementById('gsearch');if(!dl)return;
+ function draw(f){dl.innerHTML='';f=(f||'').toLowerCase();var n=0;GL.forEach(function(g){if(f&&(g[0]+' '+g[1]).toLowerCase().indexOf(f)<0)return;n++;var dt=document.createElement('dt');dt.textContent=g[0];var dd=document.createElement('dd');dd.textContent=g[1];dl.appendChild(dt);dl.appendChild(dd)});
+  if(!n){var dd=document.createElement('dd');dd.textContent='No terms match. Try a shorter word, like "cover" or "rush".';dl.appendChild(dd)}}
+ draw();q.addEventListener('input',function(){draw(q.value)})})();
+
+/* ---------- TOC, progress, resume, theme ---------- */
+var secs=[].slice.call(document.querySelectorAll('.part, .ch'));
+var toc=document.getElementById('toc'),links={};
+secs.forEach(function(s){
+  if(s.classList.contains('part')){var d=document.createElement('div');d.className='tp';d.textContent=s.querySelector('.pl').textContent+': '+s.querySelector('h2').textContent;toc.appendChild(d);return}
+  var h=s.querySelector('h3');var num=h.querySelector('.n').textContent;var name=h.textContent.replace(num,'').trim();
+  var a=document.createElement('a');a.href='#'+s.id;a.innerHTML='<span>'+num+'</span>'+name;toc.appendChild(a);links[s.id]={a:a,name:name,num:num};
+  a.addEventListener('click',closeD)});
+var drawer=document.getElementById('drawer'),scrim=document.getElementById('scrim'),tb=document.getElementById('tocBtn');
+function openD(){drawer.classList.add('on');scrim.classList.add('on');tb.setAttribute('aria-expanded','true');var c=toc.querySelector('.cur');if(c)c.scrollIntoView({block:'center'})}
+function closeD(){drawer.classList.remove('on');scrim.classList.remove('on');tb.setAttribute('aria-expanded','false')}
+tb.addEventListener('click',openD);scrim.addEventListener('click',closeD);document.getElementById('tocClose').addEventListener('click',closeD);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeD()});
+var chs=secs.filter(function(s){return s.classList.contains('ch')}),curId=null,pb=document.getElementById('progbar'),cc=document.getElementById('curch');
+function store(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function load(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function onScroll(){var h=document.documentElement,max=h.scrollHeight-h.clientHeight;pb.style.width=(max>0?Math.min(100,h.scrollTop/max*100):0)+'%';
+  var id=null;for(var i=0;i<chs.length;i++){if(chs[i].getBoundingClientRect().top<140)id=chs[i].id;else break}
+  if(id!==curId){if(curId&&links[curId])links[curId].a.classList.remove('cur');curId=id;if(id&&links[id]){links[id].a.classList.add('cur');cc.textContent=' / '+links[id].name;if(id!=='c1')store('dsd-last',id)}else cc.textContent=''}}
+var ticking=false;window.addEventListener('scroll',function(){if(!ticking){ticking=true;requestAnimationFrame(function(){onScroll();ticking=false})}},{passive:true});onScroll();
+(function(){var last=load('dsd-last');if(last&&links[last]&&document.documentElement.scrollTop<200){var r=document.getElementById('resume');document.getElementById('resumeTxt').textContent='Last time you were reading: '+links[last].name+'.';r.classList.add('on');
+  document.getElementById('resumeBtn').addEventListener('click',function(){document.getElementById(last).scrollIntoView();r.classList.remove('on')})}})();
+var root=document.documentElement,tbtn=document.getElementById('themeBtn');
+var saved=load('dsd-theme');if(saved)root.setAttribute('data-theme',saved);
+tbtn.addEventListener('click',function(){var cur=root.getAttribute('data-theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');var nx=cur==='dark'?'light':'dark';root.setAttribute('data-theme',nx);store('dsd-theme',nx)});
+})();
+</script>
+</body>
+</html>

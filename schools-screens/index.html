@@ -1,0 +1,589 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Screens, Schools &amp; Evidence</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a single reading column (~68ch) with full-width diagrams; "graded" evidence chips borrowed from report cards. */
+:root{
+  --paper:#f6f7f9;
+  --sheet:#ffffff;
+  --ink:#1d2430;
+  --muted:#5a6475;
+  --rule:#d9dee6;
+  --pencil:#b07d00;      /* accent: pencil yellow, darkened for text */
+  --pencil-fill:#f4d36b;
+  --good:#2f7a4f;
+  --good-bg:#e3f1e8;
+  --warn:#9a6a00;
+  --warn-bg:#fbf0d2;
+  --bad:#b0402c;
+  --bad-bg:#f8e3de;
+  --neutral-bg:#e8ebf0;
+  --display:"Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body:"Newsreader", Georgia, "Times New Roman", serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#14181f; --sheet:#1b2029; --ink:#e6e9ee; --muted:#9aa4b4; --rule:#2f3743;
+    --pencil:#f0c24a; --pencil-fill:#6b5410;
+    --good:#7fcf9c; --good-bg:#1d3427; --warn:#f0c24a; --warn-bg:#3a3018;
+    --bad:#f08f7a; --bad-bg:#3d221d; --neutral-bg:#272e39;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#14181f; --sheet:#1b2029; --ink:#e6e9ee; --muted:#9aa4b4; --rule:#2f3743;
+  --pencil:#f0c24a; --pencil-fill:#6b5410;
+  --good:#7fcf9c; --good-bg:#1d3427; --warn:#f0c24a; --warn-bg:#3a3018;
+  --bad:#f08f7a; --bad-bg:#3d221d; --neutral-bg:#272e39;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:1.075rem;line-height:1.6}
+.wrap{max-width:46rem;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:2.5rem 4rem}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,6vw,3rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.45rem,4vw,1.85rem);font-weight:800;letter-spacing:-.01em;padding-top:.6rem}
+h3{font-size:1.15rem;font-weight:700}
+h4{font-size:1rem;font-weight:700}
+p{margin:0}
+a{color:var(--ink);text-decoration-color:var(--pencil);text-underline-offset:3px;text-decoration-thickness:2px}
+a:focus-visible{outline:3px solid var(--pencil);outline-offset:2px;border-radius:2px}
+.eyebrow{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:1.2rem;color:var(--muted);max-width:60ch}
+.stack{display:flex;flex-direction:column;gap:1rem}
+section{display:flex;flex-direction:column;gap:1rem;padding-top:2.75rem;border-top:1px solid var(--rule);margin-top:2.75rem}
+header.top{display:flex;flex-direction:column;gap:1rem}
+.underline{background:linear-gradient(transparent 62%, var(--pencil-fill) 62%);padding:0 .1em}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:.35rem 1.5rem;font-family:var(--display);font-size:.95rem;margin-top:.5rem;padding:1rem 1.1rem;background:var(--sheet);border:1px solid var(--rule);border-radius:6px}
+.toc a{text-decoration:none;display:block;padding:.15rem 0}
+.toc a:hover{text-decoration:underline}
+.toc .n{font-family:var(--mono);color:var(--pencil);margin-right:.5rem;font-size:.85rem}
+ul.plain{margin:0;padding-left:1.15rem;display:flex;flex-direction:column;gap:.45rem}
+ul.plain li::marker{color:var(--pencil)}
+.takeaways{display:flex;flex-direction:column;gap:.85rem;margin:0;padding:0;list-style:none}
+.takeaways li{display:grid;grid-template-columns:2rem 1fr;gap:.6rem;align-items:start}
+.takeaways .n{font-family:var(--mono);font-weight:600;color:var(--pencil);padding-top:.15rem}
+.takeaways li>div{min-width:0}
+.note{font-size:.95rem;color:var(--muted)}
+.callout{background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.5rem}
+.callout h4{font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--pencil)}
+.chip{display:inline-block;font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:.15rem .5rem;border-radius:3px;white-space:nowrap}
+.chip.good{background:var(--good-bg);color:var(--good)}
+.chip.warn{background:var(--warn-bg);color:var(--warn)}
+.chip.bad{background:var(--bad-bg);color:var(--bad)}
+.chip.neutral{background:var(--neutral-bg);color:var(--muted)}
+/* Evidence map */
+.emap{display:flex;flex-direction:column;border:1px solid var(--rule);border-radius:6px;background:var(--sheet);overflow:hidden}
+.emap .row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:.5rem 1rem;align-items:center;padding:.75rem 1rem;border-top:1px solid var(--rule)}
+.emap .row:first-child{border-top:0}
+.emap .row.head{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--neutral-bg)}
+.emap .what{min-width:0}
+.emap .what b{font-family:var(--display);font-weight:700;font-size:.98rem;display:block}
+.emap .what span{font-size:.9rem;color:var(--muted)}
+.dots{display:inline-flex;gap:3px;justify-self:end}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--rule);display:block}
+.dots i.on{background:var(--ink)}
+.emap .verdict{justify-self:end}
+@media (max-width:560px){
+  .emap .row{grid-template-columns:minmax(0,1fr) auto}
+  .emap .row .what{grid-column:1 / -1}
+  .emap .row.head .h-what{display:none}
+  .emap .verdict{justify-self:start}
+}
+/* Figures */
+figure{margin:0;display:flex;flex-direction:column;gap:.5rem}
+figcaption{font-size:.9rem;color:var(--muted)}
+.fig{background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:1rem;overflow-x:auto}
+svg text{font-family:var(--mono);fill:var(--ink)}
+svg .muted{fill:var(--muted)}
+svg .axis{stroke:var(--rule)}
+svg .zero{stroke:var(--muted)}
+svg .bar-good{fill:var(--good)}
+svg .bar-bad{fill:var(--bad)}
+svg .bar-neutral{fill:var(--muted)}
+svg .bar-pencil{fill:var(--pencil)}
+/* Timeline */
+.timeline{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border-left:2px solid var(--rule);margin-left:.4rem}
+.timeline li{position:relative;padding:0 0 1rem 1.2rem;display:flex;flex-direction:column;gap:.15rem}
+.timeline li::before{content:"";position:absolute;left:-7px;top:.45rem;width:12px;height:12px;border-radius:50%;background:var(--sheet);border:2px solid var(--pencil)}
+.timeline .when{font-family:var(--mono);font-size:.78rem;color:var(--pencil);font-weight:600;letter-spacing:.03em}
+.timeline .what{font-size:.98rem}
+/* Tables */
+.tablewrap{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--sheet)}
+table{border-collapse:collapse;width:100%;min-width:34rem;font-size:.93rem}
+th,td{text-align:left;vertical-align:top;padding:.6rem .8rem;border-top:1px solid var(--rule)}
+thead th{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--neutral-bg);border-top:0}
+td:first-child{font-family:var(--display);font-weight:700;white-space:nowrap}
+td{font-variant-numeric:tabular-nums}
+/* Case files */
+.cases{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr));gap:1rem}
+.case{background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.55rem;min-width:0}
+.case .meta{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+.case .where{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.case p{font-size:.97rem}
+.case .why{font-size:.93rem;border-top:1px dashed var(--rule);padding-top:.5rem}
+.case .why b{font-family:var(--display)}
+/* Two-col compare */
+.compare{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr));gap:1rem}
+.compare>div{min-width:0}
+.yr{background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:1rem;display:flex;flex-direction:column;gap:.5rem}
+.yr .lbl{font-family:var(--mono);font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--pencil)}
+.stat{font-family:var(--display);font-weight:800;font-size:2.1rem;line-height:1;font-variant-numeric:tabular-nums}
+.statrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,10rem),1fr));gap:1rem}
+.statrow>div{display:flex;flex-direction:column;gap:.3rem;min-width:0}
+.sources{font-size:.88rem;display:flex;flex-direction:column;gap:.35rem;padding-left:1.1rem;margin:0}
+.sources li{overflow-wrap:anywhere}
+footer{margin-top:3rem;font-size:.85rem;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){a{transition:text-decoration-color .15s}}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <div class="eyebrow">Background reading · October 2026</div>
+  <h1>Screens, Schools &amp; <span class="underline">Evidence</span></h1>
+  <p class="lede">What the research actually shows about classroom technology, AI and phones, what districts in New York and across the US have tried in 2025–26, and why some of it worked and some of it failed.</p>
+  <nav class="toc" aria-label="Contents">
+    <a href="#short"><span class="n">1</span>The short version</a>
+    <a href="#decline"><span class="n">2</span>The score decline</a>
+    <a href="#case"><span class="n">3</span>The case against ed-tech</a>
+    <a href="#map"><span class="n">4</span>Evidence map</a>
+    <a href="#phones"><span class="n">5</span>Phone bans</a>
+    <a href="#ai"><span class="n">6</span>AI: what trials show</a>
+    <a href="#ny"><span class="n">7</span>New York right now</a>
+    <a href="#districts"><span class="n">8</span>What districts are doing</a>
+    <a href="#cases"><span class="n">9</span>Case files</a>
+    <a href="#pushback"><span class="n">10</span>The tech director's view</a>
+    <a href="#patterns"><span class="n">11</span>Why things work or fail</a>
+    <a href="#timeline"><span class="n">12</span>Timeline</a>
+    <a href="#sources"><span class="n">13</span>Sources</a>
+  </nav>
+</header>
+
+<section id="short">
+  <h2>The short version</h2>
+  <ol class="takeaways">
+    <li><span class="n">01</span><div>Test scores have been falling since roughly 2012–15, before and after the pandemic, and the drop is worst for the lowest-performing students. Nobody has proven why. Classroom screens are one suspect among several, alongside phones, the pandemic, and attendance.</div></li>
+    <li><span class="n">02</span><div>The loudest anti-ed-tech argument (Jared Cooney Horvath's Senate testimony) is persuasive but statistically contested. Its strongest pieces are the cognitive-science findings on reading and note-taking, and the general distraction problem.</div></li>
+    <li><span class="n">03</span><div>The best-supported specific findings: long or informational text is understood less well on screens than on paper, and bell-to-bell phone bans produce modest gains in middle and high school, partly by improving attendance.</div></li>
+    <li><span class="n">04</span><div>On AI, design is everything. A general chatbot used during practice made students do worse later. A tightly scaffolded tutor that gives hints, not answers, avoided that harm and in some trials produced large short-term gains.</div></li>
+    <li><span class="n">05</span><div>The 2026 trend is not removing technology. It is deliberate restriction: no personal devices in the youngest grades, devices kept at school, carts instead of 1:1, short approved-app lists, YouTube blocked, and caps on minutes.</div></li>
+    <li><span class="n">06</span><div>New York is in the middle of this. The state has a bell-to-bell phone law and no comprehensive statewide AI guidance. NYC just paused student-facing generative AI through 8th grade for a year.</div></li>
+    <li><span class="n">07</span><div>The biggest failures (LAUSD's "Ed" chatbot, the PowerSchool breach) were about procurement, vendor risk, and data, not pedagogy. That is where people with engineering backgrounds can help most.</div></li>
+  </ol>
+</section>
+
+<section id="decline">
+  <h2>The score decline everyone is reacting to</h2>
+  <p>The 2024 National Assessment of Educational Progress (NAEP, "the nation's report card") is the backdrop for nearly every argument in this guide.</p>
+  <div class="statrow">
+    <div><span class="stat">−5</span><span class="note">points in 4th and 8th grade reading since 2019, with a further 2-point drop from 2022 to 2024</span></div>
+    <div><span class="stat">−8</span><span class="note">points in 8th grade math since 2019</span></div>
+    <div><span class="stat">45%</span><span class="note">of 12th graders below NAEP Basic in math, the highest share since 2005</span></div>
+  </div>
+  <ul class="plain">
+    <li>12th grade reading scores were the lowest in the history of the assessment, which began in 1992.</li>
+    <li>The highest performers held steady while the bottom fell. In 8th grade math, the gap between top and bottom students was the widest ever recorded.</li>
+    <li>Absenteeism was strongly linked with low scores.</li>
+    <li>NAEP itself offers no explanation. Educators commonly point to screen time, shorter attention spans, and less long-form reading in and out of school.</li>
+  </ul>
+  <div class="callout">
+    <h4>Why this matters</h4>
+    <p>Because the decline started around 2012–15, it can't be blamed only on the pandemic. That timing overlaps with smartphones, social media, and the spread of 1:1 school devices, which is why all three get blamed together. Separating them is hard, and any district claim that its own policy caused a score change deserves skepticism.</p>
+  </div>
+</section>
+
+<section id="case">
+  <h2>The case against ed-tech, and how well it holds up</h2>
+  <p>In January 2026, neuroscientist and former teacher Jared Cooney Horvath testified to the U.S. Senate Commerce Committee that classroom technology is a major driver of declining learning. The video has been viewed millions of times, Jonathan Haidt has promoted his work, and parents are bringing his book, <i>The Digital Delusion</i>, to school board meetings. Most district technology leaders have almost certainly seen it.</p>
+
+  <h3>His three arguments</h3>
+  <ul class="plain">
+    <li><b>Correlation.</b> On international tests, students who spend more time on school computers tend to score lower, and scores began dropping as laptops arrived.</li>
+    <li><b>Meta-analyses.</b> He pooled reviews covering over 20,000 studies and argued most ed-tech performs below "ordinary instruction," using a benchmark effect size of about +0.42.</li>
+    <li><b>Cognitive science.</b> Screens are distracting, make learning frictionless in ways that hurt retention, and can't replace human relationships.</li>
+  </ul>
+  <p>His policy asks are moderate compared with the headlines: efficacy standards before ed-tech is funded, validation before high-stakes tests move from paper to screen, and stronger limits on tracking and profiling children through school platforms.</p>
+
+  <h3>The critique</h3>
+  <p>Chalkbeat's March 2026 review found no smoking gun linking ed-tech to the recent declines, while still concluding his case should give schools pause.</p>
+  <ul class="plain">
+    <li>The correlation is just that. Horvath acknowledges it.</li>
+    <li>The studies he cites actually show a small <em>positive</em> average effect. His conclusion only turns negative because of the +0.42 benchmark. Northwestern statistician Elizabeth Tipton, herself an ed-tech skeptic, calls that benchmark unrealistic, since well-designed studies comparing two real instructional conditions usually find small effects.</li>
+    <li>Tipton also worries about "garbage in, garbage out." He summarized summaries of studies of varying quality, about technology that changes quickly.</li>
+    <li>His strongest ground is the cognitive science. There is real evidence that students learn less from reading and taking notes on screens, and cognitive psychologist Daniel Willingham shares the distraction worry: give kids a Chromebook and they will find a way to do something more fun on it.</li>
+  </ul>
+  <div class="callout">
+    <h4>A useful middle position</h4>
+    <p>Horvath argues the burden of proof should be on vendors, not critics. You don't need to accept his statistics to accept that point. "Show us evidence this tool helps, for these students, compared with what we'd do otherwise" is a reasonable standard either way.</p>
+  </div>
+
+  <h3>Paper versus screen reading</h3>
+  <p>This is the most solid strand. Two major meta-analyses agree:</p>
+  <ul class="plain">
+    <li><b>Delgado et al. (2018)</b>: 54 studies, more than 170,000 participants. Comprehension was better on paper (effect about −0.21 for screens). The gap was concentrated in informational and expository text, roughly −0.3, and close to zero for narrative fiction. It grew under time pressure and was <em>larger</em> in more recent studies, so growing up with screens hasn't closed it.</li>
+    <li><b>Clinton (2019)</b>: 33 studies, a similar effect (about −0.25), again for expository text. Screen readers also overestimated how well they understood.</li>
+    <li>For young children (ages 2–8) the evidence is more mixed.</li>
+    <li>Reading researcher Naomi Baron's analysis of about 300,000 4th and 8th graders found that as little as 30 minutes a day of screen reading was associated with lower national test scores.</li>
+  </ul>
+  <p class="note">Practical reading: textbooks, workbooks, and anything students must study closely do better on paper. Access, logistics, and fiction can stay on screen.</p>
+</section>
+
+<section id="map">
+  <h2>Evidence map</h2>
+  <p>A rough summary of where specific uses of technology land. Strength reflects how good the research is, not how big the effect is.</p>
+  <div class="emap" role="table" aria-label="Evidence by technology use">
+    <div class="row head" role="row"><span class="h-what" role="columnheader">Use</span><span role="columnheader">Strength</span><span role="columnheader">Direction</span></div>
+    <div class="row" role="row"><div class="what" role="cell"><b>Reading informational text on paper vs. screen</b><span>Two large meta-analyses, consistent</span></div><span class="dots" role="cell" aria-label="strong"><i class="on"></i><i class="on"></i><i class="on"></i></span><span class="verdict chip good" role="cell">Paper better</span></div>
+    <div class="row" role="row"><div class="what" role="cell"><b>Bell-to-bell phone bans, grades 6–12</b><span>Quasi-experimental studies in Florida and nationally</span></div><span class="dots" role="cell" aria-label="moderate"><i class="on"></i><i class="on"></i><i></i></span><span class="verdict chip good" role="cell">Modest gain</span></div>
+    <div class="row" role="row"><div class="what" role="cell"><b>Phone bans, elementary</b><span>Same studies; few elementary students had phones</span></div><span class="dots" role="cell" aria-label="moderate"><i class="on"></i><i class="on"></i><i></i></span><span class="verdict chip neutral" role="cell">No effect</span></div>
+    <div class="row" role="row"><div class="what" role="cell"><b>Adaptive practice where answers are right or wrong</b><span>Spelling, arithmetic drills; some learning disabilities</span></div><span class="dots" role="cell" aria-label="moderate"><i class="on"></i><i class="on"></i><i></i></span><span class="verdict chip good" role="cell">Helps</span></div>
+    <div class="row" role="row"><div class="what" role="cell"><b>General-purpose AI chatbot during practice</b><span>One large preregistered field trial</span></div><span class="dots" role="cell" aria-label="moderate"><i class="on"></i><i class="on"></i><i></i></span><span class="verdict chip bad" role="cell">Hurts learning</span></div>
+    <div class="row" role="row"><div class="what" role="cell"><b>Scaffolded AI tutor (hints, not answers)</b><span>A few short RCTs, carefully built tools</span></div><span class="dots" role="cell" aria-label="weak"><i class="on"></i><i></i><i></i></span><span class="verdict chip good" role="cell">Promising</span></div>
+    <div class="row" role="row"><div class="what" role="cell"><b>Laptop note-taking</b><span>Debated among researchers</span></div><span class="dots" role="cell" aria-label="weak"><i class="on"></i><i></i><i></i></span><span class="verdict chip warn" role="cell">Likely worse</span></div>
+    <div class="row" role="row"><div class="what" role="cell"><b>Drafting and revising writing on computers</b><span>Maine laptop program evaluations</span></div><span class="dots" role="cell" aria-label="weak"><i class="on"></i><i></i><i></i></span><span class="verdict chip good" role="cell">Small gain</span></div>
+    <div class="row" role="row"><div class="what" role="cell"><b>Broad 1:1 devices, used for everything</b><span>Mostly correlational (PISA, NAEP trends)</span></div><span class="dots" role="cell" aria-label="weak"><i class="on"></i><i></i><i></i></span><span class="verdict chip bad" role="cell">No gain, maybe harm</span></div>
+    <div class="row" role="row"><div class="what" role="cell"><b>Assistive tech, IEP and 504 accommodations</b><span>Legally required; not a research question</span></div><span class="dots" role="cell" aria-label="not applicable"><i></i><i></i><i></i></span><span class="verdict chip neutral" role="cell">Protect</span></div>
+  </div>
+  <div class="callout">
+    <h4>Four questions to ask of any study or vendor claim</h4>
+    <ul class="plain">
+      <li><b>What was the control?</b> Beating "nothing" is easy. Beating a good teacher is the real test.</li>
+      <li><b>Was it learning or performance?</b> Scores while using a tool differ from what students can do without it later.</li>
+      <li><b>Who paid for it?</b> Districts often rely on company-funded research, which a 2020 review found can mislead.</li>
+      <li><b>Correlation or experiment?</b> Most headline claims on both sides are correlational.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="phones">
+  <h2>Phone bans: the clearest evidence so far</h2>
+  <p>Economists David Figlio (University of Rochester) and Umut Özek (RAND) studied a large urban Florida district with a bell-to-bell ban, comparing schools that had heavy versus light phone use before the ban (measured with building-level phone location data). Their results, published in <i>Education Next</i> in 2026, are the best causal evidence available.</p>
+  <div class="compare">
+    <div class="yr">
+      <span class="lbl">Year 1 (2023–24)</span>
+      <ul class="plain">
+        <li>Phone use during school fell sharply</li>
+        <li>Test scores held steady</li>
+        <li>Suspensions <b>rose</b>, especially for Black boys</li>
+        <li>Unexcused absences dropped</li>
+      </ul>
+    </div>
+    <div class="yr">
+      <span class="lbl">Year 2 (2024–25)</span>
+      <ul class="plain">
+        <li>Scores up about 1.1 percentile points attributable to the ban, more in high-use schools</li>
+        <li>About 3.5 percentiles above the pre-ban year overall</li>
+        <li>Suspensions mostly back to pre-ban levels</li>
+        <li>About half the score gain came through better attendance</li>
+      </ul>
+    </div>
+  </div>
+  <ul class="plain">
+    <li>Effects were concentrated in middle and high school and among boys. Elementary schools showed no measurable change.</li>
+    <li>Figlio's summary: meaningful but not game-changing.</li>
+    <li>The enforcement lesson: first-year discipline spikes are real and fall unevenly, so how a ban is enforced matters as much as the ban.</li>
+  </ul>
+</section>
+
+<section id="ai">
+  <h2>AI: what the trials actually show</h2>
+  <p>Teacher and student AI use is already near-universal (one 2024–25 survey found 85% of teachers and 86% of students used it), so the question is design and guardrails, not whether kids will encounter it.</p>
+
+  <figure>
+    <div class="fig">
+      <svg viewBox="0 0 640 260" width="100%" style="min-width:420px" role="img" aria-label="Bar chart: GPT Base improved practice scores 48 percent but lowered exam scores 17 percent; GPT Tutor improved practice 127 percent with no exam difference.">
+        <!-- scale: -20..130 mapped to x 200..610 ; 1 unit = 2.733px ; zero at x=254.7 -->
+        <line class="zero" x1="255" y1="30" x2="255" y2="230" stroke-width="1.5"/>
+        <line class="axis" x1="392" y1="30" x2="392" y2="230" stroke-dasharray="3 4"/>
+        <line class="axis" x1="528" y1="30" x2="528" y2="230" stroke-dasharray="3 4"/>
+        <text x="255" y="250" text-anchor="middle" font-size="11" class="muted">0%</text>
+        <text x="392" y="250" text-anchor="middle" font-size="11" class="muted">+50%</text>
+        <text x="528" y="250" text-anchor="middle" font-size="11" class="muted">+100%</text>
+        <text x="10" y="22" font-size="11" class="muted" font-weight="600">VS. NO-AI CONTROL GROUP</text>
+        <text x="10" y="58" font-size="13" font-weight="600">Chatbot (GPT Base)</text>
+        <text x="10" y="76" font-size="11" class="muted">practice, with AI</text>
+        <rect class="bar-pencil" x="255" y="50" width="131" height="22"/>
+        <text x="392" y="66" font-size="12" font-weight="600">+48%</text>
+        <text x="10" y="106" font-size="11" class="muted">exam, without AI</text>
+        <rect class="bar-bad" x="209" y="94" width="46" height="22"/>
+        <text x="262" y="110" font-size="12" font-weight="600">−17%</text>
+        <text x="10" y="158" font-size="13" font-weight="600">Tutor (GPT Tutor)</text>
+        <text x="10" y="176" font-size="11" class="muted">practice, with AI</text>
+        <rect class="bar-pencil" x="255" y="150" width="347" height="22"/>
+        <text x="594" y="166" font-size="12" font-weight="600" text-anchor="end" style="fill:var(--sheet)">+127%</text>
+        <text x="10" y="206" font-size="11" class="muted">exam, without AI</text>
+        <rect class="bar-neutral" x="253" y="194" width="4" height="22"/>
+        <text x="264" y="210" font-size="12" font-weight="600">≈ 0</text>
+      </svg>
+    </div>
+    <figcaption>Bastani et al., <i>PNAS</i> 2025: a randomized field trial with nearly 1,000 high school math students in Turkey. Students leaned on the plain chatbot as a crutch and learned less. The tutor's prompts withheld direct answers, which removed the harm but didn't add exam gains.</figcaption>
+  </figure>
+
+  <h3>The positive trials, and their fine print</h3>
+  <ul class="plain">
+    <li><b>Harvard physics (Kestin et al., 2025).</b> 194 undergraduates. A custom AI tutor produced more than double the learning gains of an already strong active-learning class, in less time. But it took months to write the tutor's prompts, covered one course's topics over two weeks, measured only short-term results, and was built by the same instructors who designed the class.</li>
+    <li><b>Nigeria (World Bank, 2025).</b> About 800 secondary students, six weeks of after-school English with Microsoft Copilot, supervised by teachers. Gains of 0.31 standard deviations, large for that setting.</li>
+    <li><b>Tutor CoPilot (Stanford).</b> AI that coaches <em>human</em> tutors in real time. 900 tutors and 1,800 students; mastery rose four percentage points, with the biggest gains for students of weaker tutors.</li>
+    <li><b>Khanmigo.</b> Widely piloted (Indiana, Maryland, Michigan Virtual), with teachers mostly praising its planning help. As of mid-2026 there was no published peer-reviewed RCT of its effect on learning; one small independent comparison found no difference from Google search or paper.</li>
+  </ul>
+  <div class="callout">
+    <h4>The pattern</h4>
+    <p>Every positive result came from AI embedded in a tight instructional design, usually with an adult in the loop. Districts mostly buy platforms, licenses, and dashboards, which is not what those trials tested. A default chatbot is tuned to be maximally helpful, which is the opposite of what learning needs.</p>
+  </div>
+</section>
+
+<section id="ny">
+  <h2>New York right now</h2>
+  <h3>Phones: bell-to-bell, statewide</h3>
+  <ul class="plain">
+    <li>In effect since September 2025 in all public, charter, and BOCES schools, covering the whole school day including lunch.</li>
+    <li>The state set aside $13.5 million for phone storage. Districts design their own storage and parent-contact plans.</li>
+    <li>Students can't be suspended solely for violations, and districts must report enforcement data annually, including demographics of students disciplined. That last rule speaks directly to the Florida finding about uneven discipline.</li>
+    <li>A June 2026 survey of about 600 educators, released by the governor's office, found 75% said the policy improved their ability to teach. It's self-reported and political, but consistent with the research.</li>
+  </ul>
+
+  <h3>AI: no statewide rulebook yet</h3>
+  <ul class="plain">
+    <li>NYSED presented an AI framework to the Board of Regents in March 2024 but has not issued comprehensive guidance. More than 30 states have.</li>
+    <li>Districts are filling the gap themselves. The NYS AI Consortium, a practitioner network of more than 280 educators from over 180 schools and districts, meets monthly and is pressing Albany to act.</li>
+    <li>A pending bill (A9190) would prohibit most AI use in classrooms before high school.</li>
+    <li>Education Law 2-d already bars using student data to train commercial models or monetizing it. Any AI vendor contract has to satisfy it.</li>
+  </ul>
+
+  <h3>NYC: the policy everyone will be watching</h3>
+  <p>In March 2026 NYC Public Schools released draft guidance with a red/yellow/green "traffic light" framework (for example, AI is barred for grading, discipline, and IEPs). Then on September 2, 2026, the city went much further:</p>
+  <ul class="plain">
+    <li>A one-year moratorium on student-facing generative AI for 3-K/pre-K through 8th grade, about 600,000 students.</li>
+    <li>Companion chatbots banned in every grade. More than 38 previously approved programs had AI features turned off or were removed.</li>
+    <li>High school AI limited to a handful of named pilots.</li>
+    <li>Screen guidance: no daily one-to-one device time through 2nd grade (assistive tech excepted), about 30 minutes a day maximum for grades 3–5, about 45 for grades 6–8.</li>
+    <li>A review of every tech tool in the system, eliminating those not essential to learning, and an evaluation coalition reporting before the city decides what's next.</li>
+  </ul>
+  <p class="note">LAUSD, the second-largest district, is also blocking AI on student devices across all grades while it writes a policy. Elsewhere in the state, candidates in Bethlehem Central (near Albany) campaigned in May 2026 on a formal screen-time audit, noting that computer-based state tests constrain how far elementary and middle schools can pull back.</p>
+</section>
+
+<section id="districts">
+  <h2>What other districts are doing</h2>
+  <p>At least six states enacted screen-time laws in 2026 (including Alabama, Iowa, Tennessee, and Utah), at least 13 have AI-in-education laws, and the AFT's Randi Weingarten has called for a screen ban for pre-K through 2nd grade. The issue is not partisan: Moms for Liberty and the AFT are on the same side of it. Locally, the most common moves look like this:</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>District</th><th>Youngest grades</th><th>Older grades</th><th>Other notable rules</th></tr></thead>
+      <tbody>
+        <tr><td>NYC (NY)</td><td>No daily 1:1 device time through gr. 2</td><td>~30 min/day gr. 3–5; ~45 min gr. 6–8</td><td>Student-facing AI paused through gr. 8; full tool review</td></tr>
+        <tr><td>Los Angeles (CA)</td><td>No student devices TK–1</td><td>Grade-level caps</td><td>YouTube and gaming blocked; no devices at lunch, recess, passing; opt-out process</td></tr>
+        <tr><td>Greenville Co. (SC)</td><td>No laptops before gr. 2</td><td>Chromebooks ≤ half of class time</td><td>Only 14 approved apps, all others blocked; report to board after 6 months</td></tr>
+        <tr><td>Henrico (VA)</td><td>15 min/day pre-K</td><td>Up to 90 min/day gr. 3–5</td><td>No digital homework K–5; devices stay at school; YouTube blocked K–8</td></tr>
+        <tr><td>Chesterfield (VA)</td><td>K–2 devices stay at school</td><td>Used only with clear instructional need</td><td>Parent pressure drove the change</td></tr>
+        <tr><td>Canon-McMillan (PA)</td><td>No Chromebooks K–2</td><td>Shared carts gr. 3–8; 1:1 in high school</td><td>Superintendent asked the state to allow paper testing</td></tr>
+        <tr><td>Galesburg (IL)</td><td>No individual devices gr. 2–8</td><td>1:1 in high school</td><td>Surveyed staff and administrators before deciding</td></tr>
+        <tr><td>Granville Co. (NC)</td><td>Tech-free Tuesdays and Thursdays, all grades</td><td>No take-home laptops gr. 3–8</td><td>Evaluated with UNC public health researchers</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">LAUSD's own resolution admitted the district didn't track student screen time by app or grade. Greenville found the same thing when it tried to measure usage. Most districts setting caps currently can't measure them.</p>
+</section>
+
+<section id="cases">
+  <h2>Case files: what worked, what failed, and why</h2>
+  <div class="cases">
+
+    <article class="case">
+      <div class="meta"><span class="chip bad">Failed</span><span class="where">Los Angeles · 2024</span></div>
+      <h3>LAUSD's "Ed" chatbot</h3>
+      <p>Launched with fanfare in March 2024 as an AI assistant for 500,000 students and families, built by startup AllHere under a contract worth up to about $6 million. By June the company had furloughed most of its staff and the chatbot went dark; the district had paid roughly $2 million. A former AllHere engineer alleged student data was handled insecurely, the district's inspector general investigated, and AllHere went bankrupt.</p>
+      <p class="why"><b>Why:</b> no single clear problem (it tried to answer everything from bus schedules to grades), a young vendor with no K-12 track record, and underestimated difficulty of integrating district data. Parents said it mostly surfaced information already on the website.</p>
+    </article>
+
+    <article class="case">
+      <div class="meta"><span class="chip bad">Failed</span><span class="where">National · Dec 2024</span></div>
+      <h3>PowerSchool breach</h3>
+      <p>An attacker used compromised credentials on a customer-support portal to pull student information system data, reportedly covering about 62 million students and 9.5 million teachers across roughly 6,500 districts. Some records went back 20+ years and included Social Security numbers. The attacker later tried to extort districts directly; he was sentenced to four years in federal prison. Some districts learned of it from the news.</p>
+      <p class="why"><b>Why:</b> vendor remote-access paths, weak credential controls, and districts' old data that nobody had a reason to keep. Lessons: data-retention limits, MFA, and vendor-access audits written into contracts.</p>
+    </article>
+
+    <article class="case">
+      <div class="meta"><span class="chip warn">Mixed</span><span class="where">Sweden · 2009–2028</span></div>
+      <h3>Sweden reverses course</h3>
+      <p>Sweden went heavily digital from 2009, including tablets in preschools. After PISA declines, the government changed course in 2023, spending well over €100 million on printed textbooks, dropping the preschool digital requirement in 2025, banning phones even for educational use, and planning a textbook-based curriculum for 2028.</p>
+      <p class="why"><b>Why it's contested:</b> the OECD's education director cautioned against reading cause and effect into it, and the pandemic and a rise in non-native-speaking students coincided with the drop. Sweden's ed-tech industry calls the policy populist. It shows a country acting before the evidence is settled.</p>
+    </article>
+
+    <article class="case">
+      <div class="meta"><span class="chip warn">Mixed</span><span class="where">Maine · 2002–2016</span></div>
+      <h3>Maine's laptop program</h3>
+      <p>The first statewide 1:1 program gave laptops to every 7th and 8th grader starting in 2002. Writing scores improved, and the gains held when students wrote by hand, which researchers tied to more drafting and revising. Math rose more where teachers had specific training. Reading and overall scores barely moved. Horvath now uses Maine as a cautionary tale.</p>
+      <p class="why"><b>Why:</b> technology helped where it changed a concrete practice (more revision) and where teachers were trained. It did little as a general-purpose tool.</p>
+    </article>
+
+    <article class="case">
+      <div class="meta"><span class="chip good">Worked, modestly</span><span class="where">Florida · 2023–25</span></div>
+      <h3>Florida's phone ban</h3>
+      <p>See section 5. Attendance up, unexcused absences down, test scores up a few percentile points by year two in middle and high school, after a first-year spike in suspensions.</p>
+      <p class="why"><b>Why:</b> it removed a constant distraction rather than adding anything, and enforcement settled down in year two. The gains came partly through kids showing up more.</p>
+    </article>
+
+    <article class="case">
+      <div class="meta"><span class="chip bad">Underdelivered</span><span class="where">Texas and elsewhere · 2025–26</span></div>
+      <h3>Alpha School's AI model</h3>
+      <p>A private K–8 chain where AI apps deliver about two hours of academics a day without traditional teachers, promoted as producing "2x" learning. A New York Times investigation found only 42% of students met that target in both math and reading, and 404 Media reported poorly constructed AI-generated lessons. Houston ISD is expanding a different AI-focused school model, which became a campaign issue in Texas.</p>
+      <p class="why"><b>Why:</b> unverifiable marketing claims, selective student populations, and AI-generated content without human quality control.</p>
+    </article>
+
+    <article class="case">
+      <div class="meta"><span class="chip neutral">Too early</span><span class="where">Greenville Co., SC · 2026</span></div>
+      <h3>Greenville's 14-app list</h3>
+      <p>South Carolina's largest district (76,000 students) capped Chromebooks at half of class time, removed them before 2nd grade, and blocked all but 14 approved apps. It kept tools its own analysis showed helping struggling readers (an AI reading tutor, Amira) and one AI platform for grades 6–12.</p>
+      <p class="why"><b>Worth watching:</b> it pairs restriction with an approved list and a scheduled report back to the board. That structure makes it evaluable.</p>
+    </article>
+
+    <article class="case">
+      <div class="meta"><span class="chip warn">Messy</span><span class="where">Granville Co., NC · 2025–26</span></div>
+      <h3>Tech-free Tuesdays and Thursdays</h3>
+      <p>Teachers, especially in middle school, reported less distraction and more peer interaction, and the district expanded the policy. But about 15% of 222 teachers surveyed felt not at all prepared, and students asked for activities designed for tech-free days instead of paper copies of online worksheets.</p>
+      <p class="why"><b>Why:</b> removing screens without redesigning lessons and supporting teachers produces paper versions of the same low-value work.</p>
+    </article>
+
+    <article class="case">
+      <div class="meta"><span class="chip neutral">Too early</span><span class="where">Mesick, MI · 2026</span></div>
+      <h3>Mesick's no-screens elementary</h3>
+      <p>A small rural district with low reading scores pulled all devices from its 250-student elementary school mid-year in February 2026, going back to paper books, handwriting, and small-group reading. Teachers found screens had been more of a crutch than they realized. No results yet.</p>
+      <p class="why"><b>Why it matters:</b> this is the kind of story that will spread on anecdote before any data exists.</p>
+    </article>
+
+  </div>
+</section>
+
+<section id="pushback">
+  <h2>The view district tech directors tend to hold</h2>
+  <p>CoSN, the professional association for district technology leaders, released screen-time guidance in August 2026. Read it as the counterweight many district technology leaders will bring, and much of it is reasonable.</p>
+  <ul class="plain">
+    <li><b>Minutes are a poor measure.</b> Thirty minutes of passive video is too much; thirty minutes programming a sensor for a school garden may not be enough.</li>
+    <li><b>Cut low-value uses instead:</b> passive video without instruction, repetitive digital worksheets, screen time as a reward, unsupervised browsing, unvetted apps, and products designed to maximize engagement.</li>
+    <li><b>Protect what's required:</b> assistive tech, IEP and 504 accommodations, supports for multilingual learners, screen readers, speech-to-text, and universal screeners.</li>
+    <li><b>Watch for stigma.</b> If only students with disabilities may use devices, everyone knows who they are.</li>
+    <li><b>School accounts are safer.</b> School-managed devices carry stronger privacy protections and filtering than kids' personal devices, and fewer school screens can mean less digital-citizenship teaching.</li>
+  </ul>
+  <h3>Practical constraints that will come up</h3>
+  <ul class="plain">
+    <li><b>Computer-based state testing</b> requires students to be fluent on devices. Several superintendents have asked states for paper options.</li>
+    <li><b>The device refresh bill.</b> Pandemic relief (ESSER, about $190 billion) bought many 1:1 fleets in 2020–21. Chromebooks last 4–5 years, the federal money is gone, E-Rate doesn't cover student devices, and low-cost Chromebook prices rose in 2026. A refresh decision is a natural moment to ask whether every grade needs 1:1.</li>
+    <li><b>Tool sprawl.</b> Districts accessed an average of 2,982 distinct ed-tech tools in 2024–25, still growing about 8–9% a year, while individual educators use around 50. In 2025, 45% of the 40 most-used tools had published research meeting any federal (ESSA) evidence tier.</li>
+  </ul>
+</section>
+
+<section id="patterns">
+  <h2>Why things work or fail</h2>
+  <div class="compare">
+    <div class="yr">
+      <span class="lbl">What the successes share</span>
+      <ul class="plain">
+        <li>A specific problem and a specific practice (revising writing, removing phones, hint-only tutoring)</li>
+        <li>Teachers trained and involved in the design</li>
+        <li>Narrow scope: certain grades, subjects, or students</li>
+        <li>Measurement planned from the start, with a date to report back</li>
+        <li>Protections kept for students who need tools</li>
+      </ul>
+    </div>
+    <div class="yr">
+      <span class="lbl">What the failures share</span>
+      <ul class="plain">
+        <li>Technology as the goal, or a vague promise to "personalize" or "know every student"</li>
+        <li>Vendor claims accepted without independent evidence</li>
+        <li>Young vendors holding sensitive data with weak contract terms</li>
+        <li>Rollouts at full scale instead of pilots</li>
+        <li>Restrictions without lesson redesign or enforcement planning</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout">
+    <h4>Questions this suggests for a district</h4>
+    <ul class="plain">
+      <li>Can the district measure how much time students spend on devices, in which apps, by grade? If not, can it start?</li>
+      <li>How many distinct tools are in use, who approved them, and which have independent evidence?</li>
+      <li>When is the next device refresh, and is 1:1 needed in every grade?</li>
+      <li>What do vendor contracts say about data retention, deletion, breach notification, and AI training under Ed Law 2-d?</li>
+      <li>How is the phone law being enforced here, and what does the required discipline data show?</li>
+      <li>What's the district's AI position while NYSED has none, and will it watch NYC's moratorium results?</li>
+      <li>Which core reading happens on paper versus screens?</li>
+    </ul>
+  </div>
+</section>
+
+<section id="timeline">
+  <h2>Timeline</h2>
+  <ol class="timeline">
+    <li><span class="when">2009</span><span class="what">Sweden begins replacing textbooks with digital materials.</span></li>
+    <li><span class="when">2012–15</span><span class="what">U.S. benchmark test scores peak, then begin declining as smartphones and school devices spread.</span></li>
+    <li><span class="when">2020–21</span><span class="what">ESSER funding builds near-universal 1:1 device programs.</span></li>
+    <li><span class="when">May 2023</span><span class="what">Florida passes the first statewide school phone restriction. Sweden pivots back to print.</span></li>
+    <li><span class="when">Mar–Jul 2024</span><span class="what">LAUSD launches, then shelves, the "Ed" chatbot as AllHere collapses.</span></li>
+    <li><span class="when">Dec 2024</span><span class="what">PowerSchool breach exposes tens of millions of student records.</span></li>
+    <li><span class="when">Jan 2025</span><span class="what">NAEP 2024 results show reading declines continuing and the lowest performers at historic lows.</span></li>
+    <li><span class="when">Jun 2025</span><span class="what">Bastani AI study (PNAS) and Harvard AI tutor study published.</span></li>
+    <li><span class="when">Sep 2025</span><span class="what">New York's bell-to-bell phone law takes effect.</span></li>
+    <li><span class="when">Oct 2025</span><span class="what">Figlio and Özek release Florida phone-ban results.</span></li>
+    <li><span class="when">Jan 2026</span><span class="what">Horvath testifies to the U.S. Senate Commerce Committee.</span></li>
+    <li><span class="when">Mar 2026</span><span class="what">NYC releases traffic-light AI guidance. Mesick goes screen-free. Chalkbeat publishes its review of Horvath's evidence.</span></li>
+    <li><span class="when">Apr 2026</span><span class="what">LAUSD votes to limit screen time for 2026–27.</span></li>
+    <li><span class="when">Jun 2026</span><span class="what">Greenville County adopts its 14-app limit. New York releases its phone-ban educator survey.</span></li>
+    <li><span class="when">Aug 2026</span><span class="what">CoSN advises against minute-based limits. U.S. Department of Education issues screen-time guidance.</span></li>
+    <li><span class="when">Sep 2026</span><span class="what">NYC pauses student-facing AI through 8th grade for a year.</span></li>
+    <li><span class="when">Oct 2026</span><span class="what">Pennsylvania signs a bell-to-bell law. Screen time and AI become school board and midterm campaign issues in both parties.</span></li>
+  </ol>
+</section>
+
+<section id="sources">
+  <h2>Sources</h2>
+  <ol class="sources">
+    <li><a href="https://www.chalkbeat.org/2026/03/17/jared-cooney-horvath-says-ed-tech-hurts-learning-a-look-at-the-evidence/" target="_blank" rel="noopener">Chalkbeat: A viral case against screens in schools… Does the evidence hold up?</a></li>
+    <li><a href="https://legislature.vermont.gov/Documents/2026/Workgroups/House%20Commerce/Bills/H.650/Witness%20Documents/H.650~Jared%20Cooney%20Horvath~Written%20Testimony~2-6-2026.pdf" target="_blank" rel="noopener">Horvath written testimony (Vermont, Feb 2026)</a></li>
+    <li><a href="https://fortune.com/2026/03/01/american-schools-broken-silicon-valley-edtech-gen-z-test-scores/" target="_blank" rel="noopener">Fortune: Horvath on ed-tech and Gen Z test scores</a></li>
+    <li><a href="https://www.sciencenews.org/article/science-school-screen-limits-devices" target="_blank" rel="noopener">Science News: Science backs calls for limiting screens in schools</a></li>
+    <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7463273" target="_blank" rel="noopener">Delgado &amp; Salmerón: The inattentive on-screen reading</a></li>
+    <li><a href="https://www.edtech.tum.de/?p=2157" target="_blank" rel="noopener">TUM: Summary of Delgado (2018) and Clinton (2019) meta-analyses</a></li>
+    <li><a href="https://chalkbeat.org/2025/01/29/naep-reading-scores-decline-and-struggling-students-fall-behind" target="_blank" rel="noopener">Chalkbeat: NAEP 2024 4th and 8th grade results</a></li>
+    <li><a href="https://www.chalkbeat.org/2025/09/09/naep-scores-12th-grade-math-reading-declines" target="_blank" rel="noopener">Chalkbeat: NAEP 2024 12th grade results</a></li>
+    <li><a href="https://www.educationnext.org/wp-content/uploads/2026/05/ednext_26_2_research_figlio_ozek.pdf" target="_blank" rel="noopener">Figlio &amp; Özek, Education Next: Can Banning Cellphones Save Student Learning?</a></li>
+    <li><a href="https://www.chalkbeat.org/2025/10/20/new-study-finds-cell-phone-ban-benefits-to-test-scores/" target="_blank" rel="noopener">Chalkbeat: School cellphone bans can boost test scores</a></li>
+    <li><a href="https://papers.ssrn.com/abstract=4895486" target="_blank" rel="noopener">Bastani et al.: Generative AI without guardrails can harm learning (PNAS 2025)</a></li>
+    <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12179260/" target="_blank" rel="noopener">Kestin et al.: AI tutoring vs. active learning (Scientific Reports 2025)</a></li>
+    <li><a href="https://nickpotkalitsky.substack.com/p/what-are-we-buying-when-we-buy-an" target="_blank" rel="noopener">What are we buying when we buy an AI tutor? (on the Harvard and Nigeria trials)</a></li>
+    <li><a href="https://nssa.stanford.edu/news/how-tutor-co-pilot-systems-scale-teaching-capacity-worldwide" target="_blank" rel="noopener">Stanford NSSA: Tutor CoPilot</a></li>
+    <li><a href="https://governor.ny.gov/news/video-audio-photos-rush-transcript-governor-hochul-announces-successful-results-new-yorks" target="_blank" rel="noopener">NY Governor: Phone-free schools first-year results</a></li>
+    <li><a href="https://digital-release.mychamplainvalley.com/?p=2057823" target="_blank" rel="noopener">NY bell-to-bell law: funding and enforcement rules</a></li>
+    <li><a href="https://nyc.gov/mayors-office/news/2026/09/mayor-mamdani-and-chancellor-samuels-put-students-first-with-nat" target="_blank" rel="noopener">NYC Mayor's Office: AI moratorium and screen-time policy</a></li>
+    <li><a href="https://www.chalkbeat.org/newyork/2026/03/24/preliminary-ai-policy-nyc-schools/" target="_blank" rel="noopener">Chalkbeat NY: NYC preliminary AI guidance</a></li>
+    <li><a href="https://www.govtech.com/education/k-12/opinion-new-york-schools-need-statewide-ai-guidelines" target="_blank" rel="noopener">GovTech: New York schools need statewide AI guidelines (NYSAIC)</a></li>
+    <li><a href="https://legislation.nysenate.gov/pdf/bills/2025/A9190" target="_blank" rel="noopener">NY Assembly bill A9190</a></li>
+    <li><a href="https://cpo.soar.com/articles/7996414/New-York/Candidates-back-a-district-screen-time-audit-and-question-Chromebook-policies" target="_blank" rel="noopener">Bethlehem Central candidates on a screen-time audit</a></li>
+    <li><a href="https://www.k12dive.com/news/as-districts-navigate-screen-time-cosn-advises-against-time-limits/827595/" target="_blank" rel="noopener">K-12 Dive: CoSN advises against time limits</a></li>
+    <li><a href="https://www.chalkbeat.org/2026/10/26/backlash-to-ai-screen-time-ed-tech-factors-into-midterm-elections/" target="_blank" rel="noopener">Chalkbeat: The ed-tech backlash and the midterms</a></li>
+    <li><a href="https://fordhaminstitute.org/sites/default/files/2026-07/Res-048-2026UsingTechnologyWithIntention.pdf" target="_blank" rel="noopener">LAUSD resolution: Using Technology with Intention</a></li>
+    <li><a href="https://www.postandcourier.com/education-lab/greenville-schools-throttle-back-chromebooks/article_50ead8d1-9e15-4ced-92aa-bd33b5f1c322.html" target="_blank" rel="noopener">Post and Courier: Greenville County limits screen time</a></li>
+    <li><a href="https://www.axios.com/local/richmond/2026/09/01/richmond-henrico-chesterfield-schools-chromebooks-screen-time" target="_blank" rel="noopener">Axios Richmond: Henrico and Chesterfield screen limits</a></li>
+    <li><a href="https://rocketnews.com/2026/08/why-this-district-is-getting-rid-of-chromebooks-for-k-2-students/" target="_blank" rel="noopener">Canon-McMillan drops K-2 Chromebooks (via Education Week)</a></li>
+    <li><a href="https://www.wgil.com/2026/04/14/district-205-chromebook-policy-change-2026/" target="_blank" rel="noopener">WGIL: Galesburg D205 scales back Chromebooks</a></li>
+    <li><a href="https://indyweek.com/?p=1166930" target="_blank" rel="noopener">INDY Week: Granville County tech-free days</a></li>
+    <li><a href="https://www.chalkbeat.org/2026/03/25/screen-free-school-in-michigan-banned-chromebooks-to-help-students-read/" target="_blank" rel="noopener">Chalkbeat: Mesick's screen-free elementary</a></li>
+    <li><a href="https://www.edsurge.com/news/2024-07-15-an-education-chatbot-company-collapsed-where-did-the-student-data-go" target="_blank" rel="noopener">EdSurge: Where did the LAUSD chatbot data go?</a></li>
+    <li><a href="https://www.the74million.org/article/la-unified-faces-criticism-after-collapse-of-splashy-ai-tool-ed/" target="_blank" rel="noopener">The 74: LAUSD criticized after "Ed" collapse</a></li>
+    <li><a href="https://edweek.org/technology/los-angeles-unifieds-ai-meltdown-5-ways-districts-can-avoid-the-same-mistakes/2024/07" target="_blank" rel="noopener">Education Week: Lessons from LAUSD's AI meltdown</a></li>
+    <li><a href="https://www.bleepingcomputer.com/news/security/powerschool-hacker-claims-they-stole-data-of-62-million-students/" target="_blank" rel="noopener">BleepingComputer: PowerSchool breach scale</a></li>
+    <li><a href="https://edcircuit.com/powerschool-data-breach-2025-k12-schools/" target="_blank" rel="noopener">EdCircuit: PowerSchool breach lessons</a></li>
+    <li><a href="https://www.the-star.co.ke/news/world/2026-04-16-back-to-books-swedens-schools-give-up-digital-learning" target="_blank" rel="noopener">BBC (via The Star): Sweden's schools give up digital learning</a></li>
+    <li><a href="https://hechingerreport.org/?p=10049" target="_blank" rel="noopener">Hechinger Report: Maine's laptop program results</a></li>
+    <li><a href="https://aiweekly.co/alerts/only-42-of-alpha-school-pupils-hit-2x-growth-nyt-finds" target="_blank" rel="noopener">Summary of NYT investigation into Alpha School</a></li>
+    <li><a href="https://www.classlink.com/news/despite-push-to-pare-back-ed-tech-report-finds-districts-inventories-are-still-growing" target="_blank" rel="noopener">EdTech Top 40 (2025): district tool counts</a></li>
+    <li><a href="https://edtechmagazine.com/k12/article/2026/08/esser-funds-are-gone-heres-how-k-12-it-leaders-replace-them-perfcon" target="_blank" rel="noopener">EdTech Magazine: After ESSER</a></li>
+    <li><a href="https://www.investigatetv.com/2026/01/28/ai-schools-how-many-teachers-students-embrace-artificial-intelligence-education-tool/" target="_blank" rel="noopener">InvestigateTV: Teacher and student AI use (CDT survey)</a></li>
+  </ol>
+</section>
+
+<footer>Compiled October 27, 2026 from public reporting and research. Figures are as reported by the cited sources; several studies are recent and not yet replicated.</footer>
+</div>
+
+</body></html>
